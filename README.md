@@ -15,6 +15,41 @@ The library is in development.
 * Support most popular technical analysis indicators
 * Have a good documentation for every indicator
 
+
+## Roadmap
+
+That's the list of things to be done before first stable release.
+More indicators can be added later.
+
+* [ ] Indicators
+  * [ ] Trend
+    * [x] EMA
+    * [x] SMA
+  * [ ] Oscillators
+    * [ ] RSI
+    * [ ] Stochastic
+    * [ ] MACD
+  * [ ] Other
+    * [ ] True Range
+    * [ ] Average True Range
+    * [ ] Rate of Change
+* [ ] Good test coverage
+  * Unit tests
+  * Integration tests
+  * Ensure every indicators implements traits:
+    * Default
+    * Next<T>
+    * Reset
+    * Display
+    * Debug
+    * Clone
+* [ ] Good documentation
+  * Every indicator must have:
+    * Description
+    * Formula
+    * Example
+
+
 ## Get started
 
 Add to you `Cargo.toml`:
