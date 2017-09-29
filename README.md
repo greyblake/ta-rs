@@ -18,7 +18,7 @@ The library is in development.
 
 ## Roadmap
 
-That's the list of things to be done before first stable release.
+That's the list of things to be done before first stable release 0.1.0.
 More indicators can be added later.
 
 * [ ] Indicators
@@ -43,7 +43,9 @@ More indicators can be added later.
     * Display
     * Debug
     * Clone
-* [ ] Good documentation
+* [ ] Documentation
+  * Good README and lib doc, that explain the idea behind traits `Next<T>`, `Reset`.
+  * `How to contribute` section in README
   * Every indicator must have:
     * Description
     * Formula
