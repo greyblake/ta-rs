@@ -101,6 +101,12 @@ mod tests {
     use test_helper::*;
 
     #[test]
+    fn test_new() {
+        assert!(SimpleMovingAverage::new(0).is_err());
+        assert!(SimpleMovingAverage::new(1).is_ok());
+    }
+
+    #[test]
     fn test_next() {
         let mut sma = SimpleMovingAverage::new(4).unwrap();
         assert_eq!(sma.next(4.0), 4.0);

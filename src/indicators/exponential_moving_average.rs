@@ -1,6 +1,45 @@
 use {Close, Next, Reset};
 use errors::*;
 
+/// An exponential moving average (EMA), also known as an exponentially weighted moving average
+/// (EWMA), is a type of infinite impulse response filter that applies weighting factors which decrease exponentially.
+/// The weighting for each older datum decreases exponentially, never reaching zero.
+///
+/// # Formula
+///
+/// ![EMA formula](https://wikimedia.org/api/rest_v1/media/math/render/svg/05d06bdbee2c14031fd91ead6f5f772aec1ec964)
+///
+/// Where:
+///
+/// * _EMA<sub>t</sub>_ - is the value of the EMA at any time period _t_.
+/// * _EMA<sub>t-1</sub>_ - is the value of the EMA at the previous period _t-1_.
+/// * _p<sub>t</sub>_ - is the input value at a time period t.
+/// * _α_ - is the coefficient that represents the degree of weighting decrease, a constant smoothing factor between 0 and 1.
+///
+/// _α_ is calculated with the following formula:
+///
+/// ![alpha formula](https://wikimedia.org/api/rest_v1/media/math/render/svg/d9f6258e152db0644af548972bd6c50a8becf7ee)
+///
+/// Where:
+///
+/// * _n_ - number of periods
+///
+/// # Parameters
+///
+/// * _n_ - number of periods (integer greater than 0)
+///
+/// # Example
+///
+/// ```
+/// use ta::indicators::ExponentialMovingAverage;
+/// use ta::Next;
+///
+/// let mut ema = ExponentialMovingAverage::new(3).unwrap();
+/// assert_eq!(ema.next(2.0), 2.0);
+/// assert_eq!(ema.next(5.0), 3.5);
+/// assert_eq!(ema.next(1.0), 2.25);
+/// assert_eq!(ema.next(6.25), 4.25);
+/// ```
 #[derive(Debug,Clone)]
 pub struct ExponentialMovingAverage {
     k:  f64,
