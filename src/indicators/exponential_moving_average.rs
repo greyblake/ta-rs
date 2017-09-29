@@ -36,16 +36,6 @@ impl Next<f64> for ExponentialMovingAverage {
     }
 }
 
-// TODO: Move into macro
-impl Next<i32> for ExponentialMovingAverage {
-    type Output = f64;
-
-    fn next(&mut self, input: i32) -> Self::Output {
-        let input: f64 = input.into();
-        self.next(input)
-    }
-}
-
 impl<T: Close> Next<T> for ExponentialMovingAverage {
     type Output = f64;
 
@@ -83,9 +73,9 @@ mod tests {
     fn test_next() {
         let mut ema = ExponentialMovingAverage::new(3).unwrap();
 
-        assert_eq!(ema.next(2), 2.0);
-        assert_eq!(ema.next(5), 3.5);
-        assert_eq!(ema.next(1), 2.25);
+        assert_eq!(ema.next(2.0), 2.0);
+        assert_eq!(ema.next(5.0), 3.5);
+        assert_eq!(ema.next(1.0), 2.25);
         assert_eq!(ema.next(6.25), 4.25);
 
         let mut ema = ExponentialMovingAverage::new(3).unwrap();
@@ -99,14 +89,14 @@ mod tests {
     fn test_reset() {
         let mut ema = ExponentialMovingAverage::new(5).unwrap();
 
-        assert_eq!(ema.next(4), 4.0);
-        ema.next(10);
-        ema.next(15);
-        ema.next(1000);
-        assert_ne!(ema.next(4), 4.0);
+        assert_eq!(ema.next(4.0), 4.0);
+        ema.next(10.0);
+        ema.next(15.0);
+        ema.next(20.0);
+        assert_ne!(ema.next(4.0), 4.0);
 
         ema.reset();
-        assert_eq!(ema.next(4), 4.0);
+        assert_eq!(ema.next(4.0), 4.0);
     }
 
     #[test]
