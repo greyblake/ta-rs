@@ -1,6 +1,4 @@
-use Close;
-use Next;
-use Reset;
+use {Close, Next, Reset};
 use errors::*;
 
 #[derive(Debug,Clone)]
@@ -27,12 +25,12 @@ impl ExponentialMovingAverage {
 impl Next<f64> for ExponentialMovingAverage {
     type Output = f64;
 
-    fn next(&mut self, val: f64) -> Self::Output {
+    fn next(&mut self, input: f64) -> Self::Output {
         if self.is_new {
             self.is_new = false;
-            self.current = val;
+            self.current = input;
         } else {
-            self.current = self.k * val + (1.0 - self.k) * self.current;
+            self.current = self.k * input + (1.0 - self.k) * self.current;
         }
         self.current
     }
@@ -42,9 +40,9 @@ impl Next<f64> for ExponentialMovingAverage {
 impl Next<i32> for ExponentialMovingAverage {
     type Output = f64;
 
-    fn next(&mut self, val: i32) -> Self::Output {
-        let val: f64 = val.into();
-        self.next(val)
+    fn next(&mut self, input: i32) -> Self::Output {
+        let input: f64 = input.into();
+        self.next(input)
     }
 }
 
@@ -89,6 +87,12 @@ mod tests {
         assert_eq!(ema.next(5), 3.5);
         assert_eq!(ema.next(1), 2.25);
         assert_eq!(ema.next(6.25), 4.25);
+
+        let mut ema = ExponentialMovingAverage::new(3).unwrap();
+        let bar1 = Bar::new().close(2);
+        let bar2 = Bar::new().close(5);
+        assert_eq!(ema.next(bar1), 2.0);
+        assert_eq!(ema.next(bar2), 3.5);
     }
 
     #[test]
