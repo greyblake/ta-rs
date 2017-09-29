@@ -56,7 +56,7 @@ Add to you `Cargo.toml`:
 ```
 [dependencies]
 
-whatlang = "*"
+ta = "*"
 ```
 
 Example:
