@@ -1,7 +1,24 @@
 [package]
 name = "ta"
-version = "0.1.0"
+version = "0.0.1-alpha"
 authors = ["Sergey Potapov <blake131313@gmail.com>"]
+description = "Technical analysis library. Implements number of indicators: EMA, SMA, RSI, MACD, Stochastic, etc."
+keywords = ["technical-analysis", "finance", "ema", "indicators", "market"]
+license = "MIT"
+repository = "https://github.com/greyblake/ta-rs"
+homepage = "https://github.com/greyblake/ta-rs"
+documentation = "https://docs.rs/ta"
+readme = "README.md"
+categories = ["science", "algorithms"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md"
+]
+
+[badges]
+travis-ci = { repository = "greyblake/ta-rs", branch = "master" }
+
 
 [dependencies]
-error-chain = "0.11.0"
+error-chain = "0.11"
