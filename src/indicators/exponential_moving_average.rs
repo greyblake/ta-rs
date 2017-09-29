@@ -1,6 +1,7 @@
 use Close;
 use Next;
 use Reset;
+use errors::*;
 
 #[derive(Debug,Clone)]
 pub struct ExponentialMovingAverage {
@@ -9,12 +10,16 @@ pub struct ExponentialMovingAverage {
     is_new: bool
 }
 
-
 impl ExponentialMovingAverage {
-    // TODO: return an error, if n is 0
-    pub fn new(n : u32) -> Self {
-        let k = 2f64 / (n as f64 + 1f64);
-        Self { k: k, current: 0f64, is_new: true }
+    pub fn new(n : u32) -> Result<Self> {
+        match n {
+            0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
+            _ => {
+                let k = 2f64 / (n as f64 + 1f64);
+                let indicator = Self { k: k, current: 0f64, is_new: true };
+                Ok(indicator)
+            }
+        }
     }
 
 }
@@ -60,7 +65,7 @@ impl Reset for ExponentialMovingAverage {
 
 impl Default for ExponentialMovingAverage {
     fn default() -> Self {
-        Self::new(9)
+        Self::new(9).unwrap()
     }
 }
 
@@ -71,8 +76,14 @@ mod tests {
     use test_helper::*;
 
     #[test]
+    fn test_new() {
+        assert!(ExponentialMovingAverage::new(0).is_err());
+        assert!(ExponentialMovingAverage::new(1).is_ok());
+    }
+
+    #[test]
     fn test_next() {
-        let mut ema = ExponentialMovingAverage::new(3);
+        let mut ema = ExponentialMovingAverage::new(3).unwrap();
 
         assert_eq!(ema.next(2), 2.0);
         assert_eq!(ema.next(5), 3.5);
@@ -82,7 +93,7 @@ mod tests {
 
     #[test]
     fn test_reset() {
-        let mut ema = ExponentialMovingAverage::new(5);
+        let mut ema = ExponentialMovingAverage::new(5).unwrap();
 
         assert_eq!(ema.next(4), 4.0);
         ema.next(10);
@@ -92,5 +103,10 @@ mod tests {
 
         ema.reset();
         assert_eq!(ema.next(4), 4.0);
+    }
+
+    #[test]
+    fn test_default() {
+        ExponentialMovingAverage::default();
     }
 }
