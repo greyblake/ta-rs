@@ -40,6 +40,11 @@ use errors::*;
 /// assert_eq!(ema.next(1.0), 2.25);
 /// assert_eq!(ema.next(6.25), 4.25);
 /// ```
+///
+/// # Links
+///
+/// * [Exponential moving average, Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
+///
 #[derive(Debug,Clone)]
 pub struct ExponentialMovingAverage {
     k:  f64,
