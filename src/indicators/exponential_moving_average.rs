@@ -1,3 +1,5 @@
+use std::fmt;
+
 use {Close, Next, Reset};
 use errors::*;
 
@@ -47,6 +49,7 @@ use errors::*;
 ///
 #[derive(Debug,Clone)]
 pub struct ExponentialMovingAverage {
+    n: u32,
     k:  f64,
     current: f64,
     is_new: bool
@@ -58,7 +61,7 @@ impl ExponentialMovingAverage {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
                 let k = 2f64 / (n as f64 + 1f64);
-                let indicator = Self { k: k, current: 0f64, is_new: true };
+                let indicator = Self { n: n, k: k, current: 0f64, is_new: true };
                 Ok(indicator)
             }
         }
@@ -98,6 +101,12 @@ impl Reset for ExponentialMovingAverage {
 impl Default for ExponentialMovingAverage {
     fn default() -> Self {
         Self::new(9).unwrap()
+    }
+}
+
+impl fmt::Display for ExponentialMovingAverage {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "EMA({})", self.n)
     }
 }
 
@@ -146,5 +155,11 @@ mod tests {
     #[test]
     fn test_default() {
         ExponentialMovingAverage::default();
+    }
+
+    #[test]
+    fn test_display() {
+        let mut ema = ExponentialMovingAverage::new(7).unwrap();
+        assert_eq!(format!("{}", ema), "EMA(7)");
     }
 }

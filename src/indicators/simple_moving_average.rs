@@ -1,3 +1,5 @@
+use std::fmt;
+
 use {Close, Next, Reset};
 use errors::*;
 
@@ -34,6 +36,7 @@ use errors::*;
 ///
 /// * [Simple Moving Average, Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average)
 ///
+#[derive(Debug,Clone)]
 pub struct SimpleMovingAverage {
     n: u32,
     index: usize,
@@ -95,6 +98,12 @@ impl Default for SimpleMovingAverage {
     }
 }
 
+impl fmt::Display for SimpleMovingAverage {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "SMA({})", self.n)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -127,5 +136,16 @@ mod tests {
 
         sma.reset();
         assert_eq!(sma.next(99.0), 99.0);
+    }
+
+    #[test]
+    fn test_default() {
+        SimpleMovingAverage::default();
+    }
+
+    #[test]
+    fn test_display() {
+        let mut sma = SimpleMovingAverage::new(5).unwrap();
+        assert_eq!(format!("{}", sma), "SMA(5)");
     }
 }
