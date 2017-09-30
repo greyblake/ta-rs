@@ -11,6 +11,8 @@ use errors::*;
 ///
 /// The oscillator returns output in the range of 0..100.
 ///
+/// ![RSI](https://upload.wikimedia.org/wikipedia/commons/6/67/RSIwiki.gif)
+///
 /// # Formula
 ///
 /// RSI<sub>t</sub> = EMA<sub>Ut</sub> * 100 / (EMA<sub>Ut</sub> + EMA<sub>Dt</sub>)
