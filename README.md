@@ -22,11 +22,11 @@ That's the list of things to be done before first stable release 0.1.0.
 More indicators can be added later.
 
 * [ ] Indicators
-  * [ ] Trend
+  * [x] Trend
     * [x] EMA
     * [x] SMA
   * [ ] Oscillators
-    * [ ] RSI
+    * [x] RSI
     * [ ] Stochastic
     * [ ] MACD
   * [ ] Other

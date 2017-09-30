@@ -1,5 +1,4 @@
 use std::fmt;
-
 use {Close, Next, Reset};
 use errors::*;
 
@@ -107,7 +106,6 @@ impl fmt::Display for SimpleMovingAverage {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
 
     #[test]
     fn test_new() {
@@ -145,7 +143,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let mut sma = SimpleMovingAverage::new(5).unwrap();
+        let sma = SimpleMovingAverage::new(5).unwrap();
         assert_eq!(format!("{}", sma), "SMA(5)");
     }
 }

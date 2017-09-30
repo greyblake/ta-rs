@@ -1,5 +1,4 @@
 use std::fmt;
-
 use {Close, Next, Reset};
 use errors::*;
 
@@ -159,7 +158,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let mut ema = ExponentialMovingAverage::new(7).unwrap();
+        let ema = ExponentialMovingAverage::new(7).unwrap();
         assert_eq!(format!("{}", ema), "EMA(7)");
     }
 }
