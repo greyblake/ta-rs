@@ -23,3 +23,7 @@ pub trait Close {
 pub trait Low {
     fn low(&self) -> f64;
 }
+
+pub trait High {
+    fn high(&self) -> f64;
+}

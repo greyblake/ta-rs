@@ -9,3 +9,6 @@ pub use self::relative_strength_index::RelativeStrengthIndex;
 
 mod minimum;
 pub use self::minimum::Minimum;
+
+mod maximum;
+pub use self::maximum::Maximum;
