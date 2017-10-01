@@ -11,14 +11,13 @@ pub struct Bar {
 
 impl Bar {
     pub fn new() -> Self {
-        //Self { open: 0.0, high: 0.0, low: 0.0, close: 0.0, volume: 0 }
         Self { open: 0.0, close: 0.0, low: 0.0 }
     }
 
-    pub fn open<T: Into<f64>>(mut self, val :T ) -> Self {
-        self.open = val.into();
-        self
-    }
+    //pub fn open<T: Into<f64>>(mut self, val :T ) -> Self {
+    //    self.open = val.into();
+    //    self
+    //}
 
     //pub fn high<T: Into<f64>>(mut self, val :T ) -> Self {
     //    self.high = val.into();

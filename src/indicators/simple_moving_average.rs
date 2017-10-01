@@ -169,3 +169,4 @@ mod tests {
         assert_eq!(format!("{}", sma), "SMA(5)");
     }
 }
+
