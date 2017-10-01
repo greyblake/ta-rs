@@ -6,3 +6,6 @@ pub use self::simple_moving_average::SimpleMovingAverage;
 
 mod relative_strength_index;
 pub use self::relative_strength_index::RelativeStrengthIndex;
+
+mod minimum;
+pub use self::minimum::Minimum;

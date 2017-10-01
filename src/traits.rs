@@ -19,3 +19,7 @@ pub trait Open {
 pub trait Close {
     fn close(&self) -> f64;
 }
+
+pub trait Low {
+    fn low(&self) -> f64;
+}
