@@ -80,6 +80,14 @@ impl Next<f64> for SimpleMovingAverage {
     }
 }
 
+impl<T: Close> Next<T> for SimpleMovingAverage {
+    type Output = f64;
+
+    fn next(&mut self, input: T) -> Self::Output {
+        self.next(input.close())
+    }
+}
+
 impl Reset for SimpleMovingAverage {
     fn reset(&mut self) {
         self.index = 0;
@@ -106,6 +114,7 @@ impl fmt::Display for SimpleMovingAverage {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use test_helper::*;
 
     #[test]
     fn test_new() {
@@ -123,6 +132,19 @@ mod tests {
         assert_eq!(sma.next(6.0), 5.75);
         assert_eq!(sma.next(6.0), 6.0);
         assert_eq!(sma.next(2.0), 5.0);
+    }
+
+    #[test]
+    fn test_next_with_bars() {
+        fn bar(close: f64) -> Bar {
+            Bar::new().close(close)
+        }
+
+        let mut sma = SimpleMovingAverage::new(3).unwrap();
+        assert_eq!(sma.next(bar(4.0)), 4.0);
+        assert_eq!(sma.next(bar(4.0)), 4.0);
+        assert_eq!(sma.next(bar(7.0)), 5.0);
+        assert_eq!(sma.next(bar(1.0)), 4.0);
     }
 
     #[test]
