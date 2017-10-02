@@ -12,3 +12,6 @@ pub use self::minimum::Minimum;
 
 mod maximum;
 pub use self::maximum::Maximum;
+
+mod stochastic;
+pub use self::stochastic::Stochastic;

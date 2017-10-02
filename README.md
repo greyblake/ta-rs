@@ -27,9 +27,11 @@ More indicators can be added later.
     * [x] SMA
   * [ ] Oscillators
     * [x] RSI
-    * [ ] Stochastic
+    * [x] Stochastic
     * [ ] MACD
   * [ ] Other
+    * [x] Minimum
+    * [x] Maximum
     * [ ] True Range
     * [ ] Average True Range
     * [ ] Rate of Change
