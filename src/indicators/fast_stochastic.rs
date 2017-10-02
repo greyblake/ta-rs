@@ -10,7 +10,7 @@ use errors::*;
 ///
 /// # Formula
 ///
-/// ![Stochastic oscillator formula](https://wikimedia.org/api/rest_v1/media/math/render/svg/5a419041034a8044308c999f85661a08bcf91b1d)
+/// ![Fast stochastic oscillator formula](https://wikimedia.org/api/rest_v1/media/math/render/svg/5a419041034a8044308c999f85661a08bcf91b1d)
 ///
 /// Where:
 ///
@@ -27,10 +27,10 @@ use errors::*;
 /// # Example
 ///
 /// ```
-/// use ta::indicators::Stochastic;
+/// use ta::indicators::FastStochastic;
 /// use ta::Next;
 ///
-/// let mut stoch = Stochastic::new(5).unwrap();
+/// let mut stoch = FastStochastic::new(5).unwrap();
 /// assert_eq!(stoch.next(20.0), 50.0);
 /// assert_eq!(stoch.next(30.0), 100.0);
 /// assert_eq!(stoch.next(40.0), 100.0);
@@ -38,13 +38,13 @@ use errors::*;
 /// assert_eq!(stoch.next(15.0), 0.0);
 /// ```
 #[derive(Debug,Clone)]
-pub struct Stochastic {
+pub struct FastStochastic {
     n: u32,
     minimum: Minimum,
     maximum: Maximum,
 }
 
-impl Stochastic {
+impl FastStochastic {
     pub fn new(n: u32) -> Result<Self> {
         let indicator = Self {
             n: n,
@@ -55,7 +55,7 @@ impl Stochastic {
     }
 }
 
-impl Next<f64> for Stochastic {
+impl Next<f64> for FastStochastic {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -72,7 +72,7 @@ impl Next<f64> for Stochastic {
     }
 }
 
-impl<T: High + Low + Close> Next<T> for Stochastic {
+impl<T: High + Low + Close> Next<T> for FastStochastic {
     type Output = f64;
 
     fn next(&mut self, input: T) -> Self::Output {
@@ -89,20 +89,20 @@ impl<T: High + Low + Close> Next<T> for Stochastic {
     }
 }
 
-impl Reset for Stochastic {
+impl Reset for FastStochastic {
     fn reset(&mut self) {
         self.minimum.reset();
         self.maximum.reset();
     }
 }
 
-impl Default for Stochastic {
+impl Default for FastStochastic {
     fn default() -> Self {
         Self::new(14).unwrap()
     }
 }
 
-impl fmt::Display for Stochastic {
+impl fmt::Display for FastStochastic {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "FAST_STOCH({})", self.n)
     }
@@ -115,13 +115,13 @@ mod tests {
 
     #[test]
     fn test_new() {
-        assert!(Stochastic::new(0).is_err());
-        assert!(Stochastic::new(1).is_ok());
+        assert!(FastStochastic::new(0).is_err());
+        assert!(FastStochastic::new(1).is_ok());
     }
 
     #[test]
     fn test_next_with_f64() {
-        let mut stoch = Stochastic::new(3).unwrap();
+        let mut stoch = FastStochastic::new(3).unwrap();
         assert_eq!(stoch.next(0.0), 50.0);
         assert_eq!(stoch.next(200.0), 100.0);
         assert_eq!(stoch.next(100.0), 50.0);
@@ -141,7 +141,7 @@ mod tests {
             (35.0  , 25.0, 30.0 , 75.0), // min = 15, max = 35
         ];
 
-        let mut stoch = Stochastic::new(3).unwrap();
+        let mut stoch = FastStochastic::new(3).unwrap();
 
         for (high, low, close, expected) in test_data {
             let input_bar = Bar::new().high(high).low(low).close(close);
@@ -151,7 +151,7 @@ mod tests {
 
     #[test]
     fn test_reset() {
-        let mut indicator = Stochastic::new(10).unwrap();
+        let mut indicator = FastStochastic::new(10).unwrap();
         assert_eq!(indicator.next(10.0), 50.0);
         assert_eq!(indicator.next(210.0), 100.0);
         assert_eq!(indicator.next(10.0), 0.0);
@@ -165,12 +165,12 @@ mod tests {
 
     #[test]
     fn test_default() {
-        Stochastic::default();
+        FastStochastic::default();
     }
 
     #[test]
     fn test_display() {
-        let indicator = Stochastic::new(21).unwrap();
+        let indicator = FastStochastic::new(21).unwrap();
         assert_eq!(format!("{}", indicator), "FAST_STOCH(21)");
     }
 }

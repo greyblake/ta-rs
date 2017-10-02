@@ -27,7 +27,8 @@ More indicators can be added later.
     * [x] SMA
   * [ ] Oscillators
     * [x] RSI
-    * [x] Stochastic
+    * [x] Fast stochastic
+    * [ ] Slow stochastic
     * [ ] MACD
   * [ ] Other
     * [x] Minimum
