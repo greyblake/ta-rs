@@ -10,7 +10,7 @@ pub trait Next<T> {
 }
 
 
-// Bar traits
+// DataItem traits
 //
 pub trait Open {
     fn open(&self) -> f64;
@@ -26,4 +26,8 @@ pub trait Low {
 
 pub trait High {
     fn high(&self) -> f64;
+}
+
+pub trait Volume {
+    fn volume(&self) -> f64;
 }

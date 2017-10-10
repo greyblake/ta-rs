@@ -22,7 +22,7 @@ use errors::*;
 ///
 /// # Parameters
 ///
-/// * _n_ - number of periods (integer greater than 0). Default is 14.
+/// * _length_ - number of periods (integer greater than 0). Default is 14.
 ///
 /// # Example
 ///
@@ -39,19 +39,23 @@ use errors::*;
 /// ```
 #[derive(Debug,Clone)]
 pub struct FastStochastic {
-    n: u32,
+    length: u32,
     minimum: Minimum,
     maximum: Maximum,
 }
 
 impl FastStochastic {
-    pub fn new(n: u32) -> Result<Self> {
+    pub fn new(length: u32) -> Result<Self> {
         let indicator = Self {
-            n: n,
-            minimum: Minimum::new(n)?,
-            maximum: Maximum::new(n)?
+            length: length,
+            minimum: Minimum::new(length)?,
+            maximum: Maximum::new(length)?
         };
         Ok(indicator)
+    }
+
+    pub fn length(&self) -> u32 {
+        self.length
     }
 }
 
@@ -104,7 +108,7 @@ impl Default for FastStochastic {
 
 impl fmt::Display for FastStochastic {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "FAST_STOCH({})", self.n)
+        write!(f, "FAST_STOCH({})", self.length)
     }
 }
 

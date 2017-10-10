@@ -15,7 +15,6 @@ The library is in development.
 * Support most popular technical analysis indicators
 * Have a good documentation for every indicator
 
-
 ## Roadmap
 
 That's the list of things to be done before first stable release 0.1.0.
@@ -28,12 +27,12 @@ More indicators can be added later.
   * [ ] Oscillators
     * [x] RSI
     * [x] Fast stochastic
-    * [ ] Slow stochastic
+    * [x] Slow stochastic
     * [ ] MACD
   * [ ] Other
     * [x] Minimum
     * [x] Maximum
-    * [ ] True Range
+    * [x] True Range
     * [ ] Average True Range
     * [ ] Rate of Change
 * [ ] Good test coverage

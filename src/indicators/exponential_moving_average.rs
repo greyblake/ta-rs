@@ -23,7 +23,7 @@ use errors::*;
 ///
 /// Where:
 ///
-/// * _n_ - number of periods
+/// * _length_ - number of periods
 ///
 /// # Parameters
 ///
@@ -48,24 +48,27 @@ use errors::*;
 ///
 #[derive(Debug,Clone)]
 pub struct ExponentialMovingAverage {
-    n: u32,
+    length: u32,
     k:  f64,
     current: f64,
     is_new: bool
 }
 
 impl ExponentialMovingAverage {
-    pub fn new(n : u32) -> Result<Self> {
-        match n {
+    pub fn new(length: u32) -> Result<Self> {
+        match length {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
-                let k = 2f64 / (n as f64 + 1f64);
-                let indicator = Self { n: n, k: k, current: 0f64, is_new: true };
+                let k = 2f64 / (length as f64 + 1f64);
+                let indicator = Self { length: length, k: k, current: 0f64, is_new: true };
                 Ok(indicator)
             }
         }
     }
 
+    pub fn length(&self) -> u32 {
+        self.length
+    }
 }
 
 impl Next<f64> for ExponentialMovingAverage {
@@ -105,7 +108,7 @@ impl Default for ExponentialMovingAverage {
 
 impl fmt::Display for ExponentialMovingAverage {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "EMA({})", self.n)
+        write!(f, "EMA({})", self.length)
     }
 }
 
