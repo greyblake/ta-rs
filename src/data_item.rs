@@ -135,8 +135,6 @@ impl DataItemBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
-
 
     #[test]
     fn test_builder() {

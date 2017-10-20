@@ -1,6 +1,7 @@
+use std::fmt;
 use indicators::{TrueRange, ExponentialMovingAverage};
 use errors::*;
-use {Next, High, Low, Close};
+use {Next, Reset, High, Low, Close};
 
 pub struct AverageTrueRange {
     true_range: TrueRange,
@@ -28,7 +29,22 @@ impl<'a, T: High + Low + Close>  Next<&'a T> for AverageTrueRange {
 }
 
 impl Reset for AverageTrueRange {
-    fn
+    fn reset(&mut self) {
+        self.true_range.reset();
+        self.ema.reset();
+    }
+}
+
+impl Default for AverageTrueRange {
+    fn default() -> Self {
+        Self::new(14).unwrap()
+    }
+}
+
+impl fmt::Display for AverageTrueRange {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "ATR({})", self.ema.length())
+    }
 }
 
 #[cfg(test)]
@@ -67,5 +83,16 @@ mod tests {
         atr.reset();
         let bar3 = Bar::new().high(60).low(15).close(51);
         assert_eq!(atr.next(&bar3), 45.0);
+    }
+
+    #[test]
+    fn test_default() {
+        AverageTrueRange::default();
+    }
+
+    #[test]
+    fn test_display() {
+        let indicator = AverageTrueRange::new(8).unwrap();
+        assert_eq!(format!("{}", indicator), "ATR(8)");
     }
 }
