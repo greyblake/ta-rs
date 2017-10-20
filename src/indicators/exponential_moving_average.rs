@@ -27,7 +27,7 @@ use errors::*;
 ///
 /// # Parameters
 ///
-/// * _n_ - number of periods (integer greater than 0)
+/// * _length_ - number of periods (integer greater than 0)
 ///
 /// # Example
 ///
