@@ -29,12 +29,12 @@ More indicators can be added later.
     * [x] Fast stochastic
     * [x] Slow stochastic
     * [ ] MACD
-  * [ ] Other
+  * [x] Other
     * [x] Minimum
     * [x] Maximum
     * [x] True Range
-    * [ ] Average True Range
-    * [ ] Rate of Change
+    * [x] Average True Range
+    * [x] Rate of Change
 * [ ] Good test coverage
   * Unit tests
   * Integration tests
