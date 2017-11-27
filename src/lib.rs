@@ -2,6 +2,7 @@
 extern crate error_chain;
 
 #[cfg(test)]
+#[macro_use]
 mod test_helper;
 
 mod helpers;

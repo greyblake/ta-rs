@@ -79,10 +79,10 @@ impl Next<f64> for Maximum {
     }
 }
 
-impl<T: High> Next<T> for Maximum {
+impl<'a, T: High> Next<&'a T> for Maximum {
     type Output = f64;
 
-    fn next(&mut self, input: T) -> Self::Output {
+    fn next(&mut self, input: &'a T) -> Self::Output {
         self.next(input.high())
     }
 }
@@ -111,6 +111,8 @@ impl fmt::Display for Maximum {
 mod tests {
     use super::*;
     use test_helper::*;
+
+    test_indicator!(Maximum);
 
     #[test]
     fn test_new() {
@@ -141,10 +143,10 @@ mod tests {
 
         let mut max= Maximum::new(2).unwrap();
 
-        assert_eq!(max.next(bar(1.1)), 1.1);
-        assert_eq!(max.next(bar(4.0)), 4.0);
-        assert_eq!(max.next(bar(3.5)), 4.0);
-        assert_eq!(max.next(bar(2.0)), 3.5);
+        assert_eq!(max.next(&bar(1.1)), 1.1);
+        assert_eq!(max.next(&bar(4.0)), 4.0);
+        assert_eq!(max.next(&bar(3.5)), 4.0);
+        assert_eq!(max.next(&bar(2.0)), 3.5);
     }
 
     #[test]

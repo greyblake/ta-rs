@@ -68,6 +68,16 @@ impl AverageTrueRange {
     }
 }
 
+impl Next<f64> for AverageTrueRange {
+    type Output = f64;
+
+    fn next(&mut self, input: f64) -> Self::Output {
+        self.ema.next(
+            self.true_range.next(input)
+        )
+    }
+}
+
 impl<'a, T: High + Low + Close>  Next<&'a T> for AverageTrueRange {
     type Output = f64;
 
@@ -101,6 +111,8 @@ impl fmt::Display for AverageTrueRange {
 mod tests {
     use super::*;
     use test_helper::*;
+
+    test_indicator!(AverageTrueRange);
 
     #[test]
     fn test_new() {

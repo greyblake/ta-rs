@@ -115,7 +115,10 @@ impl fmt::Display for MovingAverageConvergenceDivergence {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use test_helper::*;
     type Macd = MovingAverageConvergenceDivergence;
+
+    test_indicator!(Macd);
 
     fn round(nums: (f64, f64, f64)) -> (f64, f64, f64) {
         let n0 = (nums.0 * 100.0).round() / 100.0;

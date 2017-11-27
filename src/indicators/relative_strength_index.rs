@@ -112,10 +112,10 @@ impl Next<f64> for RelativeStrengthIndex {
     }
 }
 
-impl<T: Close> Next<T> for RelativeStrengthIndex {
+impl<'a, T: Close> Next<&'a T> for RelativeStrengthIndex {
     type Output = f64;
 
-    fn next(&mut self, input: T) -> Self::Output {
+    fn next(&mut self, input: &'a T) -> Self::Output {
         self.next(input.close())
     }
 }
@@ -144,6 +144,9 @@ impl fmt::Display for RelativeStrengthIndex {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use test_helper::*;
+
+    test_indicator!(RelativeStrengthIndex);
 
     #[test]
     fn test_new() {

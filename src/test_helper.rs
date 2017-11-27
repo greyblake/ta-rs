@@ -65,6 +65,31 @@ impl High for Bar {
     }
 }
 
-//pub fn round(num : f64) -> f64 {
-//    (num * 100.0).round() / 100.0
-//}
+pub fn round(num : f64) -> f64 {
+    (num * 1000.0).round() / 1000.00
+}
+
+macro_rules! test_indicator {
+    ($i:tt) => {
+        #[test]
+        fn test_indicator() {
+            let bar = Bar::new();
+
+            // ensure Default trait is implemented
+            let mut indicator = $i::default();
+
+            // ensure Next<f64> is implemented
+            let first_output = indicator.next(12.3);
+
+            // ensure next accepts &DataItem as well
+            indicator.next(&bar);
+
+            // ensure Reset is implemented and works correctly
+            indicator.reset();
+            assert_eq!(indicator.next(12.3), first_output);
+
+            // ensure Display is implemented
+            format!("{}", indicator);
+        }
+    }
+}

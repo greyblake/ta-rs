@@ -79,10 +79,10 @@ impl Next<f64> for Minimum {
     }
 }
 
-impl<T: Low> Next<T> for Minimum {
+impl<'a, T: Low> Next<&'a T> for Minimum {
     type Output = f64;
 
-    fn next(&mut self, input: T) -> Self::Output {
+    fn next(&mut self, input: &'a T) -> Self::Output {
         self.next(input.low())
     }
 }
@@ -111,6 +111,8 @@ impl fmt::Display for Minimum {
 mod tests {
     use super::*;
     use test_helper::*;
+
+    test_indicator!(Minimum);
 
     #[test]
     fn test_new() {
@@ -142,10 +144,10 @@ mod tests {
 
         let mut min = Minimum::new(3).unwrap();
 
-        assert_eq!(min.next(bar(4.0)), 4.0);
-        assert_eq!(min.next(bar(4.0)), 4.0);
-        assert_eq!(min.next(bar(1.2)), 1.2);
-        assert_eq!(min.next(bar(5.0)), 1.2);
+        assert_eq!(min.next(&bar(4.0)), 4.0);
+        assert_eq!(min.next(&bar(4.0)), 4.0);
+        assert_eq!(min.next(&bar(1.2)), 1.2);
+        assert_eq!(min.next(&bar(5.0)), 1.2);
     }
 
     #[test]

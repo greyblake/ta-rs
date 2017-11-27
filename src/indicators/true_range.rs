@@ -69,6 +69,19 @@ impl fmt::Display for TrueRange {
     }
 }
 
+impl Next<f64> for TrueRange {
+    type Output = f64;
+
+    fn next(&mut self, input: f64) -> Self::Output {
+        let distance = match self.prev_close {
+            Some(prev) => (input - prev).abs(),
+            None => 0.0
+        };
+        self.prev_close = Some(input);
+        distance
+    }
+}
+
 impl<'a, T: High + Low + Close>  Next<&'a T> for TrueRange {
     type Output = f64;
 
@@ -101,8 +114,18 @@ mod tests {
     use super::*;
     use test_helper::*;
 
+    test_indicator!(TrueRange);
+
     #[test]
-    fn test_next() {
+    fn test_next_f64() {
+        let mut tr = TrueRange::new();
+        assert_eq!(round(tr.next(2.5)), 0.0);
+        assert_eq!(round(tr.next(3.6)), 1.1);
+        assert_eq!(round(tr.next(3.3)), 0.3);
+    }
+
+    #[test]
+    fn test_next_bar() {
         let mut tr = TrueRange::new();
 
         let bar1 = Bar::new().high(10).low(7.5).close(9);

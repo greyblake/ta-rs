@@ -85,10 +85,10 @@ impl Next<f64> for ExponentialMovingAverage {
     }
 }
 
-impl<T: Close> Next<T> for ExponentialMovingAverage {
+impl<'a, T: Close> Next<&'a T> for ExponentialMovingAverage {
     type Output = f64;
 
-    fn next(&mut self, input: T) -> Self::Output {
+    fn next(&mut self, input: &'a T) -> Self::Output {
         self.next(input.close())
     }
 }
@@ -118,6 +118,8 @@ mod tests {
     use super::*;
     use test_helper::*;
 
+    test_indicator!(ExponentialMovingAverage);
+
     #[test]
     fn test_new() {
         assert!(ExponentialMovingAverage::new(0).is_err());
@@ -136,8 +138,8 @@ mod tests {
         let mut ema = ExponentialMovingAverage::new(3).unwrap();
         let bar1 = Bar::new().close(2);
         let bar2 = Bar::new().close(5);
-        assert_eq!(ema.next(bar1), 2.0);
-        assert_eq!(ema.next(bar2), 3.5);
+        assert_eq!(ema.next(&bar1), 2.0);
+        assert_eq!(ema.next(&bar2), 3.5);
     }
 
     #[test]

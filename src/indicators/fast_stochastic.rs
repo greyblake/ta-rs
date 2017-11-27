@@ -76,10 +76,10 @@ impl Next<f64> for FastStochastic {
     }
 }
 
-impl<T: High + Low + Close> Next<T> for FastStochastic {
+impl<'a, T: High + Low + Close> Next<&'a T> for FastStochastic {
     type Output = f64;
 
-    fn next(&mut self, input: T) -> Self::Output {
+    fn next(&mut self, input: &'a T) -> Self::Output {
         let highest = self.maximum.next(input.high());
         let lowest = self.minimum.next(input.low());
         let close = input.close();
@@ -117,6 +117,8 @@ mod tests {
     use super::*;
     use test_helper::*;
 
+    test_indicator!(FastStochastic);
+
     #[test]
     fn test_new() {
         assert!(FastStochastic::new(0).is_err());
@@ -149,7 +151,7 @@ mod tests {
 
         for (high, low, close, expected) in test_data {
             let input_bar = Bar::new().high(high).low(low).close(close);
-            assert_eq!(stoch.next(input_bar), expected);
+            assert_eq!(stoch.next(&input_bar), expected);
         }
     }
 

@@ -52,10 +52,10 @@ impl Next<f64> for SlowStochastic {
     }
 }
 
-impl<T: High + Low + Close> Next<T> for SlowStochastic {
+impl<'a, T: High + Low + Close> Next<&'a T> for SlowStochastic {
     type Output = f64;
 
-    fn next(&mut self, input: T) -> Self::Output {
+    fn next(&mut self, input: &'a T) -> Self::Output {
         self.ema.next(
             self.fast_stochastic.next(input)
         )
@@ -85,6 +85,8 @@ impl fmt::Display for SlowStochastic {
 mod tests {
     use super::*;
     use test_helper::*;
+
+    test_indicator!(SlowStochastic);
 
     #[test]
     fn test_new() {
@@ -119,7 +121,7 @@ mod tests {
 
         for (high, low, close, expected) in test_data {
             let input_bar = Bar::new().high(high).low(low).close(close);
-            assert_eq!(stoch.next(input_bar).round(), expected);
+            assert_eq!(stoch.next(&input_bar).round(), expected);
         }
     }
 
