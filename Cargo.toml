@@ -25,4 +25,4 @@ error-chain = "0.11"
 
 [dev-dependencies]
 assert_approx_eq = "1.0.0"
-csv = "*"
+csv = "0.15.0"
