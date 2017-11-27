@@ -20,15 +20,15 @@ The library is in development.
 That's the list of things to be done before first stable release 0.1.0.
 More indicators can be added later.
 
-* [ ] Indicators
+* [x] Indicators
   * [x] Trend
     * [x] EMA
     * [x] SMA
-  * [ ] Oscillators
+  * [x] Oscillators
     * [x] RSI
     * [x] Fast stochastic
     * [x] Slow stochastic
-    * [ ] MACD
+    * [x] MACD
   * [x] Other
     * [x] Minimum
     * [x] Maximum
