@@ -6,7 +6,13 @@
 
 Technical analysis library for Rust.
 
-## Get started
+* [Getting Started](#getting-started)
+* [Basics ideas](#basic-ideas)
+* [List of indicators](#list-of-indicators)
+* [License](#license)
+* [Contributors](#contributors)
+
+## Getting started
 
 Add to you `Cargo.toml`:
 ```
@@ -28,7 +34,8 @@ assert_eq!(ema.next(1.0), 2.25);
 assert_eq!(ema.next(6.25), 4.25);
 ```
 
-See more in [examples dir](https://github.com/greyblake/ta-rs/tree/master/examples).
+See more in the examples [here](https://github.com/greyblake/ta-rs/tree/master/examples).
+Check all the [documentation](https://docs.rs/ta).
 
 ## Basic ideas
 
@@ -52,7 +59,7 @@ Indicators typically implement the following traits:
 * `Default`
 * `Clone`
 
-## Indicators
+## List of indicators
 
 So far there are the following indicators available.
 
