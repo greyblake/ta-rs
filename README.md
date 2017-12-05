@@ -6,54 +6,6 @@
 
 Technical analysis library for Rust.
 
-## Status
-
-The library is in development.
-
-## Goals
-* Implement flexible and easy to use library in pure Rust
-* Support most popular technical analysis indicators
-* Have a good documentation for every indicator
-
-## Roadmap
-
-That's the list of things to be done before first stable release 0.1.0.
-More indicators can be added later.
-
-* [x] Indicators
-  * [x] Trend
-    * [x] EMA
-    * [x] SMA
-  * [x] Oscillators
-    * [x] RSI
-    * [x] Fast stochastic
-    * [x] Slow stochastic
-    * [x] MACD
-  * [x] Other
-    * [x] Minimum
-    * [x] Maximum
-    * [x] True Range
-    * [x] Average True Range
-    * [x] Rate of Change
-* [ ] Good test coverage
-  * Unit tests
-  * Integration tests
-  * Ensure every indicators implements traits:
-    * Default
-    * Next<T>
-    * Reset
-    * Display
-    * Debug
-    * Clone
-* [ ] Documentation
-  * Good README and lib doc, that explain the idea behind traits `Next<T>`, `Reset`.
-  * `How to contribute` section in README
-  * Every indicator must have:
-    * Description
-    * Formula
-    * Example
-
-
 ## Get started
 
 Add to you `Cargo.toml`:
@@ -75,6 +27,48 @@ assert_eq!(ema.next(5.0), 3.5);
 assert_eq!(ema.next(1.0), 2.25);
 assert_eq!(ema.next(6.25), 4.25);
 ```
+
+## Basic ideas
+
+Data item which represent a stock quote may implement the following traits:
+
+* `Open`
+* `High`
+* `Low`
+* `Close`
+* `Volume`
+
+It's not necessary to implement all of them, but it must be enough to fulfill requirements for a particular indicator.
+You probably should `DataItem` unless you have particular reasons to implement your own struct.
+
+Indicators typically implement the following traits:
+
+* `Next<T>` (often `Next<f64>` and `Next<DataItem>`) - to feed and get the next value
+* `Reset` - to reset an indicator
+* `Debug`
+* `Display`
+* `Default`
+* `Clone`
+
+## Indicators
+
+So far there are the following indicators available.
+
+* Trend
+  * Exponential Moving Average (EMA)
+  * Simple Moving Average (SMA)
+* Oscillators
+  * Relative Strength Index (RSI)
+  * Fast Stochastic
+  * Slow Stochastic
+  * Moving Average Convergence Divergence (MACD)
+* Other
+  * Minimum
+  * Maximum
+  * True Range
+  * Average True Range (AR)
+  * Rate of Change (ROC)
+
 
 ## License
 
