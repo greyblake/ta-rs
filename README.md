@@ -28,6 +28,8 @@ assert_eq!(ema.next(1.0), 2.25);
 assert_eq!(ema.next(6.25), 4.25);
 ```
 
+See more in [examples dir](https://github.com/greyblake/ta-rs/tree/master/examples).
+
 ## Basic ideas
 
 Data item which represent a stock quote may implement the following traits:
@@ -39,11 +41,11 @@ Data item which represent a stock quote may implement the following traits:
 * `Volume`
 
 It's not necessary to implement all of them, but it must be enough to fulfill requirements for a particular indicator.
-You probably should `DataItem` unless you have particular reasons to implement your own struct.
+You probably should prefer using `DataItem` unless you have reasons to implement your own structure.
 
 Indicators typically implement the following traits:
 
-* `Next<T>` (often `Next<f64>` and `Next<DataItem>`) - to feed and get the next value
+* `Next<T>` (often `Next<f64>` and `Next<&DataItem>`) - to feed and get the next value
 * `Reset` - to reset an indicator
 * `Debug`
 * `Display`
@@ -68,7 +70,6 @@ So far there are the following indicators available.
   * True Range
   * Average True Range (AR)
   * Rate of Change (ROC)
-
 
 ## License
 
