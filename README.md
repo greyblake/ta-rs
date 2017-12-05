@@ -37,7 +37,7 @@ assert_eq!(ema.next(6.25), 4.25);
 ```
 
 See more in the examples [here](https://github.com/greyblake/ta-rs/tree/master/examples).
-Check all the [documentation](https://docs.rs/ta).
+Check also the [documentation](https://docs.rs/ta).
 
 ## Basic ideas
 
