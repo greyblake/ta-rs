@@ -23,6 +23,24 @@
 //! assert_eq!(ema.next(1.0), 2.25);
 //! assert_eq!(ema.next(6.25), 4.25);
 //! ```
+//!
+//! # List of indicators
+//!
+//! * Trend
+//!   * [Exponential Moving Average (EMA)](indicators/struct.ExponentialMovingAverage.html)
+//!   * [Simple Moving Average (SMA)](indicators/struct.SimpleMovingAverage.html)
+//! * Oscillators
+//!   * [Relative Strength Index (RSI)](indicators/struct.RelativeStrengthIndex.html)
+//!   * [Fast Stochastic](indicators/struct.FastStochastic.html)
+//!   * [Slow Stochastic](indicators/struct.SlowStochastic.html)
+//!   * [Moving Average Convergence Divergence (MACD)](indicators/struct.MovingAverageConvergenceDivergence.html)
+//! * Other
+//!   * [Maximum](indicators/struct.Maximum.html)
+//!   * [Minimum](indicators/struct.Minimum.html)
+//!   * [True Range](indicators/struct.TrueRange.html)
+//!   * [Average True Range (ATR)](indicators/struct.AverageTrueRange.html)
+//!   * Rate of Change (ROC) - to be implemented
+//!
 #[macro_use]
 extern crate error_chain;
 
