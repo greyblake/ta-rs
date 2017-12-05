@@ -3,7 +3,9 @@ use {Close, Next, Reset};
 use indicators::ExponentialMovingAverage as Ema;
 use errors::*;
 
-/// The relative strength index (RSI) is a momentum oscillator,
+/// The relative strength index (RSI).
+///
+/// It is a momentum oscillator,
 /// that compares the magnitude of recent gains
 /// and losses over a specified time period to measure speed and change of price
 /// movements of a security. It is primarily used to attempt to identify
