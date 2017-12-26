@@ -79,6 +79,7 @@ So far there are the following indicators available.
   * True Range
   * Average True Range (AR)
   * Rate of Change (ROC)
+  * Efficiency Ratio (ER)
 
 ## License
 

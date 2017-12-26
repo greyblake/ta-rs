@@ -39,6 +39,7 @@
 //!   * [Minimum](indicators/struct.Minimum.html)
 //!   * [True Range](indicators/struct.TrueRange.html)
 //!   * [Average True Range (ATR)](indicators/struct.AverageTrueRange.html)
+//!   * [Efficiency Ratio (ER)](indicators/struct.EfficiencyRatio.html)
 //!   * Rate of Change (ROC) - to be implemented
 //!
 #[macro_use]
