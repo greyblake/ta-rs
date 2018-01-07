@@ -6,8 +6,8 @@
 
 Technical analysis library for Rust.
 
-* [Getting Started](#getting-started)
-* [Basics ideas](#basic-ideas)
+* [Getting started](#getting-started)
+* [Basic ideas](#basic-ideas)
 * [List of indicators](#list-of-indicators)
 * [License](#license)
 * [Contributors](#contributors)
