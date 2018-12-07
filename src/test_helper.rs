@@ -1,4 +1,4 @@
-use super::{Open, Close, Low, High};
+use super::{Close, High, Low, Open};
 
 #[derive(Debug, PartialEq)]
 pub struct Bar {
@@ -11,7 +11,12 @@ pub struct Bar {
 
 impl Bar {
     pub fn new() -> Self {
-        Self { open: 0.0, close: 0.0, low: 0.0, high: 0.0 }
+        Self {
+            open: 0.0,
+            close: 0.0,
+            low: 0.0,
+            high: 0.0,
+        }
     }
 
     //pub fn open<T: Into<f64>>(mut self, val :T ) -> Self {
@@ -19,17 +24,17 @@ impl Bar {
     //    self
     //}
 
-    pub fn high<T: Into<f64>>(mut self, val :T ) -> Self {
+    pub fn high<T: Into<f64>>(mut self, val: T) -> Self {
         self.high = val.into();
         self
     }
 
-    pub fn low<T: Into<f64>>(mut self, val :T ) -> Self {
+    pub fn low<T: Into<f64>>(mut self, val: T) -> Self {
         self.low = val.into();
         self
     }
 
-    pub fn close<T: Into<f64>>(mut self, val :T ) -> Self {
+    pub fn close<T: Into<f64>>(mut self, val: T) -> Self {
         self.close = val.into();
         self
     }
@@ -39,7 +44,6 @@ impl Bar {
     //    self
     //}
 }
-
 
 impl Open for Bar {
     fn open(&self) -> f64 {
@@ -65,7 +69,7 @@ impl High for Bar {
     }
 }
 
-pub fn round(num : f64) -> f64 {
+pub fn round(num: f64) -> f64 {
     (num * 1000.0).round() / 1000.00
 }
 
@@ -91,5 +95,5 @@ macro_rules! test_indicator {
             // ensure Display is implemented
             format!("{}", indicator);
         }
-    }
+    };
 }

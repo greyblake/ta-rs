@@ -1,7 +1,8 @@
 use std::fmt;
-use indicators::{FastStochastic, ExponentialMovingAverage};
-use {Next, Reset, High, Low, Close};
-use errors::Result;
+
+use crate::errors::Result;
+use crate::indicators::{ExponentialMovingAverage, FastStochastic};
+use crate::{Close, High, Low, Next, Reset};
 
 /// Slow stochastic oscillator.
 ///
@@ -25,18 +26,17 @@ use errors::Result;
 /// assert_eq!(stoch.next(30.0).round(), 31.0);
 /// assert_eq!(stoch.next(55.0).round(), 77.0);
 /// ```
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct SlowStochastic {
     fast_stochastic: FastStochastic,
     ema: ExponentialMovingAverage,
 }
 
-
 impl SlowStochastic {
     pub fn new(stochastic_n: u32, ema_n: u32) -> Result<Self> {
         let indicator = Self {
             fast_stochastic: FastStochastic::new(stochastic_n)?,
-            ema: ExponentialMovingAverage::new(ema_n)?
+            ema: ExponentialMovingAverage::new(ema_n)?,
         };
         Ok(indicator)
     }
@@ -46,9 +46,7 @@ impl Next<f64> for SlowStochastic {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        self.ema.next(
-            self.fast_stochastic.next(input)
-        )
+        self.ema.next(self.fast_stochastic.next(input))
     }
 }
 
@@ -56,9 +54,7 @@ impl<'a, T: High + Low + Close> Next<&'a T> for SlowStochastic {
     type Output = f64;
 
     fn next(&mut self, input: &'a T) -> Self::Output {
-        self.ema.next(
-            self.fast_stochastic.next(input)
-        )
+        self.ema.next(self.fast_stochastic.next(input))
     }
 }
 
@@ -77,14 +73,19 @@ impl Default for SlowStochastic {
 
 impl fmt::Display for SlowStochastic {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "SLOW_STOCH({}, {})", self.fast_stochastic.length(), self.ema.length())
+        write!(
+            f,
+            "SLOW_STOCH({}, {})",
+            self.fast_stochastic.length(),
+            self.ema.length()
+        )
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
+    use crate::test_helper::*;
 
     test_indicator!(SlowStochastic);
 
@@ -109,12 +110,12 @@ mod tests {
     fn test_next_with_bars() {
         let test_data = vec![
             // high, low , close, expected
-            (30.0  , 10.0, 25.0 , 75.0),
-            (20.0  , 20.0, 20.0 , 58.0),
-            (40.0  , 20.0, 16.0 , 33.0),
-            (35.0  , 15.0, 19.0 , 22.0),
-            (30.0  , 20.0, 25.0 , 34.0),
-            (35.0  , 25.0, 30.0 , 61.0),
+            (30.0, 10.0, 25.0, 75.0),
+            (20.0, 20.0, 20.0, 58.0),
+            (40.0, 20.0, 16.0, 33.0),
+            (35.0, 15.0, 19.0, 22.0),
+            (30.0, 20.0, 25.0, 34.0),
+            (35.0, 25.0, 30.0, 61.0),
         ];
 
         let mut stoch = SlowStochastic::new(3, 2).unwrap();

@@ -1,5 +1,5 @@
-use {Open, High, Low, Close, Volume};
-use errors::*;
+use crate::errors::*;
+use crate::traits::{Close, High, Low, Open, Volume};
 
 /// Data item is used as an input for indicators.
 ///
@@ -31,7 +31,7 @@ pub struct DataItem {
     high: f64,
     low: f64,
     close: f64,
-    volume: f64
+    volume: f64,
 }
 
 impl DataItem {
@@ -75,7 +75,7 @@ pub struct DataItemBuilder {
     high: Option<f64>,
     low: Option<f64>,
     close: Option<f64>,
-    volume: Option<f64>
+    volume: Option<f64>,
 }
 
 impl DataItemBuilder {
@@ -85,7 +85,7 @@ impl DataItemBuilder {
             high: None,
             low: None,
             close: None,
-            volume: None
+            volume: None,
         }
     }
 
@@ -115,13 +115,25 @@ impl DataItemBuilder {
     }
 
     pub fn build(self) -> Result<DataItem> {
-        if let (Some(open), Some(high), Some(low), Some(close), Some(volume)) = (self.open, self.high, self.low, self.close, self.volume) {
+        if let (Some(open), Some(high), Some(low), Some(close), Some(volume)) =
+            (self.open, self.high, self.low, self.close, self.volume)
+        {
             // validate
-            if low <= open && low <= close && low <= high &&
-                high >= open && high >= close && high >= low &&
-                volume >= 0.0 && low >= 0.0
+            if low <= open
+                && low <= close
+                && low <= high
+                && high >= open
+                && high >= close
+                && volume >= 0.0
+                && low >= 0.0
             {
-                let item = DataItem { open, high, low, close, volume };
+                let item = DataItem {
+                    open,
+                    high,
+                    low,
+                    close,
+                    volume,
+                };
                 Ok(item)
             } else {
                 Err(Error::from_kind(ErrorKind::DataItemInvalid))
@@ -162,25 +174,29 @@ mod tests {
 
         let valid_records = vec![
             // open, high, low , close, volume
-            (20.0  , 25.0, 15.0, 21.0 , 7500.0),
-            (10.0  , 10.0, 10.0, 10.0 , 10.0),
-            (0.0   , 0.0 , 0.0 , 0.0  , 0.0)
+            (20.0, 25.0, 15.0, 21.0, 7500.0),
+            (10.0, 10.0, 10.0, 10.0, 10.0),
+            (0.0, 0.0, 0.0, 0.0, 0.0),
         ];
-        for record in valid_records { assert_valid(record) }
+        for record in valid_records {
+            assert_valid(record)
+        }
 
         let invalid_records = vec![
             // open, high, low , close, volume
-            (-1.0  , 25.0, 15.0, 21.0 , 7500.0),
-            (20.0  , -1.0, 15.0, 21.0 , 7500.0),
-            (20.0  , 25.0, -1.0, 21.0 , 7500.0),
-            (20.0  , 25.0, 15.0, -1.0 , 7500.0),
-            (20.0  , 25.0, 15.0, 21.0 , -1.0),
-            (14.9  , 25.0, 15.0, 21.0 , 7500.0),
-            (25.1  , 25.0, 15.0, 21.0 , 7500.0),
-            (20.0  , 25.0, 15.0, 14.9 , 7500.0),
-            (20.0  , 25.0, 15.0, 25.1 , 7500.0),
-            (20.0  , 15.0, 25.0, 21.0 , 7500.0),
+            (-1.0, 25.0, 15.0, 21.0, 7500.0),
+            (20.0, -1.0, 15.0, 21.0, 7500.0),
+            (20.0, 25.0, -1.0, 21.0, 7500.0),
+            (20.0, 25.0, 15.0, -1.0, 7500.0),
+            (20.0, 25.0, 15.0, 21.0, -1.0),
+            (14.9, 25.0, 15.0, 21.0, 7500.0),
+            (25.1, 25.0, 15.0, 21.0, 7500.0),
+            (20.0, 25.0, 15.0, 14.9, 7500.0),
+            (20.0, 25.0, 15.0, 25.1, 7500.0),
+            (20.0, 15.0, 25.0, 21.0, 7500.0),
         ];
-        for record in invalid_records { assert_invalid(record) }
+        for record in invalid_records {
+            assert_invalid(record)
+        }
     }
 }

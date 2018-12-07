@@ -1,7 +1,8 @@
+use std::f64::INFINITY;
 use std::fmt;
-use {Next, Reset, Low};
-use errors::*;
-use ::std::f64::INFINITY;
+
+use crate::errors::*;
+use crate::{Low, Next, Reset};
 
 /// Returns the lowest value in a given time frame.
 ///
@@ -21,12 +22,12 @@ use ::std::f64::INFINITY;
 /// assert_eq!(min.next(12.0), 10.0);
 /// assert_eq!(min.next(13.0), 11.0);
 /// ```
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct Minimum {
     n: usize,
     vec: Vec<f64>,
     min_index: usize,
-    cur_index: usize
+    cur_index: usize,
 }
 
 impl Minimum {
@@ -41,7 +42,7 @@ impl Minimum {
             n: n,
             vec: vec![INFINITY; n],
             min_index: 0,
-            cur_index: 0
+            cur_index: 0,
         };
 
         Ok(indicator)
@@ -110,7 +111,7 @@ impl fmt::Display for Minimum {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
+    use crate::test_helper::*;
 
     test_indicator!(Minimum);
 
@@ -124,16 +125,16 @@ mod tests {
     fn test_next() {
         let mut min = Minimum::new(3).unwrap();
 
-        assert_eq!(min.next(4.0)  , 4.0);
-        assert_eq!(min.next(1.2)  , 1.2);
-        assert_eq!(min.next(5.0)  , 1.2);
-        assert_eq!(min.next(3.0)  , 1.2);
-        assert_eq!(min.next(4.0)  , 3.0);
-        assert_eq!(min.next(6.0)  , 3.0);
-        assert_eq!(min.next(7.0)  , 4.0);
-        assert_eq!(min.next(8.0)  , 6.0);
-        assert_eq!(min.next(-9.0) , -9.0);
-        assert_eq!(min.next(0.0)  , -9.0);
+        assert_eq!(min.next(4.0), 4.0);
+        assert_eq!(min.next(1.2), 1.2);
+        assert_eq!(min.next(5.0), 1.2);
+        assert_eq!(min.next(3.0), 1.2);
+        assert_eq!(min.next(4.0), 3.0);
+        assert_eq!(min.next(6.0), 3.0);
+        assert_eq!(min.next(7.0), 4.0);
+        assert_eq!(min.next(8.0), 6.0);
+        assert_eq!(min.next(-9.0), -9.0);
+        assert_eq!(min.next(0.0), -9.0);
     }
 
     #[test]

@@ -1,7 +1,8 @@
 use std::fmt;
-use indicators::{Minimum, Maximum};
-use {Next, Reset, High, Low, Close};
-use errors::*;
+
+use crate::errors::*;
+use crate::indicators::{Maximum, Minimum};
+use crate::{Close, High, Low, Next, Reset};
 
 /// Fast stochastic oscillator.
 ///
@@ -37,7 +38,7 @@ use errors::*;
 /// assert_eq!(stoch.next(35.0), 75.0);
 /// assert_eq!(stoch.next(15.0), 0.0);
 /// ```
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct FastStochastic {
     length: u32,
     minimum: Minimum,
@@ -49,7 +50,7 @@ impl FastStochastic {
         let indicator = Self {
             length: length,
             minimum: Minimum::new(length)?,
-            maximum: Maximum::new(length)?
+            maximum: Maximum::new(length)?,
         };
         Ok(indicator)
     }
@@ -115,7 +116,7 @@ impl fmt::Display for FastStochastic {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
+    use crate::test_helper::*;
 
     test_indicator!(FastStochastic);
 
@@ -139,12 +140,12 @@ mod tests {
     fn test_next_with_bars() {
         let test_data = vec![
             // high, low , close, expected
-            (20.0  , 20.0, 20.0 , 50.0), // min = 20, max = 20
-            (30.0  , 10.0, 25.0 , 75.0), // min = 10, max = 30
-            (40.0  , 20.0, 16.0 , 20.0), // min = 10, max = 40
-            (35.0  , 15.0, 19.0 , 30.0), // min = 10, max = 40
-            (30.0  , 20.0, 25.0 , 40.0), // min = 15, max = 40
-            (35.0  , 25.0, 30.0 , 75.0), // min = 15, max = 35
+            (20.0, 20.0, 20.0, 50.0), // min = 20, max = 20
+            (30.0, 10.0, 25.0, 75.0), // min = 10, max = 30
+            (40.0, 20.0, 16.0, 20.0), // min = 10, max = 40
+            (35.0, 15.0, 19.0, 30.0), // min = 10, max = 40
+            (30.0, 20.0, 25.0, 40.0), // min = 15, max = 40
+            (35.0, 25.0, 30.0, 75.0), // min = 15, max = 35
         ];
 
         let mut stoch = FastStochastic::new(3).unwrap();

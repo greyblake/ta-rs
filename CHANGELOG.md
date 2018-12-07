@@ -1,4 +1,5 @@
 * Implement Kaufman's Efficiency Ratio (ER)
+* Migrate to Rust 2018 edition
 
 #### v0.1.0 - 2017-12-05
 

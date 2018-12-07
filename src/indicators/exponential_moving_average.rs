@@ -1,6 +1,7 @@
 use std::fmt;
-use {Close, Next, Reset};
-use errors::*;
+
+use crate::errors::*;
+use crate::{Close, Next, Reset};
 
 /// An exponential moving average (EMA), also known as an exponentially weighted moving average
 /// (EWMA).
@@ -48,12 +49,12 @@ use errors::*;
 ///
 /// * [Exponential moving average, Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
 ///
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct ExponentialMovingAverage {
     length: u32,
-    k:  f64,
+    k: f64,
     current: f64,
-    is_new: bool
+    is_new: bool,
 }
 
 impl ExponentialMovingAverage {
@@ -62,7 +63,12 @@ impl ExponentialMovingAverage {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
                 let k = 2f64 / (length as f64 + 1f64);
-                let indicator = Self { length: length, k: k, current: 0f64, is_new: true };
+                let indicator = Self {
+                    length,
+                    k,
+                    current: 0f64,
+                    is_new: true,
+                };
                 Ok(indicator)
             }
         }
@@ -114,11 +120,10 @@ impl fmt::Display for ExponentialMovingAverage {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
+    use crate::test_helper::*;
 
     test_indicator!(ExponentialMovingAverage);
 

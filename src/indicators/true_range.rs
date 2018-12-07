@@ -1,6 +1,7 @@
 use std::fmt;
-use {Next, Reset, High, Low, Close};
-use helpers::max3;
+
+use crate::helpers::max3;
+use crate::{Close, High, Low, Next, Reset};
 
 /// The range of a day's trading is simply _high_ - _low_.
 /// The true range extends it to yesterday's closing price if it was outside of today's range.
@@ -46,9 +47,9 @@ use helpers::max3;
 ///     }
 /// }
 /// ```
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct TrueRange {
-    prev_close: Option<f64>
+    prev_close: Option<f64>,
 }
 
 impl TrueRange {
@@ -75,29 +76,26 @@ impl Next<f64> for TrueRange {
     fn next(&mut self, input: f64) -> Self::Output {
         let distance = match self.prev_close {
             Some(prev) => (input - prev).abs(),
-            None => 0.0
+            None => 0.0,
         };
         self.prev_close = Some(input);
         distance
     }
 }
 
-impl<'a, T: High + Low + Close>  Next<&'a T> for TrueRange {
+impl<'a, T: High + Low + Close> Next<&'a T> for TrueRange {
     type Output = f64;
 
     fn next(&mut self, bar: &'a T) -> Self::Output {
-        let max_dist =
-            match self.prev_close {
-                Some(prev_close) => {
-                    let dist1 = bar.high() - bar.low();
-                    let dist2 = (bar.high() - prev_close).abs();
-                    let dist3 = (bar.low() - prev_close).abs();
-                    max3(dist1, dist2, dist3)
-                },
-                None => {
-                    bar.high() - bar.low()
-                }
-            };
+        let max_dist = match self.prev_close {
+            Some(prev_close) => {
+                let dist1 = bar.high() - bar.low();
+                let dist2 = (bar.high() - prev_close).abs();
+                let dist3 = (bar.low() - prev_close).abs();
+                max3(dist1, dist2, dist3)
+            }
+            None => bar.high() - bar.low(),
+        };
         self.prev_close = Some(bar.close());
         max_dist
     }
@@ -112,7 +110,7 @@ impl Reset for TrueRange {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
+    use crate::test_helper::*;
 
     test_indicator!(TrueRange);
 
