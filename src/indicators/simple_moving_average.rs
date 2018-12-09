@@ -1,6 +1,7 @@
 use std::fmt;
-use {Close, Next, Reset};
-use errors::*;
+
+use crate::errors::*;
+use crate::{Close, Next, Reset};
 
 /// Simple moving average (SMA).
 ///
@@ -35,13 +36,13 @@ use errors::*;
 ///
 /// * [Simple Moving Average, Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average)
 ///
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct SimpleMovingAverage {
     n: u32,
     index: usize,
     count: u32,
     sum: f64,
-    vec: Vec<f64>
+    vec: Vec<f64>,
 }
 
 impl SimpleMovingAverage {
@@ -54,7 +55,7 @@ impl SimpleMovingAverage {
                     index: 0,
                     count: 0,
                     sum: 0.0,
-                    vec: vec![0.0; n as usize]
+                    vec: vec![0.0; n as usize],
                 };
                 Ok(indicator)
             }
@@ -114,7 +115,7 @@ impl fmt::Display for SimpleMovingAverage {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
+    use crate::test_helper::*;
 
     test_indicator!(SimpleMovingAverage);
 
@@ -171,4 +172,3 @@ mod tests {
         assert_eq!(format!("{}", sma), "SMA(5)");
     }
 }
-

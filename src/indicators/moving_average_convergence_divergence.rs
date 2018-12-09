@@ -1,7 +1,8 @@
 use std::fmt;
-use {Next, Reset, Close};
-use indicators::ExponentialMovingAverage as Ema;
-use errors::*;
+
+use crate::errors::*;
+use crate::indicators::ExponentialMovingAverage as Ema;
+use crate::{Close, Next, Reset};
 
 /// Moving average converge divergence (MACD).
 ///
@@ -47,11 +48,11 @@ use errors::*;
 ///     (n0, n1, n2)
 /// }
 /// ```
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct MovingAverageConvergenceDivergence {
     fast_ema: Ema,
     slow_ema: Ema,
-    signal_ema: Ema
+    signal_ema: Ema,
 }
 
 impl MovingAverageConvergenceDivergence {
@@ -59,7 +60,7 @@ impl MovingAverageConvergenceDivergence {
         let indicator = Self {
             fast_ema: Ema::new(fast_length)?,
             slow_ema: Ema::new(slow_length)?,
-            signal_ema: Ema::new(signal_length)?
+            signal_ema: Ema::new(signal_length)?,
         };
         Ok(indicator)
     }
@@ -104,7 +105,9 @@ impl Default for MovingAverageConvergenceDivergence {
 
 impl fmt::Display for MovingAverageConvergenceDivergence {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "MACD({}, {}, {})",
+        write!(
+            f,
+            "MACD({}, {}, {})",
             self.fast_ema.length(),
             self.slow_ema.length(),
             self.signal_ema.length()
@@ -115,7 +118,7 @@ impl fmt::Display for MovingAverageConvergenceDivergence {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
+    use crate::test_helper::*;
     type Macd = MovingAverageConvergenceDivergence;
 
     test_indicator!(Macd);

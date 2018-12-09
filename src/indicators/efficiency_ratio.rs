@@ -1,8 +1,8 @@
 use std::collections::VecDeque;
 use std::fmt;
 
-use errors::*;
-use traits::{Next, Reset, Close};
+use crate::errors::*;
+use crate::traits::{Close, Next, Reset};
 
 /// Kaufman's Efficiency Ratio (ER).
 ///
@@ -28,10 +28,9 @@ use traits::{Next, Reset, Close};
 /// assert_eq!(er.next(19.0), 0.75);
 /// ```
 
-
 pub struct EfficiencyRatio {
     length: u32,
-    prices: VecDeque<f64>
+    prices: VecDeque<f64>,
 }
 
 impl EfficiencyRatio {
@@ -41,7 +40,7 @@ impl EfficiencyRatio {
         } else {
             let indicator = Self {
                 length: length,
-                prices: VecDeque::with_capacity(length as usize + 1)
+                prices: VecDeque::with_capacity(length as usize + 1),
             };
             Ok(indicator)
         }
@@ -61,10 +60,13 @@ impl Next<f64> for EfficiencyRatio {
         let first = self.prices[0];
 
         // Calculate volatility
-        let volatility = self.prices
+        let volatility = self
+            .prices
             .iter()
             .skip(1)
-            .fold((first, 0.0), |(prev, sum), &val| (val, sum + (prev - val).abs()))
+            .fold((first, 0.0), |(prev, sum), &val| {
+                (val, sum + (prev - val).abs())
+            })
             .1;
 
         // Calculate direction
@@ -75,7 +77,6 @@ impl Next<f64> for EfficiencyRatio {
         if self.prices.len() > (self.length as usize) {
             self.prices.pop_front();
         }
-
 
         eprintln!("");
         eprintln!("direction: {}", direction);
@@ -116,7 +117,7 @@ impl fmt::Display for EfficiencyRatio {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
+    use crate::test_helper::*;
 
     test_indicator!(EfficiencyRatio);
 

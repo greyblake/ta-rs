@@ -1,4 +1,4 @@
-extern crate ta;
 extern crate csv;
+extern crate ta;
 
 // TODO: implement some integration tests

@@ -1,7 +1,8 @@
+use std::f64::INFINITY;
 use std::fmt;
-use {Next, Reset, High};
-use errors::*;
-use ::std::f64::INFINITY;
+
+use crate::errors::*;
+use crate::{High, Next, Reset};
 
 /// Returns the highest value in a given time frame.
 ///
@@ -22,19 +23,19 @@ use ::std::f64::INFINITY;
 /// assert_eq!(max.next(4.0), 5.0);
 /// assert_eq!(max.next(8.0), 8.0);
 /// ```
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct Maximum {
     n: usize,
     vec: Vec<f64>,
     max_index: usize,
-    cur_index: usize
+    cur_index: usize,
 }
 
 impl Maximum {
     pub fn new(n: u32) -> Result<Self> {
         let n = n as usize;
 
-        if n <= 0 {
+        if n == 0 {
             return Err(Error::from_kind(ErrorKind::InvalidParameter));
         }
 
@@ -42,14 +43,14 @@ impl Maximum {
             n: n,
             vec: vec![-INFINITY; n],
             max_index: 0,
-            cur_index: 0
+            cur_index: 0,
         };
         Ok(indicator)
     }
 
     fn find_max_index(&self) -> usize {
         let mut max = -INFINITY;
-        let mut index : usize = 0;
+        let mut index: usize = 0;
 
         for (i, &val) in self.vec.iter().enumerate() {
             if val > max {
@@ -110,7 +111,7 @@ impl fmt::Display for Maximum {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
+    use crate::test_helper::*;
 
     test_indicator!(Maximum);
 
@@ -124,15 +125,15 @@ mod tests {
     fn test_next() {
         let mut max = Maximum::new(3).unwrap();
 
-        assert_eq!(max.next(4.0)  , 4.0);
+        assert_eq!(max.next(4.0), 4.0);
         assert_eq!(max.next(1.2), 4.0);
-        assert_eq!(max.next(5.0)  , 5.0);
-        assert_eq!(max.next(3.0)  , 5.0);
-        assert_eq!(max.next(4.0)  , 5.0);
-        assert_eq!(max.next(0.0)  , 4.0);
-        assert_eq!(max.next(-1.0) , 4.0);
-        assert_eq!(max.next(-2.0) , 0.0);
-        assert_eq!(max.next(-1.5) , -1.0);
+        assert_eq!(max.next(5.0), 5.0);
+        assert_eq!(max.next(3.0), 5.0);
+        assert_eq!(max.next(4.0), 5.0);
+        assert_eq!(max.next(0.0), 4.0);
+        assert_eq!(max.next(-1.0), 4.0);
+        assert_eq!(max.next(-2.0), 0.0);
+        assert_eq!(max.next(-1.5), -1.0);
     }
 
     #[test]
@@ -141,7 +142,7 @@ mod tests {
             Bar::new().high(high)
         }
 
-        let mut max= Maximum::new(2).unwrap();
+        let mut max = Maximum::new(2).unwrap();
 
         assert_eq!(max.next(&bar(1.1)), 1.1);
         assert_eq!(max.next(&bar(4.0)), 4.0);

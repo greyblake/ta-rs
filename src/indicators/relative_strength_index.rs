@@ -1,7 +1,8 @@
 use std::fmt;
-use {Close, Next, Reset};
-use indicators::ExponentialMovingAverage as Ema;
-use errors::*;
+
+use crate::errors::*;
+use crate::indicators::ExponentialMovingAverage as Ema;
+use crate::{Close, Next, Reset};
 
 /// The relative strength index (RSI).
 ///
@@ -65,23 +66,23 @@ use errors::*;
 /// * [Relative strength index (Wikipedia)](https://en.wikipedia.org/wiki/Relative_strength_index)
 /// * [RSI (Investopedia)](http://www.investopedia.com/terms/r/rsi.asp)
 ///
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct RelativeStrengthIndex {
     n: u32,
     up_ema_indicator: Ema,
     down_ema_indicator: Ema,
     prev_val: f64,
-    is_new: bool
+    is_new: bool,
 }
 
 impl RelativeStrengthIndex {
-    pub fn new(n : u32) -> Result<Self> {
+    pub fn new(n: u32) -> Result<Self> {
         let rsi = Self {
             n: n,
             up_ema_indicator: Ema::new(n)?,
             down_ema_indicator: Ema::new(n)?,
             prev_val: 0.0,
-            is_new: true
+            is_new: true,
         };
         Ok(rsi)
     }
@@ -146,7 +147,7 @@ impl fmt::Display for RelativeStrengthIndex {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
+    use crate::test_helper::*;
 
     test_indicator!(RelativeStrengthIndex);
 

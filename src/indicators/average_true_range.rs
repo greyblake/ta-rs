@@ -1,7 +1,8 @@
 use std::fmt;
-use indicators::{TrueRange, ExponentialMovingAverage};
-use errors::*;
-use {Next, Reset, High, Low, Close};
+
+use crate::errors::*;
+use crate::indicators::{ExponentialMovingAverage, TrueRange};
+use crate::{Close, High, Low, Next, Reset};
 
 /// Average true range (ATR).
 ///
@@ -52,17 +53,17 @@ use {Next, Reset, High, Low, Close};
 ///         assert_approx_eq!(indicator.next(&di), atr);
 ///     }
 /// }
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct AverageTrueRange {
     true_range: TrueRange,
-    ema: ExponentialMovingAverage
+    ema: ExponentialMovingAverage,
 }
 
 impl AverageTrueRange {
     pub fn new(length: u32) -> Result<Self> {
         let indicator = Self {
             true_range: TrueRange::new(),
-            ema: ExponentialMovingAverage::new(length)?
+            ema: ExponentialMovingAverage::new(length)?,
         };
         Ok(indicator)
     }
@@ -72,19 +73,15 @@ impl Next<f64> for AverageTrueRange {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        self.ema.next(
-            self.true_range.next(input)
-        )
+        self.ema.next(self.true_range.next(input))
     }
 }
 
-impl<'a, T: High + Low + Close>  Next<&'a T> for AverageTrueRange {
+impl<'a, T: High + Low + Close> Next<&'a T> for AverageTrueRange {
     type Output = f64;
 
     fn next(&mut self, input: &'a T) -> Self::Output {
-        self.ema.next(
-            self.true_range.next(input)
-        )
+        self.ema.next(self.true_range.next(input))
     }
 }
 
@@ -110,7 +107,7 @@ impl fmt::Display for AverageTrueRange {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test_helper::*;
+    use crate::test_helper::*;
 
     test_indicator!(AverageTrueRange);
 
