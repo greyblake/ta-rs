@@ -30,3 +30,6 @@ pub use self::moving_average_convergence_divergence::MovingAverageConvergenceDiv
 
 mod efficiency_ratio;
 pub use self::efficiency_ratio::EfficiencyRatio;
+
+mod rate_of_change;
+pub use self::rate_of_change::RateOfChange;

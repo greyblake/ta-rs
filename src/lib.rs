@@ -40,7 +40,7 @@
 //!   * [True Range](indicators/struct.TrueRange.html)
 //!   * [Average True Range (ATR)](indicators/struct.AverageTrueRange.html)
 //!   * [Efficiency Ratio (ER)](indicators/struct.EfficiencyRatio.html)
-//!   * Rate of Change (ROC) - to be implemented
+//!   * [Rate of Change (ROC)](indicators/struct.RateOfChange.html)
 //!
 #[macro_use]
 extern crate error_chain;
