@@ -94,8 +94,8 @@ impl Reset for SimpleMovingAverage {
         self.index = 0;
         self.count = 0;
         self.sum = 0.0;
-        for i in 0..(self.n as usize) {
-            self.vec[i] = 0.0;
+        for elem in self.vec.iter_mut() {
+            *elem = 0_f64;
         }
     }
 }
