@@ -31,6 +31,6 @@ pub use self::moving_average_convergence_divergence::MovingAverageConvergenceDiv
 mod efficiency_ratio;
 pub use self::efficiency_ratio::EfficiencyRatio;
 
-mod standard_deviation;
-pub use self::standard_deviation::StandardDeviation;
+mod moving_standard_deviation;
+pub use self::moving_standard_deviation::MovingStandardDeviation;
 

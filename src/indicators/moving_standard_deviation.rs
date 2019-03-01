@@ -36,7 +36,6 @@ use crate::{Close, Next, Reset};
 /// * [Standard Deviation, Wikipedia](https://en.wikipedia.org/wiki/Standard_deviation)
 ///
 #[derive(Debug, Clone)]
-i
 pub struct MovingStandardDeviation {
     n: u32,
     index: usize,
