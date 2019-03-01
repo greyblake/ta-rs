@@ -77,14 +77,20 @@ pub struct RelativeStrengthIndex {
 
 impl RelativeStrengthIndex {
     pub fn new(n: u32) -> Result<Self> {
-        let rsi = Self {
-            n: n,
-            up_ema_indicator: Ema::new(n)?,
-            down_ema_indicator: Ema::new(n)?,
-            prev_val: 0.0,
-            is_new: true,
-        };
-        Ok(rsi)
+        match n {
+            0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
+            _ => {
+                let rsi = Self {
+                    n: n,
+                    up_ema_indicator: Ema::new(n).unwrap(),
+                    down_ema_indicator: Ema::new(n).unwrap(),
+                    prev_val: 0.0,
+                    is_new: true,
+                };
+                Ok(rsi)
+            }
+        }
+       
     }
 }
 
