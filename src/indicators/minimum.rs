@@ -90,8 +90,8 @@ impl<'a, T: Low> Next<&'a T> for Minimum {
 
 impl Reset for Minimum {
     fn reset(&mut self) {
-        for i in 0..self.n {
-            self.vec[i] = INFINITY;
+        for elem in self.vec.iter_mut() {
+            *elem = INFINITY;
         }
     }
 }

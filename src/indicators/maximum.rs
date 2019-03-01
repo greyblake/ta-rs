@@ -90,8 +90,8 @@ impl<'a, T: High> Next<&'a T> for Maximum {
 
 impl Reset for Maximum {
     fn reset(&mut self) {
-        for i in 0..self.n {
-            self.vec[i] = -INFINITY;
+        for elem in self.vec.iter_mut() {
+            *elem = -INFINITY;
         }
     }
 }

@@ -3,5 +3,5 @@
 Cargo.loc
 
 # vim cached rescue files
-.swp
-.swo
+**.swp
+**.swo
