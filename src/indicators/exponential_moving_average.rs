@@ -49,6 +49,7 @@ use crate::{Close, Next, Reset};
 ///
 /// * [Exponential moving average, Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
 ///
+
 #[derive(Debug, Clone)]
 pub struct ExponentialMovingAverage {
     length: u32,
@@ -70,7 +71,7 @@ impl ExponentialMovingAverage {
                     is_new: true,
                 };
                 Ok(indicator)
-            }
+            },
         }
     }
 
