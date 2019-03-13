@@ -7,7 +7,7 @@ use crate::indicators::ExponentialMovingAverage;
 /// A Bollinger Bands (BB).
 /// (BB).
 /// It is a type of infinite impulse response filter that calculates Bollinger Bands using Exponential Moving Average.
-/// The Bollinger Badns are represented by Average EMA and standard deviaton that is moved 'k' times away in both directions of calculated average value.
+/// The Bollinger Badns are represented by Average EMA and standard deviaton that is moved 'k' times away in both directions from calculated average value.
 /// 
 /// # Formula
 ///
@@ -33,19 +33,19 @@ use crate::indicators::ExponentialMovingAverage;
 /// # Example
 ///
 ///```
-/// use ta::indicators::{BollingerBands, BollingerBandsValue};
+/// use ta::indicators::{BollingerBands, BollingerBandsOutput};
 /// use ta::Next;
 ///
-/// let mut bb = BollingerBands::new(BandsType::SMA, 20, 2.0_f64).unwrap();
+/// let mut bb = BollingerBands::new(20, 2.0_f64).unwrap();
 ///
 ///
-/// assert_eq!(bb.next(2.0), BandsPayload {
+/// assert_eq!(bb.next(2.0), BollingersBandsOutput {
 ///     average: 2.0_f64,
 ///     upper: 2.0_f64,
 ///     lower: 2.0_f64,
 /// });
 ///
-/// assert_eq!(bb.next(4.0), BandsPayload {
+/// assert_eq!(bb.next(4.0), BollingersBandOutput {
 ///     average: 3.0_f64,
 ///     upper: 0.0_f64,
 ///     lower: 4.0_f64,
@@ -58,4 +58,103 @@ use crate::indicators::ExponentialMovingAverage;
 ///
 ///
 
+#[derive(Debug, Clone)]
+pub struct BollingerBandsOutput {
+    pub average: f64,
+    pub upper: f64,
+    pub lower: f64,
+}
 
+impl BollingerBandsOutput {
+    pub fn new(average: f64, upper: f64, lower: f64) -> Self {
+        Self {average, upper, lower}
+    }
+}
+
+#[derive(Debug, Close)]
+pub struct BollingerBands {
+    length: u32,
+    distance_multipler: f64,
+    values: Vec<f64>,
+    average: ExponentialMovingAverage,
+}
+
+impl BollingerBands {
+    pub fn new(length: u32, distance_multiplier: f64) -> Result<Self> {
+        match length {
+            0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
+            _ => {
+                Ok(Self {
+                    length,
+                    distance_multiplier,
+                    values: Vec::new(),
+                    average: ExponentialMovingAverage::new().unwrap(),
+                })
+            }
+        }
+    }
+
+    pub fn length(&self) -> u32 {
+        self.length
+    }
+
+    pub fn self.distance_multiplier(&self) -> f64 {
+        self.distance_multiplier
+    }
+}
+
+impl Next<BollingerBandsOutput> for BollingerBands {
+    type Output = BollingerBandsOutput;
+
+    fn next(&mut self, input: f64) -> Self::Output {
+        if self.values.len() == 0 {
+            self.values.push(input);
+            self.average.next(input);
+            return Self::Output::new(input, input, input);
+        }
+        if self.values.len() as u32 == self.length {
+            self.valuse.remove(0);
+        }
+        let mut mean = self.average.next(input);
+        let mut quadratic_sum = 0_f64;
+        self.values.iter().for_each(|v: f64| {
+            quadratic_sum += (v - mean).powi(2);
+        });
+        let deviation = (quadratic_sum / (self.length - 1) as f64).sqrt();
+        Self::Output::new(
+            mean,
+            mean + deviation * self.distance_multiplier,
+            mean - deviation * self.distance_multiplier)
+    }
+}
+
+impl fmt::Display for BollingerBands {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "BB({}, {})", self.length, self.distance_multiplier)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::test_helper::*;
+
+    test_indicator!(BollingerBands);
+
+    #[test]
+    fn test_new() {
+        assert!(BollingerBands::new(0, 2).is_err());
+        assert!(BollingerBands::new(1, 2).is_ok());
+    }
+
+    fn test_next() {
+        let mut bb = BollingerBands::new(4).unwrap();
+
+        assert_eq!(bb.next(2.0), BollingerBandsOutput(2.0_f64, 2.0_f64, 2.0_f64));
+        assert_eq!(bb.next(5.0), BollingerBandsOutput(3.5_f64, 2.0_f64, 5.0_f64));
+
+    }
+
+
+
+}
