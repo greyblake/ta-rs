@@ -6,13 +6,14 @@ use crate::indicators::ExponentialMovingAverage;
 
 /// A Bollinger Bands (BB).
 /// (BB).
-/// It is a type of infinite impulse response filter that calculates Bollinger Bands using Simple Moving Average or Exponential Moving Average depends on settings.
-/// The Bollinger Badns are represented by Average (EMA or EWMA) and standard deviaton that is moved 'k' times away in both directions of calculated average value.
+/// It is a type of infinite impulse response filter that calculates Bollinger Bands using Exponential Moving Average.
+/// The Bollinger Badns are represented by Average EMA and standard deviaton that is moved 'k' times away in both directions of calculated average value.
 /// 
 /// # Formula
 ///
-/// Bollinger Bands are calculated based on EWMA or SMA combined with Standard Deviaiation(SD).
-/// See EWMA and SMA doumentation.
+/// Bollinger Bands are calculated based on EMA combined with Standard Deviaiation(SD).
+///
+/// See EMA doumentation.
 ///
 /// ![SD formula](https://wikimedia.org/api/rest_v1/media/math/render/svg/8715d659116bec91d48762b9e1f3d9aed36fc028)
 ///
@@ -25,14 +26,14 @@ use crate::indicators::ExponentialMovingAverage;
 ///
 /// and then BB is composed as:
 ///
-///    Middle Band = N simple moving average (SMA) or Exponential Moving Average (EWMA).
-///    Upper Band = N * ((SMA or EWMA) + SD of observation * multipler (usually 2.0))
-///    Lower Band = N * ((SMA or EWMA) - SD of observation * multipler (usually 2.0))
+///    Middle Band = Exponential Moving Average (EMA).
+///    Upper Band = N * (EMA + SD of observation * multipler (usually 2.0))
+///    Lower Band = N * (EMA - SD of observation * multipler (usually 2.0))
 ///
 /// # Example
 ///
 ///```
-/// use ta::indicators::{BollingerBands, BandsType, BandsPayload};
+/// use ta::indicators::{BollingerBands, BollingerBandsValue};
 /// use ta::Next;
 ///
 /// let mut bb = BollingerBands::new(BandsType::SMA, 20, 2.0_f64).unwrap();
@@ -53,7 +54,8 @@ use crate::indicators::ExponentialMovingAverage;
 ///
 /// # Links
 ///
-/// * [Bollinger Bands, Wikipedia](https://en.wikipedia.org/wiki/Bollinger_Bands)
+/// ![Bollinger Bands, Wikipedia](https://en.wikipedia.org/wiki/Bollinger_Bands)
+///
 ///
 
 
