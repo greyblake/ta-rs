@@ -30,3 +30,7 @@ pub use self::moving_average_convergence_divergence::MovingAverageConvergenceDiv
 
 mod efficiency_ratio;
 pub use self::efficiency_ratio::EfficiencyRatio;
+
+mod bollinger_bands;
+pub use self::bollinger_bands::{BollingerBands, BollingerBandsOutput};
+
