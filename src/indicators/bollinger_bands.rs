@@ -73,16 +73,17 @@ impl BollingerBandsOutput {
 
 #[derive(Debug, Close)]
 pub struct BollingerBands {
-    length: u32,
+    length: usize,
     distance_multipler: f64,
     values: Vec<f64>,
     average: ExponentialMovingAverage,
 }
 
 impl BollingerBands {
-    pub fn new(length: u32, distance_multiplier: f64) -> Result<Self> {
+    pub fn new(length: usize, distance_multiplier: f64) -> Result<Self> {
         match length {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
+            1 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
                 Ok(Self {
                     length,
@@ -94,7 +95,7 @@ impl BollingerBands {
         }
     }
 
-    pub fn length(&self) -> u32 {
+    pub fn length(&self) -> usize {
         self.length
     }
 
@@ -107,12 +108,12 @@ impl Next<BollingerBandsOutput> for BollingerBands {
     type Output = BollingerBandsOutput;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        if self.values.len() == 0 {
-            self.values.push(input);
+        self.values.push(input);
+        if self.values.len() == 1 {
             self.average.next(input);
             return Self::Output::new(input, input, input);
         }
-        if self.values.len() as u32 == self.length {
+        if self.values.len() == self.length + 1 {
             self.valuse.remove(0);
         }
         let mut mean = self.average.next(input);
@@ -120,7 +121,7 @@ impl Next<BollingerBandsOutput> for BollingerBands {
         self.values.iter().for_each(|v: f64| {
             quadratic_sum += (v - mean).powi(2);
         });
-        let deviation = (quadratic_sum / (self.length - 1) as f64).sqrt();
+        let deviation = (quadratic_sum / (self.values.len() - 1) as f64).sqrt();
         Self::Output::new(
             mean,
             mean + deviation * self.distance_multiplier,
@@ -143,8 +144,9 @@ mod tests {
 
     #[test]
     fn test_new() {
-        assert!(BollingerBands::new(0, 2).is_err());
-        assert!(BollingerBands::new(1, 2).is_ok());
+        assert!(BollingerBands::new(0, 2_f64).is_err());
+        assert!(BollingerBands::new(1, 2_f64).is_err());
+        assert!(BollingerBands::new(2, 2_f64).is_ok());
     }
 
     fn test_next() {
