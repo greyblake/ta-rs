@@ -1,5 +1,4 @@
 use std::fmt;
-use std::cmp::PartialEq;
 
 use crate::errors::*;
 use crate::{Close, Next, Reset};
@@ -9,7 +8,7 @@ use crate::indicators::ExponentialMovingAverage;
 /// (BB).
 /// It is a type of infinite impulse response filter that calculates Bollinger Bands using Exponential Moving Average.
 /// The Bollinger Badns are represented by Average EMA and standard deviaton that is moved 'k' times away in both directions from calculated average value.
-/// 
+///
 /// # Formula
 ///
 /// Bollinger Bands are calculated based on EMA combined with Standard Deviaiation(SD).
@@ -39,17 +38,14 @@ use crate::indicators::ExponentialMovingAverage;
 ///
 /// let mut bb = BollingerBands::new(3, 2.0_f64).unwrap();
 ///
-/// assert_eq!(bb.next(2.0), BollingerBandsOutput {
-///     average: 2.0_f64,
-///     upper: 2.0_f64,
-///     lower: 2.0_f64,
-/// });
+/// let out_0 = bb.next(2.0);
 ///
-/// assert_eq!(bb.next(5.0), BollingerBandsOutput {
-///     average: 3.5,
-///     upper: 2.0,
-///     lower: 2.0,
-/// });
+/// let out_1 = bb.next(5.0);
+///
+/// assert_eq!(out_0.average, 2.0);
+/// assert_eq!(out_0.upper, 2.0);
+/// assert_eq!(out_0.lower, 2.0);
+///
 /// ```
 ///
 /// # Links
@@ -68,14 +64,6 @@ pub struct BollingerBandsOutput {
 impl BollingerBandsOutput {
     pub fn new(average: f64, upper: f64, lower: f64) -> Self {
         Self {average, upper, lower}
-    }
-}
-
-impl PartialEq for BollingerBandsOutput {
-    fn eq(&self, other: &Self) -> bool {
-        (self.average == other.average &&
-         self.upper == self.upper &&
-         self.lower == self.lower)
     }
 }
 
