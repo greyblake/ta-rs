@@ -37,8 +37,7 @@ use crate::indicators::ExponentialMovingAverage;
 /// use ta::indicators::{BollingerBands, BollingerBandsOutput};
 /// use ta::Next;
 ///
-/// let mut bb = BollingerBands::new(20, 2.0_f64).unwrap();
-///
+/// let mut bb = BollingerBands::new(3, 2.0_f64).unwrap();
 ///
 /// assert_eq!(bb.next(2.0), BollingerBandsOutput {
 ///     average: 2.0_f64,
@@ -46,10 +45,10 @@ use crate::indicators::ExponentialMovingAverage;
 ///     lower: 2.0_f64,
 /// });
 ///
-/// assert_eq!(bb.next(4.0), BollingerBandsOutput {
-///     average: 3.0_f64,
-///     upper: 0.0_f64,
-///     lower: 4.0_f64,
+/// assert_eq!(bb.next(5.0), BollingerBandsOutput {
+///     average: 3.5,
+///     upper: 2.0,
+///     lower: 2.0,
 /// });
 /// ```
 ///
@@ -74,9 +73,9 @@ impl BollingerBandsOutput {
 
 impl PartialEq for BollingerBandsOutput {
     fn eq(&self, other: &Self) -> bool {
-        self.average == other.average &&
-            self.upper == self.upper &&
-            self.lower == self.lower
+        (self.average == other.average &&
+         self.upper == self.upper &&
+         self.lower == self.lower)
     }
 }
 
@@ -118,18 +117,16 @@ impl Next<f64> for BollingerBands {
 
     fn next(&mut self, input: f64) -> Self::Output {
         self.values.push(input);
+        let mean = self.average.next(input);
+        println!("{}", &mean);
         if self.values.len() == 1 {
-            self.average.next(input);
-            return Self::Output::new(input, input, input);
+            return Self::Output::new(mean, mean, mean);
         }
         if self.values.len() == self.length + 1 {
             self.values.remove(0);
         }
-        let mean = self.average.next(input);
-        let mut quadratic_sum = 0_f64;
-        for v in &self.values {
-            quadratic_sum += (*v - mean).powi(2);
-        }
+        let quadratic_sum: f64 = self.values.iter()
+            .fold(0_f64, |a, v| a + (v - mean).powi(2) );
         let deviation = (quadratic_sum / (self.values.len() - 1) as f64).sqrt();
         Self::Output::new(
             mean,
@@ -137,6 +134,28 @@ impl Next<f64> for BollingerBands {
             mean - deviation * self.distance_multiplier)
     }
 }
+
+impl<'a, T: Close> Next<&'a T> for BollingerBands {
+    type Output = BollingerBandsOutput;
+
+    fn next(&mut self, input: &'a T) -> Self::Output {
+        self.next(input.close())
+    }
+}
+
+impl Reset for BollingerBands {
+    fn reset(&mut self) {
+        self.values = Vec::new();
+        self.average = ExponentialMovingAverage::new(self.length as u32).unwrap();
+    }
+}
+
+impl Default for BollingerBands {
+    fn default() -> Self {
+        Self::new(9, 2_f64).unwrap()
+    }
+}
+
 
 impl fmt::Display for BollingerBands {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -150,7 +169,7 @@ mod tests {
     use super::*;
     use crate::test_helper::*;
 
-    // test_indicator!(BollingerBands);
+    test_indicator!(BollingerBands);
 
     #[test]
     fn test_new() {
@@ -159,12 +178,14 @@ mod tests {
         assert!(BollingerBands::new(2, 2_f64).is_ok());
     }
 
+    #[test]
     fn test_next() {
-        let mut bb = BollingerBands::new(4, 1.0_f64).unwrap();
+        let mut bb = BollingerBands::new(3, 2.0_f64).unwrap();
 
         assert_eq!(bb.next(2.0), BollingerBandsOutput::new(2.0_f64, 2.0_f64, 2.0_f64));
         assert_eq!(bb.next(5.0), BollingerBandsOutput::new(3.5_f64, 2.0_f64, 5.0_f64));
-
+        assert_eq!(bb.next(1.0), BollingerBandsOutput::new(2.25_f64, 2.0_f64, 5.0_f64));
+        assert_eq!(bb.next(6.25), BollingerBandsOutput::new(4.25_f64, 2.0_f64, 5.0_f64));
     }
 
 }
