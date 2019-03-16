@@ -80,18 +80,15 @@ pub struct BollingerBands {
 
 impl BollingerBands {
     pub fn new(length: usize, distance_multiplier: f64) -> Result<Self> {
-        match length {
-            0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
-            1 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
-            _ => {
-                Ok(Self {
-                    length,
-                    distance_multiplier,
-                    values: Vec::new(),
-                    average: ExponentialMovingAverage::new(length as u32).unwrap(),
-                })
-            }
+        if length < 2 {
+            return Err(Error::from_kind(ErrorKind::InvalidParameter));
         }
+        Ok(Self {
+            length,
+            distance_multiplier,
+            values: Vec::new(),
+            average: ExponentialMovingAverage::new(length as u32).unwrap(),
+        })
     }
 
     pub fn length(&self) -> usize {
@@ -157,9 +154,6 @@ impl fmt::Display for BollingerBands {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_helper::*;
-
-    // test_indicator!(BollingerBands);
 
     #[test]
     fn test_new() {
