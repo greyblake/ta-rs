@@ -73,7 +73,7 @@ impl BollingerBands {
         Ok(Self {
             length,
             multiplier,
-            values: Vec::new(),
+            values: Vec::with_capacity((length + 1) as usize)
         })
     }
 
