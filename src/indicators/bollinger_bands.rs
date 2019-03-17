@@ -53,7 +53,7 @@ use crate::{Close, Next, Reset};
 /// ![Bollinger Bands, Wikipedia](https://en.wikipedia.org/wiki/Bollinger_Bands)
 #[derive(Debug, Clone)]
 pub struct BollingerBands {
-    length: usize,
+    length: u32,
     multiplier: f64,
     values: Vec<f64>,
 }
@@ -66,7 +66,7 @@ pub struct BollingerBandsOutput {
 }
 
 impl BollingerBands {
-    pub fn new(length: usize, multiplier: f64) -> Result<Self> {
+    pub fn new(length: u32, multiplier: f64) -> Result<Self> {
         if length < 1 {
             return Err(Error::from_kind(ErrorKind::InvalidParameter));
         }
@@ -77,7 +77,7 @@ impl BollingerBands {
         })
     }
 
-    pub fn length(&self) -> usize {
+    pub fn length(&self) -> u32 {
         self.length
     }
 
@@ -99,7 +99,7 @@ impl Next<f64> for BollingerBands {
                 lower: input,
             };
         }
-        if self.values.len() == self.length + 1 {
+        if self.values.len() == (self.length + 1) as usize {
             self.values.remove(0);
         }
         let (mean, sd) = mean_sd(&self.values);
