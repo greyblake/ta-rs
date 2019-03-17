@@ -71,7 +71,7 @@ impl ExponentialMovingAverage {
                     is_new: true,
                 };
                 Ok(indicator)
-            },
+            }
         }
     }
 

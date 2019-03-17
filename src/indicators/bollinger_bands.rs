@@ -55,7 +55,7 @@ use crate::{Close, Next, Reset};
 pub struct BollingerBands {
     length: usize,
     multiplier: f64,
-    values: Vec<f64>
+    values: Vec<f64>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -73,7 +73,7 @@ impl BollingerBands {
         Ok(Self {
             length,
             multiplier,
-            values: Vec::new()
+            values: Vec::new(),
         })
     }
 
@@ -93,7 +93,11 @@ impl Next<f64> for BollingerBands {
         self.values.push(input);
 
         if self.values.len() == 1 {
-            return Self::Output { average: input, upper: input, lower: input };
+            return Self::Output {
+                average: input,
+                upper: input,
+                lower: input,
+            };
         }
         if self.values.len() == self.length + 1 {
             self.values.remove(0);
@@ -103,7 +107,7 @@ impl Next<f64> for BollingerBands {
         Self::Output {
             average: mean,
             upper: mean + sd * self.multiplier,
-            lower: mean - sd * self.multiplier
+            lower: mean - sd * self.multiplier,
         }
     }
 }
@@ -128,7 +132,6 @@ impl Default for BollingerBands {
     }
 }
 
-
 impl fmt::Display for BollingerBands {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "BB({}, {})", self.length, self.multiplier)
@@ -141,13 +144,11 @@ fn mean_sd(numbers: &[f64]) -> (f64, f64) {
     let size = numbers.len() as f64;
     let mean = sum / size;
 
-    let quadratic_sum: f64 = numbers.iter()
-        .fold(0_f64, |a, v| a + (v - mean).powi(2) );
+    let quadratic_sum: f64 = numbers.iter().fold(0_f64, |a, v| a + (v - mean).powi(2));
 
     let sd = (quadratic_sum / size).sqrt();
     (mean, sd)
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -196,7 +197,6 @@ mod tests {
         assert_eq!(round(b.lower), 0.5);
         assert_eq!(round(c.lower), -0.733);
         assert_eq!(round(d.lower), -0.395);
-
     }
 
     #[test]
