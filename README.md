@@ -80,6 +80,7 @@ So far there are the following indicators available.
   * Average True Range (AR)
   * Rate of Change (ROC)
   * Efficiency Ratio (ER)
+  * Bollinger Bands (BB)
 
 ## License
 
@@ -89,3 +90,4 @@ So far there are the following indicators available.
 ## Contributors
 
 - [greyblake](https://github.com/greyblake) Potapov Sergey - creator, maintainer.
+- [Bartoshko](https://github.com/Bartoshko) - BollingerBands

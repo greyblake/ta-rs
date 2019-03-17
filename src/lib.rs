@@ -35,6 +35,7 @@
 //!   * [Slow Stochastic](indicators/struct.SlowStochastic.html)
 //!   * [Moving Average Convergence Divergence (MACD)](indicators/struct.MovingAverageConvergenceDivergence.html)
 //! * Other
+//!   * [Bollinger Bands (BB)](indicators/struct.BollingerBands.html)
 //!   * [Maximum](indicators/struct.Maximum.html)
 //!   * [Minimum](indicators/struct.Minimum.html)
 //!   * [True Range](indicators/struct.TrueRange.html)
