@@ -1,4 +1,7 @@
+#### v0.1.1 - 2019-02-26
+
 * Implement Kaufman's Efficiency Ratio (ER)
+* Implement Rate of Change (ROC)
 * Migrate to Rust 2018 edition
 
 #### v0.1.0 - 2017-12-05

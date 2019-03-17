@@ -34,3 +34,5 @@ pub use self::efficiency_ratio::EfficiencyRatio;
 mod bollinger_bands;
 pub use self::bollinger_bands::{BollingerBands, BollingerBandsOutput};
 
+mod rate_of_change;
+pub use self::rate_of_change::RateOfChange;

@@ -18,7 +18,7 @@ Add to you `Cargo.toml`:
 ```
 [dependencies]
 
-ta = "0.1.0"
+ta = "0.1.1"
 ```
 
 Example:
