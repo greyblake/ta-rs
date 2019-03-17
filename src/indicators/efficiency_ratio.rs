@@ -78,11 +78,6 @@ impl Next<f64> for EfficiencyRatio {
             self.prices.pop_front();
         }
 
-        eprintln!("");
-        eprintln!("direction: {}", direction);
-        eprintln!("volatility: {}", volatility);
-        eprintln!("");
-
         // Return actual efficiency ratio
         direction / volatility
     }
