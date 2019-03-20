@@ -150,6 +150,7 @@ impl fmt::Display for MoneyFlowIndex {
 impl Reset for MoneyFlowIndex {
     fn reset(&mut self) {
         self.mf_vec.clear();
+        self.prev_tp = 0.0;
     }
 }
 
@@ -214,7 +215,10 @@ mod tests {
 
         mfi.reset();
 
-        assert_eq!(round(mfi.next(&bar4)), 0.0);
+        assert_eq!(mfi.next(&bar1), 0.0);
+        assert_eq!(mfi.next(&bar2), 0.0);
+        assert_eq!(mfi.next(&bar3), 100.0);
+        assert_eq!(round(mfi.next(&bar4)), 66.667);
     }
 
     #[test]
