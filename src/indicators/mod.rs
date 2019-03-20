@@ -37,5 +37,5 @@ pub use self::bollinger_bands::{BollingerBands, BollingerBandsOutput};
 mod rate_of_change;
 pub use self::rate_of_change::RateOfChange;
 
-//mod money_flow_index;
-//pub use self::money_flow_index::MoneyFlowIndex;
+mod money_flow_index;
+pub use self::money_flow_index::MoneyFlowIndex;

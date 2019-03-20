@@ -1,4 +1,4 @@
-use super::{Close, High, Low, Open};
+use super::{Close, High, Low, Open, Volume};
 
 #[derive(Debug, PartialEq)]
 pub struct Bar {
@@ -6,7 +6,7 @@ pub struct Bar {
     high: f64,
     low: f64,
     close: f64,
-    //volume: u32
+    volume: f64,
 }
 
 impl Bar {
@@ -16,6 +16,7 @@ impl Bar {
             close: 0.0,
             low: 0.0,
             high: 0.0,
+            volume: 0.0,
         }
     }
 
@@ -39,10 +40,10 @@ impl Bar {
         self
     }
 
-    //pub fn volume(mut self, val :u32) -> Self {
-    //    self.volume = val;
-    //    self
-    //}
+    pub fn volume(mut self, val: f64) -> Self {
+        self.volume = val;
+        self
+    }
 }
 
 impl Open for Bar {
@@ -66,6 +67,12 @@ impl Low for Bar {
 impl High for Bar {
     fn high(&self) -> f64 {
         self.high
+    }
+}
+
+impl Volume for Bar {
+    fn volume(&self) -> f64 {
+        self.volume
     }
 }
 
