@@ -57,6 +57,8 @@ pub struct MoneyFlowIndex {
     n: u32,
     mf_vec: VecDeque<f64>,
     prev_tp: f64,
+    pmf: f64,
+    sum_mf: f64, // Sum of absolute values of mf
 }
 
 impl MoneyFlowIndex {
@@ -68,6 +70,8 @@ impl MoneyFlowIndex {
                     n: n,
                     mf_vec: VecDeque::with_capacity(n as usize + 1),
                     prev_tp: 0.0,
+                    pmf: 0.0,
+                    sum_mf: 0.0,
                 };
                 Ok(indicator)
             }
@@ -79,20 +83,7 @@ impl Next<f64> for MoneyFlowIndex {
     type Output = f64;
 
     fn next(&mut self, mf: f64) -> f64 {
-        if (self.mf_vec.len() as u32) < self.n {
-            self.mf_vec.push_back(mf);
-        } else {
-            self.mf_vec.pop_front();
-            self.mf_vec.push_back(mf);
-        }
-
-        if self.mf_vec.len() as u32 == self.n {
-            let pmf: f64 = self.mf_vec.iter().filter(|&i| *i >= 0.0).sum();
-            let nmf: f64 = self.mf_vec.iter().filter(|&i| *i < 0.0).sum();
-            ((pmf / (pmf + nmf.abs())) * 100.0)
-        } else {
-            0.0
-        }
+        mf
     }
 }
 
@@ -100,38 +91,28 @@ impl<'a, T: High + Low + Close + Volume> Next<&'a T> for MoneyFlowIndex {
     type Output = f64;
 
     fn next(&mut self, input: &'a T) -> f64 {
-        // self.next((input.high(), input.low(), input.close(), input.volume()))
-
-        let high = input.high();
-        let low = input.low();
-        let close = input.close();
-        let volume = input.volume();
-
-        let tp = (high + low + close) / 3.0;
-        let rmf = tp * volume;
+        let tp = (input.high() + input.low() + input.close()) / 3.0;
+        let rmf = tp * input.volume();
         let mf = if tp >= self.prev_tp {
+            self.pmf = self.pmf + rmf; // Adding to pmf as mf will be positive
             rmf
         } else {
-            (rmf * -1.0)
+            -rmf
         };
 
+        let mut popped_mf = 0.0;
+        if (self.mf_vec.len() as u32) == self.n {
+            popped_mf = self.mf_vec.pop_front().unwrap();
+        }
+
+        if popped_mf > 0.0 {
+            self.pmf = self.pmf - popped_mf;
+        }
+        self.sum_mf = self.sum_mf + mf.abs() - popped_mf.abs();
+        self.mf_vec.push_back(mf);
         self.prev_tp = tp;
 
-        if (self.mf_vec.len() as u32) < self.n {
-            self.mf_vec.push_back(mf);
-        } else {
-            self.mf_vec.pop_front();
-            self.mf_vec.push_back(mf);
-        }
-
-        if self.mf_vec.len() as u32 == self.n {
-            let pmf: f64 = self.mf_vec.iter().filter(|&i| *i >= 0.0).sum();
-            let nmf: f64 = self.mf_vec.iter().filter(|&i| *i < 0.0).sum();
-
-            ((pmf / (pmf + nmf.abs())) * 100.0)
-        } else {
-            0.0
-        }
+        ((self.pmf / self.sum_mf) * 100.0)
     }
 }
 
@@ -151,6 +132,8 @@ impl Reset for MoneyFlowIndex {
     fn reset(&mut self) {
         self.mf_vec.clear();
         self.prev_tp = 0.0;
+        self.pmf = 0.0;
+        self.sum_mf = 0.0;
     }
 }
 
@@ -168,19 +151,6 @@ mod tests {
     }
 
     #[test]
-    fn test_next_f64() {
-        let mut mfi = MoneyFlowIndex::new(4).unwrap();
-
-        assert_eq!(mfi.next(1000.0), 0.0);
-        assert_eq!(mfi.next(2000.0), 0.0);
-        assert_eq!(mfi.next(-1000.0), 0.0);
-        assert_eq!(round(mfi.next(3000.0)), 85.714);
-        assert_eq!(round(mfi.next(2000.0)), 87.500);
-        assert_eq!(round(mfi.next(-3000.0)), 55.556);
-        assert_eq!(round(mfi.next(-2000.0)), 50.000);
-    }
-
-    #[test]
     fn test_next_bar() {
         let mut mfi = MoneyFlowIndex::new(3).unwrap();
 
@@ -191,12 +161,50 @@ mod tests {
         let bar5 = Bar::new().high(5).low(3).close(4).volume(5000.0);
         let bar6 = Bar::new().high(2).low(1).close(1.5).volume(6000.0);
 
-        assert_eq!(mfi.next(&bar1), 0.0);
-        assert_eq!(mfi.next(&bar2), 0.0);
+        assert_eq!(mfi.next(&bar1), 100.0);
+        assert_eq!(mfi.next(&bar2), 100.0);
         assert_eq!(mfi.next(&bar3), 100.0);
         assert_eq!(round(mfi.next(&bar4)), 66.667);
         assert_eq!(round(mfi.next(&bar5)), 73.333);
         assert_eq!(round(mfi.next(&bar6)), 44.444);
+
+        let mut mfi_1 = MoneyFlowIndex::new(4).unwrap();
+
+        let bar7 = Bar::new().high(10).low(8).close(9).volume(1000.0);
+        let bar8 = Bar::new().high(5).low(3).close(4).volume(2000.0);
+        let bar9 = Bar::new().high(9).low(7).close(8).volume(3000.0);
+        let bar10 = Bar::new().high(5).low(3).close(4).volume(4000.0);
+        let bar11 = Bar::new().high(5).low(3).close(4).volume(5000.0);
+        let bar12 = Bar::new().high(2).low(1).close(1.5).volume(6000.0);
+        let bar13 = Bar::new().high(5).low(3).close(4).volume(2000.0);
+        let bar14 = Bar::new().high(9).low(6).close(9).volume(1000.0);
+
+        assert_eq!(mfi_1.next(&bar7), 100.0);
+        assert_eq!(round(mfi_1.next(&bar8)), 52.941);
+        assert_eq!(round(mfi_1.next(&bar9)), 80.488);
+        assert_eq!(round(mfi_1.next(&bar10)), 57.895);
+        assert_eq!(round(mfi_1.next(&bar11)), 64.706);
+        assert_eq!(round(mfi_1.next(&bar12)), 63.768);
+        assert_eq!(round(mfi_1.next(&bar13)), 52.83);
+        assert_eq!(round(mfi_1.next(&bar14)), 80.0);
+
+        let mut mfi_2 = MoneyFlowIndex::new(3).unwrap();
+
+        let bar15 = Bar::new().high(10).low(8).close(9).volume(1000.0);
+        let bar16 = Bar::new().high(9).low(7).close(8).volume(2000.0);
+        let bar17 = Bar::new().high(8).low(6).close(7).volume(3000.0);
+        let bar18 = Bar::new().high(7).low(5).close(6).volume(4000.0);
+        let bar19 = Bar::new().high(6).low(4).close(5).volume(5000.0);
+        let bar20 = Bar::new().high(7).low(5).close(6).volume(6000.0);
+        let bar21 = Bar::new().high(8).low(6).close(7).volume(2000.0);
+
+        assert_eq!(mfi_2.next(&bar15), 100.0);
+        assert_eq!(round(mfi_2.next(&bar16)), 36.00);
+        assert_eq!(round(mfi_2.next(&bar17)), 19.565);
+        assert_eq!(round(mfi_2.next(&bar18)), 0.0);
+        assert_eq!(round(mfi_2.next(&bar19)), 0.0);
+        assert_eq!(round(mfi_2.next(&bar20)), 42.353);
+        assert_eq!(round(mfi_2.next(&bar21)), 66.667);
     }
 
     #[test]
@@ -207,18 +215,24 @@ mod tests {
         let bar2 = Bar::new().high(5).low(3).close(4).volume(2000.0);
         let bar3 = Bar::new().high(9).low(7).close(8).volume(3000.0);
         let bar4 = Bar::new().high(5).low(3).close(4).volume(4000.0);
+        let bar5 = Bar::new().high(5).low(3).close(4).volume(5000.0);
+        let bar6 = Bar::new().high(2).low(1).close(1.5).volume(6000.0);
 
-        assert_eq!(mfi.next(&bar1), 0.0);
-        assert_eq!(mfi.next(&bar2), 0.0);
+        assert_eq!(mfi.next(&bar1), 100.0);
+        assert_eq!(mfi.next(&bar2), 100.0);
         assert_eq!(mfi.next(&bar3), 100.0);
         assert_eq!(round(mfi.next(&bar4)), 66.667);
+        assert_eq!(round(mfi.next(&bar5)), 73.333);
+        assert_eq!(round(mfi.next(&bar6)), 44.444);
 
         mfi.reset();
 
-        assert_eq!(mfi.next(&bar1), 0.0);
-        assert_eq!(mfi.next(&bar2), 0.0);
+        assert_eq!(mfi.next(&bar1), 100.0);
+        assert_eq!(mfi.next(&bar2), 100.0);
         assert_eq!(mfi.next(&bar3), 100.0);
         assert_eq!(round(mfi.next(&bar4)), 66.667);
+        assert_eq!(round(mfi.next(&bar5)), 73.333);
+        assert_eq!(round(mfi.next(&bar6)), 44.444);
     }
 
     #[test]
