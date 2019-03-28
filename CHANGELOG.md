@@ -1,4 +1,4 @@
-#### v0.1.3 - ????-??-??
+#### v0.1.3 - 2019-03-28
 
 * Implement Money Flow Index (MFI)
 * Add benchmarks
