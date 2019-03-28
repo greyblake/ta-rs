@@ -58,7 +58,7 @@ pub struct MoneyFlowIndex {
     prev_typical_price: f64,
     total_positive_money_flow: f64,
     total_absolute_money_flow: f64,
-    is_new: bool
+    is_new: bool,
 }
 
 impl MoneyFlowIndex {
@@ -72,7 +72,7 @@ impl MoneyFlowIndex {
                     prev_typical_price: 0.0,
                     total_positive_money_flow: 0.0,
                     total_absolute_money_flow: 0.0,
-                    is_new: true
+                    is_new: true,
                 };
                 Ok(indicator)
             }
@@ -96,13 +96,12 @@ impl<'a, T: High + Low + Close + Volume> Next<&'a T> for MoneyFlowIndex {
         } else {
             let money_flow = typical_price * input.volume();
 
-            let signed_money_flow =
-                if typical_price >= self.prev_typical_price {
-                    self.total_positive_money_flow += money_flow;
-                    money_flow
-                } else {
-                    -money_flow
-                };
+            let signed_money_flow = if typical_price >= self.prev_typical_price {
+                self.total_positive_money_flow += money_flow;
+                money_flow
+            } else {
+                -money_flow
+            };
 
             self.total_absolute_money_flow += money_flow;
 
