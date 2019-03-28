@@ -74,6 +74,7 @@ So far there are the following indicators available.
   * Fast Stochastic
   * Slow Stochastic
   * Moving Average Convergence Divergence (MACD)
+  * Money Flow Index (MFI)
 * Other
   * Minimum
   * Maximum
@@ -98,3 +99,4 @@ cargo bench
 
 - [greyblake](https://github.com/greyblake) Potapov Sergey - creator, maintainer.
 - [Bartoshko](https://github.com/Bartoshko) - BollingerBands
+- [shreyasdeotare](https://github.com/shreyasdeotare) Shreyas Deotare - MoneyFlowIndex

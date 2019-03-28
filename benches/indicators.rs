@@ -4,22 +4,13 @@ extern crate ta;
 
 use bencher::Bencher;
 use rand::Rng;
-use ta::Next;
-use ta::DataItem;
 use ta::indicators::{
-    SimpleMovingAverage,
-    ExponentialMovingAverage,
-    BollingerBands,
-    EfficiencyRatio,
-    FastStochastic,
-    Maximum,
-    Minimum,
-    MovingAverageConvergenceDivergence,
-    RateOfChange,
-    RelativeStrengthIndex,
-    SlowStochastic,
-    TrueRange,
+    BollingerBands, EfficiencyRatio, ExponentialMovingAverage, FastStochastic, Maximum, Minimum,
+    MoneyFlowIndex, MovingAverageConvergenceDivergence, RateOfChange, RelativeStrengthIndex,
+    SimpleMovingAverage, SlowStochastic, TrueRange,
 };
+use ta::DataItem;
+use ta::Next;
 
 const ITEMS_COUNT: usize = 5_000;
 
@@ -62,7 +53,6 @@ macro_rules! bench_indicators {
     }
 }
 
-
 bench_indicators!(
     SimpleMovingAverage,
     ExponentialMovingAverage,
@@ -75,7 +65,6 @@ bench_indicators!(
     RateOfChange,
     RelativeStrengthIndex,
     SlowStochastic,
-    TrueRange
+    TrueRange,
+    MoneyFlowIndex
 );
-
-
