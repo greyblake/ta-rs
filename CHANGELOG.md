@@ -1,3 +1,8 @@
+#### v0.1.3 - ????-??-??
+
+* Implement Money Flow Index (MFI)
+* Add benchmarks
+
 #### v0.1.2 - 2019-03-17
 
 * Implement Bollinger Bands (BB)

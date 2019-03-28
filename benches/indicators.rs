@@ -19,6 +19,7 @@ use ta::indicators::{
     RelativeStrengthIndex,
     SlowStochastic,
     TrueRange,
+    MoneyFlowIndex,
 };
 
 const ITEMS_COUNT: usize = 5_000;
@@ -75,7 +76,8 @@ bench_indicators!(
     RateOfChange,
     RelativeStrengthIndex,
     SlowStochastic,
-    TrueRange
+    TrueRange,
+    MoneyFlowIndex
 );
 
 
