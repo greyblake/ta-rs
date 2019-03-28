@@ -9,6 +9,7 @@ Technical analysis library for Rust.
 * [Getting started](#getting-started)
 * [Basic ideas](#basic-ideas)
 * [List of indicators](#list-of-indicators)
+* [Running benchmarks](#running-benchmarks)
 * [License](#license)
 * [Contributors](#contributors)
 
@@ -81,6 +82,12 @@ So far there are the following indicators available.
   * Rate of Change (ROC)
   * Efficiency Ratio (ER)
   * Bollinger Bands (BB)
+
+## Running benchmarks
+
+```
+cargo bench
+```
 
 ## License
 
