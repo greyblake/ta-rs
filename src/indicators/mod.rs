@@ -39,3 +39,6 @@ pub use self::rate_of_change::RateOfChange;
 
 mod money_flow_index;
 pub use self::money_flow_index::MoneyFlowIndex;
+
+mod on_balance_volume;
+pub use self::on_balance_volume::OnBalanceVolume;
