@@ -9,6 +9,7 @@ Technical analysis library for Rust.
 * [Getting started](#getting-started)
 * [Basic ideas](#basic-ideas)
 * [List of indicators](#list-of-indicators)
+* [Running benchmarks](#running-benchmarks)
 * [License](#license)
 * [Contributors](#contributors)
 
@@ -73,6 +74,7 @@ So far there are the following indicators available.
   * Fast Stochastic
   * Slow Stochastic
   * Moving Average Convergence Divergence (MACD)
+  * Money Flow Index (MFI)
 * Other
   * Minimum
   * Maximum
@@ -81,6 +83,12 @@ So far there are the following indicators available.
   * Rate of Change (ROC)
   * Efficiency Ratio (ER)
   * Bollinger Bands (BB)
+
+## Running benchmarks
+
+```
+cargo bench
+```
 
 ## License
 
@@ -91,3 +99,4 @@ So far there are the following indicators available.
 
 - [greyblake](https://github.com/greyblake) Potapov Sergey - creator, maintainer.
 - [Bartoshko](https://github.com/Bartoshko) - BollingerBands
+- [shreyasdeotare](https://github.com/shreyasdeotare) Shreyas Deotare - MoneyFlowIndex
