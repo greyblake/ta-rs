@@ -30,19 +30,31 @@ use crate::{Close, Next, Reset, Volume};
 /// use ta::{Next, DataItem};
 ///
 /// let mut obv = OnBalanceVolume::new();
-/// let di = DataItem::builder()
+///
+/// let di1 = DataItem::builder()
 ///             .high(3.0)
 ///             .low(1.0)
 ///             .close(2.0)
 ///             .open(1.5)
 ///             .volume(1000.0)
 ///             .build().unwrap();
-/// obv.next(&di);
 ///
+/// let di2 = DataItem::builder()
+///             .high(3.0)
+///             .low(1.0)
+///             .close(1.5)
+///             .open(1.5)
+///             .volume(300.0)
+///             .build().unwrap();
+///
+/// assert_eq!(obv.next(&di1), 1000.0);
+/// assert_eq!(obv.next(&di2), 700.0);
 /// ```
+///
 /// # Links
-/// * [On Balance Volume, Wikipedia] (https://en.wikipedia.org/wiki/On-balance_volume)
-/// * [On Balance Volume, stockcharts] (https://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:on_balance_volume_obv)
+///
+/// * [On Balance Volume, Wikipedia](https://en.wikipedia.org/wiki/On-balance_volume)
+/// * [On Balance Volume, stockcharts](https://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:on_balance_volume_obv)
 
 #[derive(Debug, Clone)]
 pub struct OnBalanceVolume {
@@ -114,7 +126,7 @@ mod tests {
         // close < prev_close
         assert_eq!(obv.next(&bar3), -3000.0);
 
-        // clsoe == prev_close
+        // close == prev_close
         assert_eq!(obv.next(&bar4), -3000.0);
     }
 
@@ -125,9 +137,6 @@ mod tests {
         let bar1 = Bar::new().close(1.5).volume(1000.0);
         let bar2 = Bar::new().close(4).volume(2000.0);
         let bar3 = Bar::new().close(8).volume(3000.0);
-        let bar4 = Bar::new().close(4).volume(4000.0);
-        let bar5 = Bar::new().close(1.5).volume(5000.0);
-        let bar6 = Bar::new().close(5).volume(6000.0);
 
         assert_eq!(obv.next(&bar1), 1000.0);
         assert_eq!(obv.next(&bar2), 3000.0);
@@ -135,9 +144,9 @@ mod tests {
 
         obv.reset();
 
-        assert_eq!(obv.next(&bar4), 4000.0);
-        assert_eq!(obv.next(&bar5), -1000.0);
-        assert_eq!(obv.next(&bar6), 5000.0);
+        assert_eq!(obv.next(&bar1), 1000.0);
+        assert_eq!(obv.next(&bar2), 3000.0);
+        assert_eq!(obv.next(&bar3), 6000.0);
     }
 
     #[test]

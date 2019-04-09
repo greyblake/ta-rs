@@ -43,6 +43,7 @@
 //!   * [Average True Range (ATR)](indicators/struct.AverageTrueRange.html)
 //!   * [Efficiency Ratio (ER)](indicators/struct.EfficiencyRatio.html)
 //!   * [Rate of Change (ROC)](indicators/struct.RateOfChange.html)
+//!   * [On Balance Volume (OBV)](indicators/struct.OnBalanceVolume.html)
 //!
 #[macro_use]
 extern crate error_chain;
