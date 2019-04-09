@@ -67,11 +67,10 @@ impl<'a, T: Close + Volume> Next<&'a T> for OnBalanceVolume {
     fn next(&mut self, input: &'a T) -> f64 {
         if input.close() > self.prev_close {
             self.obv = self.obv + input.volume();
-            self.prev_close = input.close();
         } else if input.close() < self.prev_close {
             self.obv = self.obv - input.volume();
-            self.prev_close = input.close();
         }
+        self.prev_close = input.close();
         self.obv
     }
 }
