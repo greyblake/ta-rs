@@ -1,6 +1,5 @@
 use std::fmt;
 
-use crate::errors::*;
 use crate::{Close, Next, Reset, Volume};
 
 /// On Balance Volume (OBV).
@@ -30,7 +29,7 @@ use crate::{Close, Next, Reset, Volume};
 /// use ta::indicators::OnBalanceVolume;
 /// use ta::{Next, DataItem};
 ///
-/// let mut obv = OnBalanceVolume::new().unwrap();
+/// let mut obv = OnBalanceVolume::new();
 /// let di = DataItem::builder()
 ///             .high(3.0)
 ///             .low(1.0)
@@ -52,12 +51,11 @@ pub struct OnBalanceVolume {
 }
 
 impl OnBalanceVolume {
-    pub fn new() -> Result<Self> {
-        let indicator = Self {
+    pub fn new() -> Self {
+        Self {
             obv: 0.0,
             prev_close: 0.0,
-        };
-        Ok(indicator)
+        }
     }
 }
 
@@ -77,7 +75,7 @@ impl<'a, T: Close + Volume> Next<&'a T> for OnBalanceVolume {
 
 impl Default for OnBalanceVolume {
     fn default() -> Self {
-        Self::new().unwrap()
+        Self::new()
     }
 }
 
@@ -100,13 +98,8 @@ mod tests {
     use crate::test_helper::*;
 
     #[test]
-    fn test_new() {
-        assert!(OnBalanceVolume::new().is_ok());
-    }
-
-    #[test]
     fn test_next_bar() {
-        let mut obv = OnBalanceVolume::new().unwrap();
+        let mut obv = OnBalanceVolume::new();
 
         let bar1 = Bar::new().close(1.5).volume(1000.0);
         let bar2 = Bar::new().close(5).volume(5000.0);
@@ -127,7 +120,7 @@ mod tests {
 
     #[test]
     fn test_reset() {
-        let mut obv = OnBalanceVolume::new().unwrap();
+        let mut obv = OnBalanceVolume::new();
 
         let bar1 = Bar::new().close(1.5).volume(1000.0);
         let bar2 = Bar::new().close(4).volume(2000.0);
@@ -154,7 +147,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let obv = OnBalanceVolume::new().unwrap();
+        let obv = OnBalanceVolume::new();
         assert_eq!(format!("{}", obv), "OBV");
     }
 
