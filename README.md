@@ -80,9 +80,10 @@ So far there are the following indicators available.
   * Maximum
   * True Range
   * Average True Range (AR)
-  * Rate of Change (ROC)
   * Efficiency Ratio (ER)
   * Bollinger Bands (BB)
+  * Rate of Change (ROC)
+  * OnBalanceVolume (OBV)
 
 ## Running benchmarks
 
