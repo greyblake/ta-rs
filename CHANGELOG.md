@@ -1,3 +1,7 @@
+#### v0.1.4 - 2019-04-09
+
+* Implement On Balance Volume (OBV)
+
 #### v0.1.3 - 2019-03-28
 
 * Implement Money Flow Index (MFI)

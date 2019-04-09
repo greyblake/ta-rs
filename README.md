@@ -19,7 +19,7 @@ Add to you `Cargo.toml`:
 ```
 [dependencies]
 
-ta = "0.1.1"
+ta = "0.1.4"
 ```
 
 Example:
@@ -100,4 +100,4 @@ cargo bench
 
 - [greyblake](https://github.com/greyblake) Potapov Sergey - creator, maintainer.
 - [Bartoshko](https://github.com/Bartoshko) - BollingerBands
-- [shreyasdeotare](https://github.com/shreyasdeotare) Shreyas Deotare - MoneyFlowIndex
+- [shreyasdeotare](https://github.com/shreyasdeotare) Shreyas Deotare - MoneyFlowIndex, OnBalanceVolume
