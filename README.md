@@ -19,7 +19,7 @@ Add to you `Cargo.toml`:
 ```
 [dependencies]
 
-ta = "0.1.4"
+ta = "0.1.5"
 ```
 
 Example:
@@ -101,3 +101,4 @@ cargo bench
 - [greyblake](https://github.com/greyblake) Potapov Sergey - creator, maintainer.
 - [Bartoshko](https://github.com/Bartoshko) - BollingerBands
 - [shreyasdeotare](https://github.com/shreyasdeotare) Shreyas Deotare - MoneyFlowIndex, OnBalanceVolume
+- [edwardycl](https://github.com/edwardycl) - StandardDeviation Implementation & More Efficient BollingerBands

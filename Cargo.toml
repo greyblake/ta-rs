@@ -1,6 +1,6 @@
 [package]
 name = "ta"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["Sergey Potapov <blake131313@gmail.com>"]
 edition = "2018"
 description = "Technical analysis library. Implements number of indicators: EMA, SMA, RSI, MACD, Stochastic, etc."

@@ -1,3 +1,8 @@
+#### v0.1.5 - 2019-12-16
+
+* StandardDeviation Implementation
+* More Efficient BollingerBands
+
 #### v0.1.4 - 2019-04-09
 
 * Implement On Balance Volume (OBV)
