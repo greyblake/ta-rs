@@ -5,7 +5,7 @@ use crate::{Close, Next, Reset};
 
 /// Standard deviation (SD).
 ///
-/// Standard deviation is calculated from the last n values.
+/// Returns the standard deviation of the last n values.
 ///
 /// # Formula
 ///
