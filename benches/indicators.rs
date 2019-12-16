@@ -7,7 +7,7 @@ use rand::Rng;
 use ta::indicators::{
     BollingerBands, EfficiencyRatio, ExponentialMovingAverage, FastStochastic, Maximum, Minimum,
     MoneyFlowIndex, MovingAverageConvergenceDivergence, OnBalanceVolume, RateOfChange,
-    RelativeStrengthIndex, SimpleMovingAverage, SlowStochastic, TrueRange,
+    RelativeStrengthIndex, SimpleMovingAverage, SlowStochastic, StandardDeviation, TrueRange,
 };
 use ta::DataItem;
 use ta::Next;
@@ -56,6 +56,7 @@ macro_rules! bench_indicators {
 bench_indicators!(
     SimpleMovingAverage,
     ExponentialMovingAverage,
+    StandardDeviation,
     BollingerBands,
     EfficiencyRatio,
     FastStochastic,

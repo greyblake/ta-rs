@@ -36,6 +36,7 @@
 //!   * [Moving Average Convergence Divergence (MACD)](indicators/struct.MovingAverageConvergenceDivergence.html)
 //!   * [Money Flow Index (MFI)](indicators/struct.MoneyFlowIndex.html)
 //! * Other
+//!   * [Standard Deviation (SD)](indicators/struct.StandardDeviation.html)
 //!   * [Bollinger Bands (BB)](indicators/struct.BollingerBands.html)
 //!   * [Maximum](indicators/struct.Maximum.html)
 //!   * [Minimum](indicators/struct.Minimum.html)

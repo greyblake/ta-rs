@@ -1,14 +1,6 @@
 /// Returns the largest of 3 given numbers.
 pub fn max3(a: f64, b: f64, c: f64) -> f64 {
-    if a > b && a > c {
-        a
-    } else {
-        if b > c {
-            b
-        } else {
-            c
-        }
-    }
+    a.max(b).max(c)
 }
 
 #[cfg(test)]
