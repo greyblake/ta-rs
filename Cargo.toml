@@ -31,4 +31,5 @@ rand = "0.6.5"
 
 [[bench]]
 name = "indicators"
+path = "benches/indicators.rs"
 harness = false
