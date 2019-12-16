@@ -1,31 +1,23 @@
 use std::fmt;
 
 use crate::errors::*;
+use crate::indicators::StandardDeviation as Sd;
 use crate::{Close, Next, Reset};
 
 /// A Bollinger Bands (BB).
 /// (BB).
 /// It is a type of infinite impulse response filter that calculates Bollinger Bands using Exponential Moving Average.
-/// The Bollinger Badns are represented by Average EMA and standard deviaton that is moved 'k' times away in both directions from calculated average value.
+/// The Bollinger Bands are represented by Average EMA and standard deviaton that is moved 'k' times away in both directions from calculated average value.
 ///
 /// # Formula
 ///
-/// See EMA documentation.
+/// See SMA, SD documentation.
 ///
-/// ![SD formula](https://wikimedia.org/api/rest_v1/media/math/render/svg/8715d659116bec91d48762b9e1f3d9aed36fc028)
+/// BB is composed as:
 ///
-/// Where:
-///
-/// * _SD<sub>s</sub>_ - is value of standard deviation for N given probes.
-/// * _SD<sub>ٍx</sub>_  - is the mean value of observation.
-/// * _SD<sub>N</sub>_ - is number of probes in observation.
-/// * _SD<sud>xi</sub>_ - is i-th observed value from N elements observation.
-///
-/// and then BB is composed as:
-///
-///  * _BB<sub>Middle Band</sub>_ - Exponential Moving Average (EMA).
-///  * _BB<sub>Upper Band</sub>_ = N * (EMA + SD of observation * multipler (usually 2.0))
-///  * _BB<sub>Lower Band</sub>_ = N * (EMA - SD of observation * multipler (usually 2.0))
+///  * _BB<sub>Middle Band</sub>_ - Simple Moving Average (SMA).
+///  * _BB<sub>Upper Band</sub>_ = SMA + SD of observation * multipler (usually 2.0)
+///  * _BB<sub>Lower Band</sub>_ = SMA - SD of observation * multipler (usually 2.0)
 ///
 /// # Example
 ///
@@ -55,7 +47,7 @@ use crate::{Close, Next, Reset};
 pub struct BollingerBands {
     length: u32,
     multiplier: f64,
-    values: Vec<f64>,
+    sd: Sd,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -67,13 +59,13 @@ pub struct BollingerBandsOutput {
 
 impl BollingerBands {
     pub fn new(length: u32, multiplier: f64) -> Result<Self> {
-        if length < 1 {
+        if multiplier <= 0.0 {
             return Err(Error::from_kind(ErrorKind::InvalidParameter));
         }
         Ok(Self {
             length,
             multiplier,
-            values: Vec::with_capacity((length + 1) as usize),
+            sd: Sd::new(length)?,
         })
     }
 
@@ -90,19 +82,8 @@ impl Next<f64> for BollingerBands {
     type Output = BollingerBandsOutput;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        self.values.push(input);
-
-        if self.values.len() == 1 {
-            return Self::Output {
-                average: input,
-                upper: input,
-                lower: input,
-            };
-        }
-        if self.values.len() == (self.length + 1) as usize {
-            self.values.remove(0);
-        }
-        let (mean, sd) = mean_sd(&self.values);
+        let sd = self.sd.next(input);
+        let mean = self.sd.mean();
 
         Self::Output {
             average: mean,
@@ -122,7 +103,7 @@ impl<'a, T: Close> Next<&'a T> for BollingerBands {
 
 impl Reset for BollingerBands {
     fn reset(&mut self) {
-        self.values.clear();
+        self.sd.reset();
     }
 }
 
@@ -138,34 +119,12 @@ impl fmt::Display for BollingerBands {
     }
 }
 
-// Calculate mean and standard deviation
-fn mean_sd(numbers: &[f64]) -> (f64, f64) {
-    let sum: f64 = numbers.iter().sum();
-    let size = numbers.len() as f64;
-    let mean = sum / size;
-
-    let quadratic_sum: f64 = numbers.iter().fold(0_f64, |a, v| a + (v - mean).powi(2));
-
-    let sd = (quadratic_sum / size).sqrt();
-    (mean, sd)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::test_helper::*;
 
     test_indicator!(BollingerBands);
-
-    #[test]
-    fn test_mean_sd() {
-        // Test data are based on this online calculator:
-        // https://www.mathsisfun.com/data/standard-deviation-calculator.html
-        assert_eq!(round(mean_sd(&[5.55]).1), 0.0);
-        assert_eq!(round(mean_sd(&[5.0, 6.0]).1), 0.5);
-        assert_eq!(round(mean_sd(&[5.0, 6.0, 5.0]).1), 0.471);
-        assert_eq!(round(mean_sd(&[5.0, 6.0, 5.0, 2.3]).1), 1.375);
-    }
 
     #[test]
     fn test_new() {
@@ -233,7 +192,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let _bb = BollingerBands::new(10, 3.0_f64).unwrap();
-        assert_eq!(format!("{}", _bb), "BB(10, 3)");
+        let bb = BollingerBands::new(10, 3.0_f64).unwrap();
+        assert_eq!(format!("{}", bb), "BB(10, 3)");
     }
 }
