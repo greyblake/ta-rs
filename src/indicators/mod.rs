@@ -29,7 +29,7 @@ mod average_true_range;
 pub use self::average_true_range::AverageTrueRange;
 
 mod moving_average_convergence_divergence;
-pub use self::moving_average_convergence_divergence::MovingAverageConvergenceDivergence;
+pub use self::moving_average_convergence_divergence::{MovingAverageConvergenceDivergence, MovingAverageConvergenceDivergenceOutput};
 
 mod efficiency_ratio;
 pub use self::efficiency_ratio::EfficiencyRatio;
