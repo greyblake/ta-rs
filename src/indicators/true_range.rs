@@ -2,6 +2,7 @@ use std::fmt;
 
 use crate::helpers::max3;
 use crate::{Close, High, Low, Next, Reset};
+use serde::{Deserialize, Serialize};
 
 /// The range of a day's trading is simply _high_ - _low_.
 /// The true range extends it to yesterday's closing price if it was outside of today's range.
@@ -47,7 +48,7 @@ use crate::{Close, High, Low, Next, Reset};
 ///     }
 /// }
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TrueRange {
     prev_close: Option<f64>,
 }
@@ -70,7 +71,7 @@ impl fmt::Display for TrueRange {
     }
 }
 
-impl Next<f64> for TrueRange {
+impl<'a> Next<'a, f64> for TrueRange {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -83,7 +84,7 @@ impl Next<f64> for TrueRange {
     }
 }
 
-impl<'a, T: High + Low + Close> Next<&'a T> for TrueRange {
+impl<'a, T: High + Low + Close> Next<'a, &'a T> for TrueRange {
     type Output = f64;
 
     fn next(&mut self, bar: &'a T) -> Self::Output {

@@ -2,6 +2,7 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::{Close, Next, Reset};
+use serde::{Deserialize, Serialize};
 
 /// An exponential moving average (EMA), also known as an exponentially weighted moving average
 /// (EWMA).
@@ -50,7 +51,7 @@ use crate::{Close, Next, Reset};
 /// * [Exponential moving average, Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
 ///
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExponentialMovingAverage {
     length: u32,
     k: f64,
@@ -80,7 +81,7 @@ impl ExponentialMovingAverage {
     }
 }
 
-impl Next<f64> for ExponentialMovingAverage {
+impl<'a> Next<'a, f64> for ExponentialMovingAverage {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -94,7 +95,7 @@ impl Next<f64> for ExponentialMovingAverage {
     }
 }
 
-impl<'a, T: Close> Next<&'a T> for ExponentialMovingAverage {
+impl<'a, T: Close> Next<'a, &'a T> for ExponentialMovingAverage {
     type Output = f64;
 
     fn next(&mut self, input: &'a T) -> Self::Output {

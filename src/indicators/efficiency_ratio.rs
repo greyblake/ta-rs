@@ -3,6 +3,7 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::traits::{Close, Next, Reset};
+use serde::{Deserialize, Serialize};
 
 /// Kaufman's Efficiency Ratio (ER).
 ///
@@ -28,6 +29,7 @@ use crate::traits::{Close, Next, Reset};
 /// assert_eq!(er.next(19.0), 0.75);
 /// ```
 
+#[derive(Serialize, Deserialize)]
 pub struct EfficiencyRatio {
     length: u32,
     prices: VecDeque<f64>,
@@ -47,7 +49,7 @@ impl EfficiencyRatio {
     }
 }
 
-impl Next<f64> for EfficiencyRatio {
+impl<'a> Next<'a, f64> for EfficiencyRatio {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> f64 {
@@ -83,7 +85,7 @@ impl Next<f64> for EfficiencyRatio {
     }
 }
 
-impl<'a, T: Close> Next<&'a T> for EfficiencyRatio {
+impl<'a, T: Close> Next<'a, &'a T> for EfficiencyRatio {
     type Output = f64;
 
     fn next(&mut self, input: &'a T) -> f64 {

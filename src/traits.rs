@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 // Indicator traits
 //
 
@@ -15,7 +17,7 @@ pub trait Reset {
 /// [MACD](indicators/struct.MovingAverageConvergenceDivergence.html) it is `(f64, f64, f64)` since
 /// MACD returns 3 values.
 ///
-pub trait Next<T> {
+pub trait Next<'a, T>: Serialize + Deserialize<'a> {
     type Output;
     fn next(&mut self, input: T) -> Self::Output;
 }

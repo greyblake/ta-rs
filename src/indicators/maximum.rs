@@ -3,6 +3,7 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::{High, Next, Reset};
+use serde::{Deserialize, Serialize};
 
 /// Returns the highest value in a given time frame.
 ///
@@ -23,7 +24,7 @@ use crate::{High, Next, Reset};
 /// assert_eq!(max.next(4.0), 5.0);
 /// assert_eq!(max.next(8.0), 8.0);
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Maximum {
     n: usize,
     vec: Vec<f64>,
@@ -63,7 +64,7 @@ impl Maximum {
     }
 }
 
-impl Next<f64> for Maximum {
+impl<'a> Next<'a, f64> for Maximum {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -80,7 +81,7 @@ impl Next<f64> for Maximum {
     }
 }
 
-impl<'a, T: High> Next<&'a T> for Maximum {
+impl<'a, T: High> Next<'a, &'a T> for Maximum {
     type Output = f64;
 
     fn next(&mut self, input: &'a T) -> Self::Output {

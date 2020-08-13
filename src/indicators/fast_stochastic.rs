@@ -3,6 +3,7 @@ use std::fmt;
 use crate::errors::*;
 use crate::indicators::{Maximum, Minimum};
 use crate::{Close, High, Low, Next, Reset};
+use serde::{Deserialize, Serialize};
 
 /// Fast stochastic oscillator.
 ///
@@ -38,7 +39,7 @@ use crate::{Close, High, Low, Next, Reset};
 /// assert_eq!(stoch.next(35.0), 75.0);
 /// assert_eq!(stoch.next(15.0), 0.0);
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FastStochastic {
     length: u32,
     minimum: Minimum,
@@ -60,7 +61,7 @@ impl FastStochastic {
     }
 }
 
-impl Next<f64> for FastStochastic {
+impl<'a> Next<'a, f64> for FastStochastic {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -77,7 +78,7 @@ impl Next<f64> for FastStochastic {
     }
 }
 
-impl<'a, T: High + Low + Close> Next<&'a T> for FastStochastic {
+impl<'a, T: High + Low + Close> Next<'a, &'a T> for FastStochastic {
     type Output = f64;
 
     fn next(&mut self, input: &'a T) -> Self::Output {
