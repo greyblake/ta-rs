@@ -1,6 +1,7 @@
 language: rust
 rust:
-  - 1.33.0
+  - stable
+  - nightly
 install:
   - rustup component add rustfmt
   - rustup component add clippy
@@ -9,3 +10,6 @@ script:
   # - cargo clippy -- -D warnings
   - cargo test
   - cargo package
+jobs:
+  allow_failures:
+    - rust: nightly
