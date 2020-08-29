@@ -1,3 +1,7 @@
+#### v0.2.0 - 2020-09-??
+
+* Breaking: MovingAverageConvergenceDivergence now returns MovingAverageConvergenceDivergenceOutput instead of tuple
+
 #### v0.1.5 - 2019-12-16
 
 * StandardDeviation Implementation
