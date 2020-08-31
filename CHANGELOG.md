@@ -1,6 +1,8 @@
-#### v0.2.0 - 2020-09-??
+#### v0.2.0 - 2020-08-31
 
 * Breaking: MovingAverageConvergenceDivergence now returns MovingAverageConvergenceDivergenceOutput instead of tuple
+* Implement Keltner Channel (KC)
+* Update error-chain dependency: 0.11 -> 0.12
 
 #### v0.1.5 - 2019-12-16
 
