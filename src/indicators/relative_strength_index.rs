@@ -78,7 +78,7 @@ pub struct RelativeStrengthIndex {
 impl RelativeStrengthIndex {
     pub fn new(n: u32) -> Result<Self> {
         let rsi = Self {
-            n: n,
+            n,
             up_ema_indicator: Ema::new(n)?,
             down_ema_indicator: Ema::new(n)?,
             prev_val: 0.0,
