@@ -39,7 +39,7 @@ impl Minimum {
         }
 
         let indicator = Self {
-            n: n,
+            n,
             vec: vec![INFINITY; n],
             min_index: 0,
             cur_index: 0,

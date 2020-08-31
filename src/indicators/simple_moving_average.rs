@@ -51,7 +51,7 @@ impl SimpleMovingAverage {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
                 let indicator = Self {
-                    n: n,
+                    n,
                     index: 0,
                     count: 0,
                     sum: 0.0,

@@ -67,7 +67,7 @@ impl MoneyFlowIndex {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
                 let indicator = Self {
-                    n: n,
+                    n,
                     money_flows: VecDeque::with_capacity(n as usize + 1),
                     prev_typical_price: 0.0,
                     total_positive_money_flow: 0.0,
@@ -228,5 +228,4 @@ mod tests {
         let mfi = MoneyFlowIndex::new(10).unwrap();
         assert_eq!(format!("{}", mfi), "MFI(10)");
     }
-
 }

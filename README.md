@@ -82,8 +82,9 @@ So far there are the following indicators available.
   * Average True Range (AR)
   * Efficiency Ratio (ER)
   * Bollinger Bands (BB)
+  * Keltner Change (KC)
   * Rate of Change (ROC)
-  * OnBalanceVolume (OBV)
+  * On Balance Volume (OBV)
 
 ## Running benchmarks
 
@@ -102,3 +103,4 @@ cargo bench
 - [Bartoshko](https://github.com/Bartoshko) - BollingerBands
 - [shreyasdeotare](https://github.com/shreyasdeotare) Shreyas Deotare - MoneyFlowIndex, OnBalanceVolume
 - [edwardycl](https://github.com/edwardycl) - StandardDeviation Implementation & More Efficient BollingerBands
+- [rideron89](https://github.com/rideron89) Ron Rider - Keltner Channel

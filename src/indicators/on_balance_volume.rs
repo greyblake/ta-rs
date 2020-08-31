@@ -159,5 +159,4 @@ mod tests {
         let obv = OnBalanceVolume::new();
         assert_eq!(format!("{}", obv), "OBV");
     }
-
 }

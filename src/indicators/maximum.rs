@@ -40,7 +40,7 @@ impl Maximum {
         }
 
         let indicator = Self {
-            n: n,
+            n,
             vec: vec![-INFINITY; n],
             max_index: 0,
             cur_index: 0,
