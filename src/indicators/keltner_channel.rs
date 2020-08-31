@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::indicators::{AverageTrueRange, ExponentialMovingAverage};
-use crate::{Close, Next, Reset};
+use crate::{Close, High, Low, Next, Reset};
 
 /// Keltner Channel (KC).
 ///
@@ -96,11 +96,20 @@ impl Next<f64> for KeltnerChannel {
     }
 }
 
-impl<'a, T: Close> Next<&'a T> for KeltnerChannel {
+impl<'a, T: Close + High + Low> Next<&'a T> for KeltnerChannel {
     type Output = KeltnerChannelOutput;
 
     fn next(&mut self, input: &'a T) -> Self::Output {
-        self.next(input.close())
+        let typical_price = (input.close() + input.high() + input.low()) / 3.0;
+
+        let average = self.ema.next(typical_price);
+        let atr = self.atr.next(input);
+
+        Self::Output {
+            average,
+            upper: average + atr * self.multiplier,
+            lower: average - atr * self.multiplier,
+        }
     }
 }
 
@@ -163,6 +172,29 @@ mod tests {
     }
 
     #[test]
+    fn test_next_with_data_item() {
+        let mut kc = KeltnerChannel::new(3, 2.0_f64).unwrap();
+
+        let dt1 = Bar::new().low(1.2).high(1.7).close(1.3); // typical_price = 1.4
+        let o1 = kc.next(&dt1);
+        assert_eq!(round(o1.average), 1.4);
+        assert_eq!(round(o1.lower), 0.4);
+        assert_eq!(round(o1.upper), 2.4);
+
+        let dt2 = Bar::new().low(1.3).high(1.8).close(1.4); // typical_price = 1.5
+        let o2 = kc.next(&dt2);
+        assert_eq!(round(o2.average), 1.45);
+        assert_eq!(round(o2.lower), 0.45);
+        assert_eq!(round(o2.upper), 2.45);
+
+        let dt3 = Bar::new().low(1.4).high(1.9).close(1.5); // typical_price = 1.6
+        let o3 = kc.next(&dt3);
+        assert_eq!(round(o3.average), 1.525);
+        assert_eq!(round(o3.lower), 0.525);
+        assert_eq!(round(o3.upper), 2.525);
+    }
+
+    #[test]
     fn test_reset() {
         let mut kc = KeltnerChannel::new(5, 2.0_f64).unwrap();
 
@@ -185,8 +217,8 @@ mod tests {
         kc.reset();
         let out = kc.next(3.0);
         assert_eq!(out.average, 3.0);
-        assert_eq!(out.upper, 3.0);
         assert_eq!(out.lower, 3.0);
+        assert_eq!(out.upper, 3.0);
     }
 
     #[test]
