@@ -42,7 +42,7 @@ use crate::{Close, Next, Reset};
 ///
 /// # Links
 ///
-/// ![Bollinger Bands, Wikipedia](https://en.wikipedia.org/wiki/Bollinger_Bands)
+/// * [Bollinger Bands, Wikipedia](https://en.wikipedia.org/wiki/Bollinger_Bands)
 #[derive(Debug, Clone)]
 pub struct BollingerBands {
     length: u32,

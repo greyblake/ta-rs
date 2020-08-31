@@ -5,7 +5,7 @@ extern crate ta;
 use bencher::Bencher;
 use rand::Rng;
 use ta::indicators::{
-    BollingerBands, EfficiencyRatio, ExponentialMovingAverage, FastStochastic, Maximum, Minimum,
+    BollingerBands, EfficiencyRatio, ExponentialMovingAverage, FastStochastic, KeltnerChannel, Maximum, Minimum,
     MoneyFlowIndex, MovingAverageConvergenceDivergence, OnBalanceVolume, RateOfChange,
     RelativeStrengthIndex, SimpleMovingAverage, SlowStochastic, StandardDeviation, TrueRange,
 };
@@ -58,6 +58,7 @@ bench_indicators!(
     ExponentialMovingAverage,
     StandardDeviation,
     BollingerBands,
+    KeltnerChannel,
     EfficiencyRatio,
     FastStochastic,
     Maximum,
