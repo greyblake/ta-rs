@@ -74,6 +74,7 @@ So far there are the following indicators available.
   * Fast Stochastic
   * Slow Stochastic
   * Moving Average Convergence Divergence (MACD)
+  * Percentage Price Oscillator (PPO)
   * Money Flow Index (MFI)
 * Other
   * Minimum
@@ -104,3 +105,4 @@ cargo bench
 - [shreyasdeotare](https://github.com/shreyasdeotare) Shreyas Deotare - MoneyFlowIndex, OnBalanceVolume
 - [edwardycl](https://github.com/edwardycl) - StandardDeviation Implementation & More Efficient BollingerBands
 - [rideron89](https://github.com/rideron89) Ron Rider - Keltner Channel
+- [tirz](https://github.com/tirz) - Percentage Price Oscillator
