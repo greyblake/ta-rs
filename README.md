@@ -82,7 +82,7 @@ So far there are the following indicators available.
   * Average True Range (AR)
   * Efficiency Ratio (ER)
   * Bollinger Bands (BB)
-  * Keltner Change (KC)
+  * Keltner Channel (KC)
   * Rate of Change (ROC)
   * On Balance Volume (OBV)
 
