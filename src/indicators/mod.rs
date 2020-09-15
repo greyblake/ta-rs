@@ -33,6 +33,11 @@ pub use self::moving_average_convergence_divergence::{
     MovingAverageConvergenceDivergence, MovingAverageConvergenceDivergenceOutput,
 };
 
+mod percentage_price_oscillator;
+pub use self::percentage_price_oscillator::{
+    PercentagePriceOscillator, PercentagePriceOscillatorOutput,
+};
+
 mod efficiency_ratio;
 pub use self::efficiency_ratio::EfficiencyRatio;
 

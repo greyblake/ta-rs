@@ -7,8 +7,8 @@ use rand::Rng;
 use ta::indicators::{
     BollingerBands, EfficiencyRatio, ExponentialMovingAverage, FastStochastic, KeltnerChannel,
     Maximum, Minimum, MoneyFlowIndex, MovingAverageConvergenceDivergence, OnBalanceVolume,
-    RateOfChange, RelativeStrengthIndex, SimpleMovingAverage, SlowStochastic, StandardDeviation,
-    TrueRange,
+    PercentagePriceOscillator, RateOfChange, RelativeStrengthIndex, SimpleMovingAverage,
+    SlowStochastic, StandardDeviation, TrueRange,
 };
 use ta::DataItem;
 use ta::Next;
@@ -65,6 +65,7 @@ bench_indicators!(
     Maximum,
     Minimum,
     MovingAverageConvergenceDivergence,
+    PercentagePriceOscillator,
     RateOfChange,
     RelativeStrengthIndex,
     SlowStochastic,
