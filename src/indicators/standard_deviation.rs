@@ -73,10 +73,14 @@ impl Next<f64> for StandardDeviation {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        self.index = (self.index + 1) % (self.n as usize);
-
         let old_val = self.vec[self.index];
         self.vec[self.index] = input;
+
+        self.index = if self.index + 1 < self.n as usize {
+            self.index + 1
+        } else {
+            0
+        };
 
         if self.count < self.n {
             self.count += 1;

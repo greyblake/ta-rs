@@ -67,7 +67,6 @@ impl Next<f64> for Minimum {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        self.cur_index = (self.cur_index + 1) % (self.n as usize);
         self.vec[self.cur_index] = input;
 
         if input < self.vec[self.min_index] {
@@ -75,6 +74,12 @@ impl Next<f64> for Minimum {
         } else if self.min_index == self.cur_index {
             self.min_index = self.find_min_index();
         }
+
+        self.cur_index = if self.cur_index + 1 < self.n as usize {
+            self.cur_index + 1
+        } else {
+            0
+        };
 
         self.vec[self.min_index]
     }
