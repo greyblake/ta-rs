@@ -1,6 +1,7 @@
 #### Unreleased
 
 * Implement Percentage Price Oscillator (PPO)
+* More efficient SimpleMovingAverage
 
 #### v0.2.0 - 2020-08-31
 
