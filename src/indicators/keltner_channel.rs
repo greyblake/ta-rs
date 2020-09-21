@@ -96,10 +96,10 @@ impl Next<f64> for KeltnerChannel {
     }
 }
 
-impl<'a, T: Close + High + Low> Next<&'a T> for KeltnerChannel {
+impl<T: Close + High + Low> Next<&T> for KeltnerChannel {
     type Output = KeltnerChannelOutput;
 
-    fn next(&mut self, input: &'a T) -> Self::Output {
+    fn next(&mut self, input: &T) -> Self::Output {
         let typical_price = (input.close() + input.high() + input.low()) / 3.0;
 
         let average = self.ema.next(typical_price);

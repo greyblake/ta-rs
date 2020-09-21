@@ -77,10 +77,10 @@ impl Next<f64> for FastStochastic {
     }
 }
 
-impl<'a, T: High + Low + Close> Next<&'a T> for FastStochastic {
+impl<T: High + Low + Close> Next<&T> for FastStochastic {
     type Output = f64;
 
-    fn next(&mut self, input: &'a T) -> Self::Output {
+    fn next(&mut self, input: &T) -> Self::Output {
         let highest = self.maximum.next(input.high());
         let lowest = self.minimum.next(input.low());
         let close = input.close();

@@ -97,10 +97,10 @@ impl Next<f64> for PercentagePriceOscillator {
     }
 }
 
-impl<'a, T: Close> Next<&'a T> for PercentagePriceOscillator {
+impl<T: Close> Next<&T> for PercentagePriceOscillator {
     type Output = PercentagePriceOscillatorOutput;
 
-    fn next(&mut self, input: &'a T) -> Self::Output {
+    fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
     }
 }

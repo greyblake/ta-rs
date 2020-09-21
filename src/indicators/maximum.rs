@@ -80,10 +80,10 @@ impl Next<f64> for Maximum {
     }
 }
 
-impl<'a, T: High> Next<&'a T> for Maximum {
+impl<T: High> Next<&T> for Maximum {
     type Output = f64;
 
-    fn next(&mut self, input: &'a T) -> Self::Output {
+    fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.high())
     }
 }
