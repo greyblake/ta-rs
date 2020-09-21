@@ -18,8 +18,7 @@ Technical analysis library for Rust.
 Add to you `Cargo.toml`:
 ```
 [dependencies]
-
-ta = "0.1.5"
+ta = "0.2.0"
 ```
 
 Example:

@@ -7,6 +7,7 @@
 * More efficient StandardDeviation
 * More efficient Minimum
 * More efficient Maximum
+* More efficient SimpleMovingAverage
 
 #### v0.2.0 - 2020-08-31
 
