@@ -93,10 +93,10 @@ impl Next<f64> for BollingerBands {
     }
 }
 
-impl<'a, T: Close> Next<&'a T> for BollingerBands {
+impl<T: Close> Next<&T> for BollingerBands {
     type Output = BollingerBandsOutput;
 
-    fn next(&mut self, input: &'a T) -> Self::Output {
+    fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
     }
 }

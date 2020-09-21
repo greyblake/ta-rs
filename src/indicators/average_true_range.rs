@@ -77,10 +77,10 @@ impl Next<f64> for AverageTrueRange {
     }
 }
 
-impl<'a, T: High + Low + Close> Next<&'a T> for AverageTrueRange {
+impl<T: High + Low + Close> Next<&T> for AverageTrueRange {
     type Output = f64;
 
-    fn next(&mut self, input: &'a T) -> Self::Output {
+    fn next(&mut self, input: &T) -> Self::Output {
         self.ema.next(self.true_range.next(input))
     }
 }

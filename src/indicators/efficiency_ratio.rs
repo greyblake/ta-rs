@@ -83,10 +83,10 @@ impl Next<f64> for EfficiencyRatio {
     }
 }
 
-impl<'a, T: Close> Next<&'a T> for EfficiencyRatio {
+impl<T: Close> Next<&T> for EfficiencyRatio {
     type Output = f64;
 
-    fn next(&mut self, input: &'a T) -> f64 {
+    fn next(&mut self, input: &T) -> f64 {
         self.next(input.close())
     }
 }

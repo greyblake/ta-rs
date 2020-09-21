@@ -80,10 +80,10 @@ impl Next<f64> for RateOfChange {
     }
 }
 
-impl<'a, T: Close> Next<&'a T> for RateOfChange {
+impl<T: Close> Next<&T> for RateOfChange {
     type Output = f64;
 
-    fn next(&mut self, input: &'a T) -> f64 {
+    fn next(&mut self, input: &T) -> f64 {
         self.next(input.close())
     }
 }

@@ -83,10 +83,10 @@ impl Next<f64> for TrueRange {
     }
 }
 
-impl<'a, T: High + Low + Close> Next<&'a T> for TrueRange {
+impl<T: High + Low + Close> Next<&T> for TrueRange {
     type Output = f64;
 
-    fn next(&mut self, bar: &'a T) -> Self::Output {
+    fn next(&mut self, bar: &T) -> Self::Output {
         let max_dist = match self.prev_close {
             Some(prev_close) => {
                 let dist1 = bar.high() - bar.low();

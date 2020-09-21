@@ -98,10 +98,10 @@ impl Next<f64> for MovingAverageConvergenceDivergence {
     }
 }
 
-impl<'a, T: Close> Next<&'a T> for MovingAverageConvergenceDivergence {
+impl<T: Close> Next<&T> for MovingAverageConvergenceDivergence {
     type Output = MovingAverageConvergenceDivergenceOutput;
 
-    fn next(&mut self, input: &'a T) -> Self::Output {
+    fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
     }
 }
