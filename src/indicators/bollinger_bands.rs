@@ -1,8 +1,8 @@
 use std::fmt;
 
-use crate::errors::*;
+use crate::errors::Result;
 use crate::indicators::StandardDeviation as Sd;
-use crate::{Close, Next, Reset};
+use crate::{Close, Next, Period, Reset};
 
 /// A Bollinger Bands (BB).
 /// (BB).
@@ -45,7 +45,7 @@ use crate::{Close, Next, Reset};
 /// * [Bollinger Bands, Wikipedia](https://en.wikipedia.org/wiki/Bollinger_Bands)
 #[derive(Debug, Clone)]
 pub struct BollingerBands {
-    length: u32,
+    period: usize,
     multiplier: f64,
     sd: Sd,
 }
@@ -58,23 +58,22 @@ pub struct BollingerBandsOutput {
 }
 
 impl BollingerBands {
-    pub fn new(length: u32, multiplier: f64) -> Result<Self> {
-        if multiplier <= 0.0 {
-            return Err(Error::from_kind(ErrorKind::InvalidParameter));
-        }
+    pub fn new(period: usize, multiplier: f64) -> Result<Self> {
         Ok(Self {
-            length,
+            period,
             multiplier,
-            sd: Sd::new(length)?,
+            sd: Sd::new(period)?,
         })
-    }
-
-    pub fn length(&self) -> u32 {
-        self.length
     }
 
     pub fn multiplier(&self) -> f64 {
         self.multiplier
+    }
+}
+
+impl Period for BollingerBands {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 
@@ -115,7 +114,7 @@ impl Default for BollingerBands {
 
 impl fmt::Display for BollingerBands {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "BB({}, {})", self.length, self.multiplier)
+        write!(f, "BB({}, {})", self.period, self.multiplier)
     }
 }
 

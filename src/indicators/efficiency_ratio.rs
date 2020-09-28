@@ -1,8 +1,8 @@
 use std::collections::VecDeque;
 use std::fmt;
 
-use crate::errors::*;
-use crate::traits::{Close, Next, Reset};
+use crate::errors::{Error, ErrorKind, Result};
+use crate::traits::{Close, Next, Period, Reset};
 
 /// Kaufman's Efficiency Ratio (ER).
 ///
@@ -11,7 +11,7 @@ use crate::traits::{Close, Next, Reset};
 ///
 /// # Parameters
 ///
-/// * _length_ - number of periods (integer greater than 0)
+/// * _period_ - number of periods (integer greater than 0)
 ///
 /// # Example
 ///
@@ -29,21 +29,25 @@ use crate::traits::{Close, Next, Reset};
 /// ```
 
 pub struct EfficiencyRatio {
-    length: u32,
+    period: usize,
     prices: VecDeque<f64>,
 }
 
 impl EfficiencyRatio {
-    pub fn new(length: u32) -> Result<Self> {
-        if length == 0 {
-            Err(Error::from_kind(ErrorKind::InvalidParameter))
-        } else {
-            let indicator = Self {
-                length: length,
-                prices: VecDeque::with_capacity(length as usize + 1),
-            };
-            Ok(indicator)
+    pub fn new(period: usize) -> Result<Self> {
+        match period {
+            0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
+            _ => Ok(Self {
+                period,
+                prices: VecDeque::with_capacity(period + 1),
+            }),
         }
+    }
+}
+
+impl Period for EfficiencyRatio {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 
@@ -74,7 +78,7 @@ impl Next<f64> for EfficiencyRatio {
         let direction = (first - self.prices[last_index]).abs();
 
         // Get rid of the first element
-        if self.prices.len() > (self.length as usize) {
+        if self.prices.len() > self.period {
             self.prices.pop_front();
         }
 
@@ -105,7 +109,7 @@ impl Default for EfficiencyRatio {
 
 impl fmt::Display for EfficiencyRatio {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ER({})", self.length)
+        write!(f, "ER({})", self.period)
     }
 }
 

@@ -1,8 +1,8 @@
 use std::fmt;
 
-use crate::errors::*;
+use crate::errors::Result;
 use crate::indicators::{Maximum, Minimum};
-use crate::{Close, High, Low, Next, Reset};
+use crate::{Close, High, Low, Next, Period, Reset};
 
 /// Fast stochastic oscillator.
 ///
@@ -23,7 +23,7 @@ use crate::{Close, High, Low, Next, Reset};
 ///
 /// # Parameters
 ///
-/// * _length_ - number of periods (integer greater than 0). Default is 14.
+/// * _period_ - number of periods (integer greater than 0). Default is 14.
 ///
 /// # Example
 ///
@@ -40,23 +40,24 @@ use crate::{Close, High, Low, Next, Reset};
 /// ```
 #[derive(Debug, Clone)]
 pub struct FastStochastic {
-    length: u32,
+    period: usize,
     minimum: Minimum,
     maximum: Maximum,
 }
 
 impl FastStochastic {
-    pub fn new(length: u32) -> Result<Self> {
-        let indicator = Self {
-            length: length,
-            minimum: Minimum::new(length)?,
-            maximum: Maximum::new(length)?,
-        };
-        Ok(indicator)
+    pub fn new(period: usize) -> Result<Self> {
+        Ok(Self {
+            period,
+            minimum: Minimum::new(period)?,
+            maximum: Maximum::new(period)?,
+        })
     }
+}
 
-    pub fn length(&self) -> u32 {
-        self.length
+impl Period for FastStochastic {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 
@@ -109,7 +110,7 @@ impl Default for FastStochastic {
 
 impl fmt::Display for FastStochastic {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "FAST_STOCH({})", self.length)
+        write!(f, "FAST_STOCH({})", self.period)
     }
 }
 

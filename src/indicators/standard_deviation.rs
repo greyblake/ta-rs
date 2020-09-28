@@ -1,7 +1,7 @@
 use std::fmt;
 
-use crate::errors::*;
-use crate::{Close, Next, Reset};
+use crate::errors::{Error, ErrorKind, Result};
+use crate::{Close, Next, Period, Reset};
 
 /// Standard deviation (SD).
 ///
@@ -14,12 +14,12 @@ use crate::{Close, Next, Reset};
 /// Where:
 ///
 /// * _σ_ - value of standard deviation for N given probes.
-/// * _N_ - number of probes in observation.
+/// * _period_ - number of probes in observation.
 /// * _x<sub>i</sub>_ - i-th observed value from N elements observation.
 ///
 /// # Parameters
 ///
-/// * _n_ - number of periods (integer greater than 0)
+/// * _period_ - number of periods (integer greater than 0)
 ///
 /// # Example
 ///
@@ -38,29 +38,26 @@ use crate::{Close, Next, Reset};
 ///
 #[derive(Debug, Clone)]
 pub struct StandardDeviation {
-    n: u32,
+    period: usize,
     index: usize,
-    count: u32,
+    count: usize,
     m: f64,
     m2: f64,
-    vec: Vec<f64>,
+    deque: Box<[f64]>,
 }
 
 impl StandardDeviation {
-    pub fn new(n: u32) -> Result<Self> {
-        match n {
+    pub fn new(period: usize) -> Result<Self> {
+        match period {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
-            _ => {
-                let std = StandardDeviation {
-                    n,
-                    index: 0,
-                    count: 0,
-                    m: 0.0,
-                    m2: 0.0,
-                    vec: vec![0.0; n as usize],
-                };
-                Ok(std)
-            }
+            _ => Ok(Self {
+                period,
+                index: 0,
+                count: 0,
+                m: 0.0,
+                m2: 0.0,
+                deque: vec![0.0; period].into_boxed_slice(),
+            }),
         }
     }
 
@@ -69,20 +66,26 @@ impl StandardDeviation {
     }
 }
 
+impl Period for StandardDeviation {
+    fn period(&self) -> usize {
+        self.period
+    }
+}
+
 impl Next<f64> for StandardDeviation {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        let old_val = self.vec[self.index];
-        self.vec[self.index] = input;
+        let old_val = self.deque[self.index];
+        self.deque[self.index] = input;
 
-        self.index = if self.index + 1 < self.n as usize {
+        self.index = if self.index + 1 < self.period {
             self.index + 1
         } else {
             0
         };
 
-        if self.count < self.n {
+        if self.count < self.period {
             self.count += 1;
             let delta = input - self.m;
             self.m += delta / self.count as f64;
@@ -91,7 +94,7 @@ impl Next<f64> for StandardDeviation {
         } else {
             let delta = input - old_val;
             let old_m = self.m;
-            self.m += delta / self.n as f64;
+            self.m += delta / self.period as f64;
             let delta2 = input - self.m + old_val - old_m;
             self.m2 += delta * delta2;
         }
@@ -114,8 +117,8 @@ impl Reset for StandardDeviation {
         self.count = 0;
         self.m = 0.0;
         self.m2 = 0.0;
-        for i in 0..(self.n as usize) {
-            self.vec[i] = 0.0;
+        for i in 0..self.period {
+            self.deque[i] = 0.0;
         }
     }
 }
@@ -128,7 +131,7 @@ impl Default for StandardDeviation {
 
 impl fmt::Display for StandardDeviation {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "SD({})", self.n)
+        write!(f, "SD({})", self.period)
     }
 }
 

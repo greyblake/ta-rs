@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::{ExponentialMovingAverage, FastStochastic};
-use crate::{Close, High, Low, Next, Reset};
+use crate::{Close, High, Low, Next, Period, Reset};
 
 /// Slow stochastic oscillator.
 ///
@@ -10,8 +10,8 @@ use crate::{Close, High, Low, Next, Reset};
 ///
 /// # Parameters
 ///
-/// * _stochastic_n_ - number of periods for fast stochastic (integer greater than 0). Default is 14.
-/// *_ema_n_ - length for EMA (integer greater than 0). Default is 3.
+/// * _stochastic_period_ - number of periods for fast stochastic (integer greater than 0). Default is 14.
+/// *_ema_period_ - period for EMA (integer greater than 0). Default is 3.
 ///
 /// # Example
 ///
@@ -33,12 +33,11 @@ pub struct SlowStochastic {
 }
 
 impl SlowStochastic {
-    pub fn new(stochastic_n: u32, ema_n: u32) -> Result<Self> {
-        let indicator = Self {
-            fast_stochastic: FastStochastic::new(stochastic_n)?,
-            ema: ExponentialMovingAverage::new(ema_n)?,
-        };
-        Ok(indicator)
+    pub fn new(stochastic_period: usize, ema_period: usize) -> Result<Self> {
+        Ok(Self {
+            fast_stochastic: FastStochastic::new(stochastic_period)?,
+            ema: ExponentialMovingAverage::new(ema_period)?,
+        })
     }
 }
 
@@ -76,8 +75,8 @@ impl fmt::Display for SlowStochastic {
         write!(
             f,
             "SLOW_STOCH({}, {})",
-            self.fast_stochastic.length(),
-            self.ema.length()
+            self.fast_stochastic.period(),
+            self.ema.period(),
         )
     }
 }
