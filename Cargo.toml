@@ -6,8 +6,8 @@ edition = "2018"
 description = "Technical analysis library. Implements number of indicators: EMA, SMA, RSI, MACD, Stochastic, etc."
 keywords = ["technical-analysis", "financial", "ema", "indicators", "trading"]
 license = "MIT"
-repository = "https://github.com/greyblake/ta-rs"
-homepage = "https://github.com/greyblake/ta-rs"
+repository = "https://github.com/dgunay/ta-rs"
+homepage = "https://github.com/dgunay/ta-rs"
 documentation = "https://docs.rs/ta"
 readme = "README.md"
 categories = ["science", "algorithms"]
@@ -18,10 +18,11 @@ include = [
 ]
 
 [badges]
-travis-ci = { repository = "greyblake/ta-rs", branch = "master" }
+travis-ci = { repository = "dgunay/ta-rs", branch = "master" }
 
 [dependencies]
 error-chain = "0.12"
+serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
 assert_approx_eq = "1.0.0"

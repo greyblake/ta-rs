@@ -3,6 +3,7 @@ use std::fmt;
 use crate::errors::*;
 use crate::indicators::ExponentialMovingAverage as Ema;
 use crate::{Close, Next, Reset};
+use serde::{Deserialize, Serialize};
 
 /// Moving average converge divergence (MACD).
 ///
@@ -48,7 +49,7 @@ use crate::{Close, Next, Reset};
 ///     (n0, n1, n2)
 /// }
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MovingAverageConvergenceDivergence {
     fast_ema: Ema,
     slow_ema: Ema,
@@ -79,7 +80,7 @@ impl From<MovingAverageConvergenceDivergenceOutput> for (f64, f64, f64) {
     }
 }
 
-impl Next<f64> for MovingAverageConvergenceDivergence {
+impl<'a> Next<'a, f64> for MovingAverageConvergenceDivergence {
     type Output = MovingAverageConvergenceDivergenceOutput;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -98,7 +99,7 @@ impl Next<f64> for MovingAverageConvergenceDivergence {
     }
 }
 
-impl<T: Close> Next<&T> for MovingAverageConvergenceDivergence {
+impl<'a, T: Close> Next<'a, &'a T> for MovingAverageConvergenceDivergence {
     type Output = MovingAverageConvergenceDivergenceOutput;
 
     fn next(&mut self, input: &T) -> Self::Output {

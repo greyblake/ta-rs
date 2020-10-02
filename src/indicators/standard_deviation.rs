@@ -2,6 +2,7 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::{Close, Next, Reset};
+use serde::{Deserialize, Serialize};
 
 /// Standard deviation (SD).
 ///
@@ -36,7 +37,7 @@ use crate::{Close, Next, Reset};
 ///
 /// * [Standard Deviation, Wikipedia](https://en.wikipedia.org/wiki/Standard_deviation)
 ///
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StandardDeviation {
     n: u32,
     index: usize,
@@ -69,7 +70,7 @@ impl StandardDeviation {
     }
 }
 
-impl Next<f64> for StandardDeviation {
+impl<'a> Next<'a, f64> for StandardDeviation {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -100,7 +101,7 @@ impl Next<f64> for StandardDeviation {
     }
 }
 
-impl<T: Close> Next<&T> for StandardDeviation {
+impl<'a, T: Close> Next<'a, &'a T> for StandardDeviation {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> Self::Output {

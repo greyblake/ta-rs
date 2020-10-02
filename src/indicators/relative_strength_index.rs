@@ -3,6 +3,7 @@ use std::fmt;
 use crate::errors::*;
 use crate::indicators::ExponentialMovingAverage as Ema;
 use crate::{Close, Next, Reset};
+use serde::{Deserialize, Serialize};
 
 /// The relative strength index (RSI).
 ///
@@ -66,7 +67,7 @@ use crate::{Close, Next, Reset};
 /// * [Relative strength index (Wikipedia)](https://en.wikipedia.org/wiki/Relative_strength_index)
 /// * [RSI (Investopedia)](http://www.investopedia.com/terms/r/rsi.asp)
 ///
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RelativeStrengthIndex {
     n: u32,
     up_ema_indicator: Ema,
@@ -88,7 +89,7 @@ impl RelativeStrengthIndex {
     }
 }
 
-impl Next<f64> for RelativeStrengthIndex {
+impl<'a> Next<'a, f64> for RelativeStrengthIndex {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -115,7 +116,7 @@ impl Next<f64> for RelativeStrengthIndex {
     }
 }
 
-impl<T: Close> Next<&T> for RelativeStrengthIndex {
+impl<'a, T: Close> Next<'a, &'a T> for RelativeStrengthIndex {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> Self::Output {

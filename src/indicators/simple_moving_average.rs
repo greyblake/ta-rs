@@ -2,6 +2,7 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::{Close, Next, Reset};
+use serde::{Deserialize, Serialize};
 
 /// Simple moving average (SMA).
 ///
@@ -36,7 +37,7 @@ use crate::{Close, Next, Reset};
 ///
 /// * [Simple Moving Average, Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average)
 ///
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SimpleMovingAverage {
     length: u32,
     index: usize,
@@ -67,7 +68,7 @@ impl SimpleMovingAverage {
     }
 }
 
-impl Next<f64> for SimpleMovingAverage {
+impl<'a> Next<'a, f64> for SimpleMovingAverage {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -89,7 +90,7 @@ impl Next<f64> for SimpleMovingAverage {
     }
 }
 
-impl<T: Close> Next<&T> for SimpleMovingAverage {
+impl<'a, T: Close> Next<'a, &'a T> for SimpleMovingAverage {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> Self::Output {
