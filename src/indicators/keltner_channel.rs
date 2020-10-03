@@ -3,6 +3,7 @@ use std::fmt;
 use crate::errors::*;
 use crate::indicators::{AverageTrueRange, ExponentialMovingAverage};
 use crate::{Close, High, Low, Next, Reset};
+#[cfg(feature = "serde_support")]
 use serde::{Deserialize, Serialize};
 
 /// Keltner Channel (KC).
@@ -45,7 +46,8 @@ use serde::{Deserialize, Serialize};
 /// # Links
 ///
 /// * [Keltner channel, Wikipedia](https://en.wikipedia.org/wiki/Keltner_channel)
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde_support", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone)]
 pub struct KeltnerChannel {
     length: u32,
     multiplier: f64,
@@ -82,7 +84,7 @@ impl KeltnerChannel {
     }
 }
 
-impl<'a> Next<'a, f64> for KeltnerChannel {
+impl<'a> Next<f64> for KeltnerChannel {
     type Output = KeltnerChannelOutput;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -97,7 +99,7 @@ impl<'a> Next<'a, f64> for KeltnerChannel {
     }
 }
 
-impl<'a, T: Close + High + Low> Next<'a, &T> for KeltnerChannel {
+impl<'a, T: Close + High + Low> Next<&T> for KeltnerChannel {
     type Output = KeltnerChannelOutput;
 
     fn next(&mut self, input: &T) -> Self::Output {

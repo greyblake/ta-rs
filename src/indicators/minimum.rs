@@ -3,6 +3,7 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::{Low, Next, Reset};
+#[cfg(feature = "serde_support")]
 use serde::{Deserialize, Serialize};
 
 /// Returns the lowest value in a given time frame.
@@ -23,7 +24,8 @@ use serde::{Deserialize, Serialize};
 /// assert_eq!(min.next(12.0), 10.0);
 /// assert_eq!(min.next(13.0), 11.0);
 /// ```
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde_support", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone)]
 pub struct Minimum {
     n: usize,
     vec: Vec<f64>,
@@ -64,7 +66,7 @@ impl Minimum {
     }
 }
 
-impl<'a> Next<'a, f64> for Minimum {
+impl<'a> Next<f64> for Minimum {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -86,7 +88,7 @@ impl<'a> Next<'a, f64> for Minimum {
     }
 }
 
-impl<'a, T: Low> Next<'a, &'a T> for Minimum {
+impl<'a, T: Low> Next<&'a T> for Minimum {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> Self::Output {

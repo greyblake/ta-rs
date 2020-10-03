@@ -3,6 +3,7 @@ use std::fmt;
 use crate::errors::*;
 use crate::indicators::ExponentialMovingAverage as Ema;
 use crate::{Close, Next, Reset};
+#[cfg(feature = "serde_support")]
 use serde::{Deserialize, Serialize};
 
 /// Percentage Price Oscillator (PPO).
@@ -49,7 +50,8 @@ use serde::{Deserialize, Serialize};
 ///     (n0, n1, n2)
 /// }
 /// ```
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[cfg_attr(feature = "serde_support", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone)]
 pub struct PercentagePriceOscillator {
     fast_ema: Ema,
     slow_ema: Ema,
@@ -79,7 +81,7 @@ impl From<PercentagePriceOscillatorOutput> for (f64, f64, f64) {
     }
 }
 
-impl<'a> Next<'a, f64> for PercentagePriceOscillator {
+impl<'a> Next<f64> for PercentagePriceOscillator {
     type Output = PercentagePriceOscillatorOutput;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -98,7 +100,7 @@ impl<'a> Next<'a, f64> for PercentagePriceOscillator {
     }
 }
 
-impl<'a, T: Close> Next<'a, &T> for PercentagePriceOscillator {
+impl<'a, T: Close> Next<&T> for PercentagePriceOscillator {
     type Output = PercentagePriceOscillatorOutput;
 
     fn next(&mut self, input: &T) -> Self::Output {

@@ -3,6 +3,7 @@ use std::fmt;
 use crate::errors::*;
 use crate::indicators::StandardDeviation as Sd;
 use crate::{Close, Next, Reset};
+#[cfg(feature = "serde_support")]
 use serde::{Deserialize, Serialize};
 
 /// A Bollinger Bands (BB).
@@ -44,7 +45,8 @@ use serde::{Deserialize, Serialize};
 /// # Links
 ///
 /// ![Bollinger Bands, Wikipedia](https://en.wikipedia.org/wiki/Bollinger_Bands)
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde_support", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone)]
 pub struct BollingerBands {
     length: u32,
     multiplier: f64,
@@ -79,7 +81,7 @@ impl BollingerBands {
     }
 }
 
-impl<'a> Next<'a, f64> for BollingerBands {
+impl<'a> Next<f64> for BollingerBands {
     type Output = BollingerBandsOutput;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -94,7 +96,7 @@ impl<'a> Next<'a, f64> for BollingerBands {
     }
 }
 
-impl<'a, T: Close> Next<'a, &'a T> for BollingerBands {
+impl<'a, T: Close> Next<&'a T> for BollingerBands {
     type Output = BollingerBandsOutput;
 
     fn next(&mut self, input: &T) -> Self::Output {

@@ -10,6 +10,7 @@ mod test {
 
     // Simple smoke test that serde works (not sure if this is really necessary)
     #[test]
+    #[cfg(feature = "serde_support")]
     fn test_serde() {
         let mut macd = SimpleMovingAverage::new(20).unwrap();
         let bytes = bincode::serialize(&macd).unwrap();

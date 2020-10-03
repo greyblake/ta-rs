@@ -17,12 +17,15 @@ include = [
     "README.md"
 ]
 
+[features]
+serde_support = ["serde"]
+
 [badges]
 travis-ci = { repository = "greyblake/ta-rs", branch = "master" }
 
 [dependencies]
 error-chain = "0.12"
-serde = { version = "1.0", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"], optional = true}
 
 [dev-dependencies]
 assert_approx_eq = "1.0.0"

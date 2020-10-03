@@ -3,6 +3,7 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::{Close, High, Low, Next, Reset, Volume};
+#[cfg(feature = "serde_support")]
 use serde::{Deserialize, Serialize};
 
 /// Money Flow Index (MFI).
@@ -52,7 +53,8 @@ use serde::{Deserialize, Serialize};
 /// * [Money Flow Index, Wikipedia](https://en.wikipedia.org/wiki/Money_flow_index)
 /// * [Money Flow Index, stockcharts](https://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:money_flow_index_mfi)
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde_support", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone)]
 pub struct MoneyFlowIndex {
     n: u32,
     money_flows: VecDeque<f64>,
@@ -81,7 +83,7 @@ impl MoneyFlowIndex {
     }
 }
 
-impl<'a, T: High + Low + Close + Volume> Next<'a, &'a T> for MoneyFlowIndex {
+impl<'a, T: High + Low + Close + Volume> Next<&'a T> for MoneyFlowIndex {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> f64 {

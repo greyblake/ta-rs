@@ -3,6 +3,7 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::traits::{Close, Next, Reset};
+#[cfg(feature = "serde_support")]
 use serde::{Deserialize, Serialize};
 
 /// Rate of Change (ROC)
@@ -38,7 +39,8 @@ use serde::{Deserialize, Serialize};
 ///
 /// * [Rate of Change, Wikipedia](https://en.wikipedia.org/wiki/Momentum_(technical_analysis))
 ///
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde_support", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone)]
 pub struct RateOfChange {
     length: u32,
     prices: VecDeque<f64>,
@@ -59,7 +61,7 @@ impl RateOfChange {
     }
 }
 
-impl<'a> Next<'a, f64> for RateOfChange {
+impl<'a> Next<f64> for RateOfChange {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> f64 {
@@ -81,7 +83,7 @@ impl<'a> Next<'a, f64> for RateOfChange {
     }
 }
 
-impl<'a, T: Close> Next<'a, &'a T> for RateOfChange {
+impl<'a, T: Close> Next<&'a T> for RateOfChange {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> f64 {
