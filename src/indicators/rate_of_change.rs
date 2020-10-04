@@ -61,7 +61,7 @@ impl RateOfChange {
     }
 }
 
-impl<'a> Next<f64> for RateOfChange {
+impl Next<f64> for RateOfChange {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> f64 {

@@ -83,7 +83,7 @@ impl ExponentialMovingAverage {
     }
 }
 
-impl<'a> Next<f64> for ExponentialMovingAverage {
+impl Next<f64> for ExponentialMovingAverage {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {

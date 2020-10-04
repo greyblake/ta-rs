@@ -81,7 +81,7 @@ impl From<PercentagePriceOscillatorOutput> for (f64, f64, f64) {
     }
 }
 
-impl<'a> Next<f64> for PercentagePriceOscillator {
+impl Next<f64> for PercentagePriceOscillator {
     type Output = PercentagePriceOscillatorOutput;
 
     fn next(&mut self, input: f64) -> Self::Output {

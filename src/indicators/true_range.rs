@@ -73,7 +73,7 @@ impl fmt::Display for TrueRange {
     }
 }
 
-impl<'a> Next<f64> for TrueRange {
+impl Next<f64> for TrueRange {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {

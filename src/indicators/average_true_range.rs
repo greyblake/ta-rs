@@ -73,7 +73,7 @@ impl AverageTrueRange {
     }
 }
 
-impl<'a> Next<f64> for AverageTrueRange {
+impl Next<f64> for AverageTrueRange {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {

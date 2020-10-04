@@ -81,7 +81,7 @@ impl BollingerBands {
     }
 }
 
-impl<'a> Next<f64> for BollingerBands {
+impl Next<f64> for BollingerBands {
     type Output = BollingerBandsOutput;
 
     fn next(&mut self, input: f64) -> Self::Output {

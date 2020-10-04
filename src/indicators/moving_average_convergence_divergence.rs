@@ -82,7 +82,7 @@ impl From<MovingAverageConvergenceDivergenceOutput> for (f64, f64, f64) {
     }
 }
 
-impl<'a> Next<f64> for MovingAverageConvergenceDivergence {
+impl Next<f64> for MovingAverageConvergenceDivergence {
     type Output = MovingAverageConvergenceDivergenceOutput;
 
     fn next(&mut self, input: f64) -> Self::Output {

@@ -63,7 +63,7 @@ impl FastStochastic {
     }
 }
 
-impl<'a> Next<f64> for FastStochastic {
+impl Next<f64> for FastStochastic {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {

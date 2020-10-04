@@ -50,7 +50,7 @@ impl EfficiencyRatio {
     }
 }
 
-impl<'a> Next<f64> for EfficiencyRatio {
+impl Next<f64> for EfficiencyRatio {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> f64 {
