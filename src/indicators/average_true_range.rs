@@ -3,6 +3,8 @@ use std::fmt;
 use crate::errors::*;
 use crate::indicators::{ExponentialMovingAverage, TrueRange};
 use crate::{Close, High, Low, Next, Reset};
+
+#[cfg(feature = "serde_support")]
 use serde::{Deserialize, Serialize};
 
 /// Average true range (ATR).
@@ -54,7 +56,8 @@ use serde::{Deserialize, Serialize};
 ///         assert_approx_eq!(indicator.next(&di), atr);
 ///     }
 /// }
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde_support", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone)]
 pub struct AverageTrueRange {
     true_range: TrueRange,
     ema: ExponentialMovingAverage,
@@ -70,7 +73,7 @@ impl AverageTrueRange {
     }
 }
 
-impl<'a> Next<'a, f64> for AverageTrueRange {
+impl<'a> Next<f64> for AverageTrueRange {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -78,7 +81,7 @@ impl<'a> Next<'a, f64> for AverageTrueRange {
     }
 }
 
-impl<'a, T: High + Low + Close> Next<'a, &'a T> for AverageTrueRange {
+impl<'a, T: High + Low + Close> Next<&'a T> for AverageTrueRange {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> Self::Output {

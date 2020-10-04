@@ -1,6 +1,7 @@
 use std::fmt;
 
 use crate::{Close, Next, Reset, Volume};
+#[cfg(feature = "serde_support")]
 use serde::{Deserialize, Serialize};
 
 /// On Balance Volume (OBV).
@@ -57,7 +58,8 @@ use serde::{Deserialize, Serialize};
 /// * [On Balance Volume, Wikipedia](https://en.wikipedia.org/wiki/On-balance_volume)
 /// * [On Balance Volume, stockcharts](https://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:on_balance_volume_obv)
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde_support", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone)]
 pub struct OnBalanceVolume {
     obv: f64,
     prev_close: f64,
@@ -72,7 +74,7 @@ impl OnBalanceVolume {
     }
 }
 
-impl<'a, T: Close + Volume> Next<'a, &'a T> for OnBalanceVolume {
+impl<'a, T: Close + Volume> Next<&'a T> for OnBalanceVolume {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> f64 {

@@ -2,6 +2,7 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::{Close, Next, Reset};
+#[cfg(feature = "serde_support")]
 use serde::{Deserialize, Serialize};
 
 /// Standard deviation (SD).
@@ -37,7 +38,8 @@ use serde::{Deserialize, Serialize};
 ///
 /// * [Standard Deviation, Wikipedia](https://en.wikipedia.org/wiki/Standard_deviation)
 ///
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde_support", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone)]
 pub struct StandardDeviation {
     n: u32,
     index: usize,
@@ -70,7 +72,7 @@ impl StandardDeviation {
     }
 }
 
-impl<'a> Next<'a, f64> for StandardDeviation {
+impl<'a> Next<f64> for StandardDeviation {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -101,7 +103,7 @@ impl<'a> Next<'a, f64> for StandardDeviation {
     }
 }
 
-impl<'a, T: Close> Next<'a, &'a T> for StandardDeviation {
+impl<'a, T: Close> Next<&'a T> for StandardDeviation {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> Self::Output {

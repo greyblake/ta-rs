@@ -3,6 +3,7 @@ use std::fmt;
 use crate::errors::Result;
 use crate::indicators::{ExponentialMovingAverage, FastStochastic};
 use crate::{Close, High, Low, Next, Reset};
+#[cfg(feature = "serde_support")]
 use serde::{Deserialize, Serialize};
 
 /// Slow stochastic oscillator.
@@ -27,7 +28,8 @@ use serde::{Deserialize, Serialize};
 /// assert_eq!(stoch.next(30.0).round(), 31.0);
 /// assert_eq!(stoch.next(55.0).round(), 77.0);
 /// ```
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde_support", derive(Serialize, Deserialize))]
+#[derive(Clone, Debug)]
 pub struct SlowStochastic {
     fast_stochastic: FastStochastic,
     ema: ExponentialMovingAverage,
@@ -43,7 +45,7 @@ impl SlowStochastic {
     }
 }
 
-impl<'a> Next<'a, f64> for SlowStochastic {
+impl<'a> Next<f64> for SlowStochastic {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
@@ -51,7 +53,7 @@ impl<'a> Next<'a, f64> for SlowStochastic {
     }
 }
 
-impl<'a, T: High + Low + Close> Next<'a, &'a T> for SlowStochastic {
+impl<'a, T: High + Low + Close> Next<&'a T> for SlowStochastic {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> Self::Output {
