@@ -5,7 +5,7 @@ extern crate ta;
 
 #[cfg(test)]
 mod test {
-    #[cfg(feature = "serde_support")]
+    #[cfg(feature = "serde")]
     mod serde {
         use ta::indicators::SimpleMovingAverage;
         use ta::Next;

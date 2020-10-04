@@ -1,4 +1,4 @@
-#[cfg(feature = "serde_support")]
+#[cfg(feature = "serde")]
 use serde::{de::DeserializeOwned, Serialize};
 
 // Indicator traits
@@ -18,13 +18,13 @@ pub trait Reset {
 /// [MACD](indicators/struct.MovingAverageConvergenceDivergence.html) it is `(f64, f64, f64)` since
 /// MACD returns 3 values.
 ///
-#[cfg(feature = "serde_support")]
+#[cfg(feature = "serde")]
 pub trait Next<T>: Serialize + DeserializeOwned {
     type Output;
     fn next(&mut self, input: T) -> Self::Output;
 }
 
-#[cfg(not(feature = "serde_support"))]
+#[cfg(not(feature = "serde"))]
 pub trait Next<T> {
     type Output;
     fn next(&mut self, input: T) -> Self::Output;

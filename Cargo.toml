@@ -17,9 +17,6 @@ include = [
     "README.md"
 ]
 
-[features]
-serde_support = ["serde"]
-
 [badges]
 travis-ci = { repository = "greyblake/ta-rs", branch = "master" }
 

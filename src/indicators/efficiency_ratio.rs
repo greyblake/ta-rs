@@ -3,7 +3,7 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::traits::{Close, Next, Reset};
-#[cfg(feature = "serde_support")]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /// Kaufman's Efficiency Ratio (ER).
@@ -30,7 +30,7 @@ use serde::{Deserialize, Serialize};
 /// assert_eq!(er.next(19.0), 0.75);
 /// ```
 
-#[cfg_attr(feature = "serde_support", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct EfficiencyRatio {
     length: u32,
     prices: VecDeque<f64>,

@@ -3,7 +3,7 @@ use std::fmt;
 use crate::errors::Result;
 use crate::indicators::{ExponentialMovingAverage, FastStochastic};
 use crate::{Close, High, Low, Next, Reset};
-#[cfg(feature = "serde_support")]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /// Slow stochastic oscillator.
@@ -28,7 +28,7 @@ use serde::{Deserialize, Serialize};
 /// assert_eq!(stoch.next(30.0).round(), 31.0);
 /// assert_eq!(stoch.next(55.0).round(), 77.0);
 /// ```
-#[cfg_attr(feature = "serde_support", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug)]
 pub struct SlowStochastic {
     fast_stochastic: FastStochastic,
