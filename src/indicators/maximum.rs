@@ -2,7 +2,7 @@ use std::f64::INFINITY;
 use std::fmt;
 
 use crate::errors::{Error, ErrorKind, Result};
-use crate::{High, Next, Reset};
+use crate::{High, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -61,6 +61,12 @@ impl Maximum {
         }
 
         index
+    }
+}
+
+impl Period for Maximum {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 

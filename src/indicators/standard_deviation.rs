@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::errors::{Error, ErrorKind, Result};
-use crate::{Close, Next, Reset};
+use crate::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -69,6 +69,12 @@ impl StandardDeviation {
 
     pub(super) fn mean(&self) -> f64 {
         self.m
+    }
+}
+
+impl Period for StandardDeviation {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 

@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 use std::fmt;
 
 use crate::errors::{Error, ErrorKind, Result};
-use crate::traits::{Close, Next, Reset};
+use crate::traits::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -47,6 +47,12 @@ impl EfficiencyRatio {
             };
             Ok(indicator)
         }
+    }
+}
+
+impl Period for EfficiencyRatio {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 

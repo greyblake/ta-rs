@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::{Error, ErrorKind, Result};
 use crate::indicators::{AverageTrueRange, ExponentialMovingAverage};
-use crate::{Close, High, Low, Next, Reset};
+use crate::{Close, High, Low, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -75,12 +75,14 @@ impl KeltnerChannel {
         })
     }
 
-    pub fn period(&self) -> usize {
-        self.period
-    }
-
     pub fn multiplier(&self) -> f64 {
         self.multiplier
+    }
+}
+
+impl Period for KeltnerChannel {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 

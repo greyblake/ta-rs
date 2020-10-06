@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 use std::fmt;
 
 use crate::errors::{Error, ErrorKind, Result};
-use crate::{Close, High, Low, Next, Reset, Volume};
+use crate::{Close, High, Low, Next, Period, Reset, Volume};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -80,6 +80,12 @@ impl MoneyFlowIndex {
                 Ok(indicator)
             }
         }
+    }
+}
+
+impl Period for MoneyFlowIndex {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 

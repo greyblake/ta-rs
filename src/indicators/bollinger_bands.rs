@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::{Error, ErrorKind, Result};
 use crate::indicators::StandardDeviation as Sd;
-use crate::{Close, Next, Reset};
+use crate::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -72,12 +72,14 @@ impl BollingerBands {
         })
     }
 
-    pub fn period(&self) -> usize {
-        self.period
-    }
-
     pub fn multiplier(&self) -> f64 {
         self.multiplier
+    }
+}
+
+impl Period for BollingerBands {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 

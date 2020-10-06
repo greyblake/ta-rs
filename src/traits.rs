@@ -6,6 +6,11 @@ pub trait Reset {
     fn reset(&mut self);
 }
 
+/// Return the period used by the indicator.
+pub trait Period {
+    fn period(&self) -> usize;
+}
+
 /// Consumes a data item of type `T` and returns `Output`.
 ///
 /// Typically `T` can be `f64` or a struct similar to [DataItem](struct.DataItem.html), that implements

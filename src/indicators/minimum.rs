@@ -2,7 +2,7 @@ use std::f64::INFINITY;
 use std::fmt;
 
 use crate::errors::{Error, ErrorKind, Result};
-use crate::{Low, Next, Reset};
+use crate::{Low, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -61,6 +61,12 @@ impl Minimum {
         }
 
         index
+    }
+}
+
+impl Period for Minimum {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 

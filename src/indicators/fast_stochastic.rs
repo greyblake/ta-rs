@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::{Maximum, Minimum};
-use crate::{Close, High, Low, Next, Reset};
+use crate::{Close, High, Low, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -57,8 +57,10 @@ impl FastStochastic {
         };
         Ok(indicator)
     }
+}
 
-    pub fn period(&self) -> usize {
+impl Period for FastStochastic {
+    fn period(&self) -> usize {
         self.period
     }
 }
