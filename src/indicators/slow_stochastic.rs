@@ -12,8 +12,8 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _stochastic_n_ - number of periods for fast stochastic (integer greater than 0). Default is 14.
-/// * _ema_n_ - length for EMA (integer greater than 0). Default is 3.
+/// * _stochastic_length_ - number of periods for fast stochastic (integer greater than 0). Default is 14.
+/// * _ema_length_ - length for EMA (integer greater than 0). Default is 3.
 ///
 /// # Example
 ///
@@ -36,10 +36,10 @@ pub struct SlowStochastic {
 }
 
 impl SlowStochastic {
-    pub fn new(stochastic_n: u32, ema_n: u32) -> Result<Self> {
+    pub fn new(stochastic_length: u32, ema_length: u32) -> Result<Self> {
         let indicator = Self {
-            fast_stochastic: FastStochastic::new(stochastic_n)?,
-            ema: ExponentialMovingAverage::new(ema_n)?,
+            fast_stochastic: FastStochastic::new(stochastic_length)?,
+            ema: ExponentialMovingAverage::new(ema_length)?,
         };
         Ok(indicator)
     }

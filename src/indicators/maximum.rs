@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _n_ - size of the time frame (integer greater than 0). Default value is 14.
+/// * _length_ - size of the time frame (integer greater than 0). Default value is 14.
 ///
 /// # Example
 ///
@@ -28,23 +28,23 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct Maximum {
-    n: usize,
+    length: usize,
     vec: Vec<f64>,
     max_index: usize,
     cur_index: usize,
 }
 
 impl Maximum {
-    pub fn new(n: u32) -> Result<Self> {
-        let n = n as usize;
+    pub fn new(length: u32) -> Result<Self> {
+        let length = length as usize;
 
-        if n == 0 {
+        if length == 0 {
             return Err(Error::from_kind(ErrorKind::InvalidParameter));
         }
 
         let indicator = Self {
-            n,
-            vec: vec![-INFINITY; n],
+            length,
+            vec: vec![-INFINITY; length],
             max_index: 0,
             cur_index: 0,
         };
@@ -78,7 +78,7 @@ impl Next<f64> for Maximum {
             self.max_index = self.find_max_index();
         }
 
-        self.cur_index = if self.cur_index + 1 < self.n as usize {
+        self.cur_index = if self.cur_index + 1 < self.length as usize {
             self.cur_index + 1
         } else {
             0
@@ -98,7 +98,7 @@ impl<T: High> Next<&T> for Maximum {
 
 impl Reset for Maximum {
     fn reset(&mut self) {
-        for i in 0..self.n {
+        for i in 0..self.length {
             self.vec[i] = -INFINITY;
         }
     }
@@ -112,7 +112,7 @@ impl Default for Maximum {
 
 impl fmt::Display for Maximum {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "MAX({})", self.n)
+        write!(f, "MAX({})", self.length)
     }
 }
 

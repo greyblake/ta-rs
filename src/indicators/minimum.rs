@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _n_ - size of the time frame (integer greater than 0). Default value is 14.
+/// * _length_ - size of the time frame (integer greater than 0). Default value is 14.
 ///
 /// # Example
 ///
@@ -27,23 +27,23 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct Minimum {
-    n: usize,
+    length: usize,
     vec: Vec<f64>,
     min_index: usize,
     cur_index: usize,
 }
 
 impl Minimum {
-    pub fn new(n: u32) -> Result<Self> {
-        let n = n as usize;
+    pub fn new(length: u32) -> Result<Self> {
+        let length = length as usize;
 
-        if n <= 0 {
+        if length <= 0 {
             return Err(Error::from_kind(ErrorKind::InvalidParameter));
         }
 
         let indicator = Self {
-            n,
-            vec: vec![INFINITY; n],
+            length,
+            vec: vec![INFINITY; length],
             min_index: 0,
             cur_index: 0,
         };
@@ -78,7 +78,7 @@ impl Next<f64> for Minimum {
             self.min_index = self.find_min_index();
         }
 
-        self.cur_index = if self.cur_index + 1 < self.n as usize {
+        self.cur_index = if self.cur_index + 1 < self.length as usize {
             self.cur_index + 1
         } else {
             0
@@ -98,7 +98,7 @@ impl<T: Low> Next<&T> for Minimum {
 
 impl Reset for Minimum {
     fn reset(&mut self) {
-        for i in 0..self.n {
+        for i in 0..self.length {
             self.vec[i] = INFINITY;
         }
     }
@@ -112,7 +112,7 @@ impl Default for Minimum {
 
 impl fmt::Display for Minimum {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "MIN({})", self.n)
+        write!(f, "MIN({})", self.length)
     }
 }
 

@@ -20,7 +20,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _length_ - number of periods (_n_), integer greater than 0
+/// * _length_ - number of periods integer greater than 0
 ///
 /// # Example
 ///
