@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::{ExponentialMovingAverage, FastStochastic};
-use crate::{Close, High, Low, Next, Reset};
+use crate::{Close, High, Low, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -37,11 +37,10 @@ pub struct SlowStochastic {
 
 impl SlowStochastic {
     pub fn new(stochastic_period: usize, ema_period: usize) -> Result<Self> {
-        let indicator = Self {
+        Ok(Self {
             fast_stochastic: FastStochastic::new(stochastic_period)?,
             ema: ExponentialMovingAverage::new(ema_period)?,
-        };
-        Ok(indicator)
+        })
     }
 }
 

@@ -50,12 +50,11 @@ pub struct FastStochastic {
 
 impl FastStochastic {
     pub fn new(period: usize) -> Result<Self> {
-        let indicator = Self {
-            period: period,
+        Ok(Self {
+            period,
             minimum: Minimum::new(period)?,
             maximum: Maximum::new(period)?,
-        };
-        Ok(indicator)
+        })
     }
 }
 

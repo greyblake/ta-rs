@@ -65,16 +65,12 @@ impl ExponentialMovingAverage {
     pub fn new(period: usize) -> Result<Self> {
         match period {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
-            _ => {
-                let k = 2.0 / (period + 1) as f64;
-                let indicator = Self {
-                    period,
-                    k,
-                    current: 0.0,
-                    is_new: true,
-                };
-                Ok(indicator)
-            }
+            _ => Ok(Self {
+                period,
+                k: 2.0 / (period + 1) as f64,
+                current: 0.0,
+                is_new: true,
+            }),
         }
     }
 }

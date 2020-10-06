@@ -50,13 +50,10 @@ impl RateOfChange {
     pub fn new(period: usize) -> Result<Self> {
         match period {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
-            _ => {
-                let indicator = Self {
-                    period: period,
-                    prices: VecDeque::with_capacity(period + 1),
-                };
-                Ok(indicator)
-            }
+            _ => Ok(Self {
+                period,
+                prices: VecDeque::with_capacity(period + 1),
+            }),
         }
     }
 }

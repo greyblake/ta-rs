@@ -80,14 +80,13 @@ pub struct RelativeStrengthIndex {
 
 impl RelativeStrengthIndex {
     pub fn new(period: usize) -> Result<Self> {
-        let rsi = Self {
+        Ok(Self {
             period,
             up_ema_indicator: Ema::new(period)?,
             down_ema_indicator: Ema::new(period)?,
             prev_val: 0.0,
             is_new: true,
-        };
-        Ok(rsi)
+        })
     }
 }
 

@@ -53,17 +53,14 @@ impl StandardDeviation {
     pub fn new(period: usize) -> Result<Self> {
         match period {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
-            _ => {
-                let std = StandardDeviation {
-                    period,
-                    index: 0,
-                    count: 0,
-                    m: 0.0,
-                    m2: 0.0,
-                    vec: vec![0.0; period],
-                };
-                Ok(std)
-            }
+            _ => Ok(Self {
+                period,
+                index: 0,
+                count: 0,
+                m: 0.0,
+                m2: 0.0,
+                vec: vec![0.0; period],
+            }),
         }
     }
 

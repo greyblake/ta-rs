@@ -52,16 +52,13 @@ impl SimpleMovingAverage {
     pub fn new(period: usize) -> Result<Self> {
         match period {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
-            _ => {
-                let indicator = Self {
-                    period,
-                    index: 0,
-                    count: 0,
-                    sum: 0.0,
-                    vec: vec![0.0; period],
-                };
-                Ok(indicator)
-            }
+            _ => Ok(Self {
+                period,
+                index: 0,
+                count: 0,
+                sum: 0.0,
+                vec: vec![0.0; period],
+            }),
         }
     }
 }

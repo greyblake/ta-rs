@@ -35,18 +35,15 @@ pub struct Minimum {
 
 impl Minimum {
     pub fn new(period: usize) -> Result<Self> {
-        if period <= 0 {
-            return Err(Error::from_kind(ErrorKind::InvalidParameter));
+        match period {
+            0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
+            _ => Ok(Self {
+                period,
+                vec: vec![INFINITY; period],
+                min_index: 0,
+                cur_index: 0,
+            }),
         }
-
-        let indicator = Self {
-            period,
-            vec: vec![INFINITY; period],
-            min_index: 0,
-            cur_index: 0,
-        };
-
-        Ok(indicator)
     }
 
     fn find_min_index(&self) -> usize {

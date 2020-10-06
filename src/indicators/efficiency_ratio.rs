@@ -38,14 +38,12 @@ pub struct EfficiencyRatio {
 
 impl EfficiencyRatio {
     pub fn new(period: usize) -> Result<Self> {
-        if period == 0 {
-            Err(Error::from_kind(ErrorKind::InvalidParameter))
-        } else {
-            let indicator = Self {
-                period: period,
+        match period {
+            0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
+            _ => Ok(Self {
+                period,
                 prices: VecDeque::with_capacity(period + 1),
-            };
-            Ok(indicator)
+            }),
         }
     }
 }

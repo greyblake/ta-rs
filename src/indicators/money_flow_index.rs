@@ -68,17 +68,14 @@ impl MoneyFlowIndex {
     pub fn new(period: usize) -> Result<Self> {
         match period {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
-            _ => {
-                let indicator = Self {
-                    period,
-                    money_flows: VecDeque::with_capacity(period + 1),
-                    prev_typical_price: 0.0,
-                    total_positive_money_flow: 0.0,
-                    total_absolute_money_flow: 0.0,
-                    is_new: true,
-                };
-                Ok(indicator)
-            }
+            _ => Ok(Self {
+                period,
+                money_flows: VecDeque::with_capacity(period + 1),
+                prev_typical_price: 0.0,
+                total_positive_money_flow: 0.0,
+                total_absolute_money_flow: 0.0,
+                is_new: true,
+            }),
         }
     }
 }

@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::errors::{Error, ErrorKind, Result};
+use crate::errors::Result;
 use crate::indicators::StandardDeviation as Sd;
 use crate::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
@@ -62,9 +62,6 @@ pub struct BollingerBandsOutput {
 
 impl BollingerBands {
     pub fn new(period: usize, multiplier: f64) -> Result<Self> {
-        if multiplier <= 0.0 {
-            return Err(Error::from_kind(ErrorKind::InvalidParameter));
-        }
         Ok(Self {
             period,
             multiplier,

@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::errors::{Error, ErrorKind, Result};
+use crate::errors::Result;
 use crate::indicators::{AverageTrueRange, ExponentialMovingAverage};
 use crate::{Close, High, Low, Next, Period, Reset};
 #[cfg(feature = "serde")]
@@ -64,9 +64,6 @@ pub struct KeltnerChannelOutput {
 
 impl KeltnerChannel {
     pub fn new(period: usize, multiplier: f64) -> Result<Self> {
-        if multiplier <= 0.0 {
-            return Err(Error::from_kind(ErrorKind::InvalidParameter));
-        }
         Ok(Self {
             period,
             multiplier,
