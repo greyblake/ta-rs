@@ -93,9 +93,9 @@ impl Next<f64> for MovingAverageConvergenceDivergence {
         let histogram = macd - signal;
 
         MovingAverageConvergenceDivergenceOutput {
-            macd: macd,
-            signal: signal,
-            histogram: histogram,
+            macd,
+            signal,
+            histogram,
         }
     }
 }
