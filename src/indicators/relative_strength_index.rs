@@ -71,7 +71,7 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct RelativeStrengthIndex {
-    length: u32,
+    length: usize,
     up_ema_indicator: Ema,
     down_ema_indicator: Ema,
     prev_val: f64,
@@ -79,7 +79,7 @@ pub struct RelativeStrengthIndex {
 }
 
 impl RelativeStrengthIndex {
-    pub fn new(length: u32) -> Result<Self> {
+    pub fn new(length: usize) -> Result<Self> {
         let rsi = Self {
             length,
             up_ema_indicator: Ema::new(length)?,

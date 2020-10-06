@@ -59,7 +59,7 @@ pub struct MovingAverageConvergenceDivergence {
 }
 
 impl MovingAverageConvergenceDivergence {
-    pub fn new(fast_length: u32, slow_length: u32, signal_length: u32) -> Result<Self> {
+    pub fn new(fast_length: usize, slow_length: usize, signal_length: usize) -> Result<Self> {
         let indicator = Self {
             fast_ema: Ema::new(fast_length)?,
             slow_ema: Ema::new(slow_length)?,

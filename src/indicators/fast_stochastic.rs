@@ -43,13 +43,13 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct FastStochastic {
-    length: u32,
+    length: usize,
     minimum: Minimum,
     maximum: Maximum,
 }
 
 impl FastStochastic {
-    pub fn new(length: u32) -> Result<Self> {
+    pub fn new(length: usize) -> Result<Self> {
         let indicator = Self {
             length: length,
             minimum: Minimum::new(length)?,
@@ -58,7 +58,7 @@ impl FastStochastic {
         Ok(indicator)
     }
 
-    pub fn length(&self) -> u32 {
+    pub fn length(&self) -> usize {
         self.length
     }
 }

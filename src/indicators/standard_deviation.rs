@@ -41,16 +41,16 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct StandardDeviation {
-    length: u32,
+    length: usize,
     index: usize,
-    count: u32,
+    count: usize,
     m: f64,
     m2: f64,
     vec: Vec<f64>,
 }
 
 impl StandardDeviation {
-    pub fn new(length: u32) -> Result<Self> {
+    pub fn new(length: usize) -> Result<Self> {
         match length {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
@@ -60,7 +60,7 @@ impl StandardDeviation {
                     count: 0,
                     m: 0.0,
                     m2: 0.0,
-                    vec: vec![0.0; length as usize],
+                    vec: vec![0.0; length],
                 };
                 Ok(std)
             }
@@ -79,7 +79,7 @@ impl Next<f64> for StandardDeviation {
         let old_val = self.vec[self.index];
         self.vec[self.index] = input;
 
-        self.index = if self.index + 1 < self.length as usize {
+        self.index = if self.index + 1 < self.length {
             self.index + 1
         } else {
             0
@@ -117,7 +117,7 @@ impl Reset for StandardDeviation {
         self.count = 0;
         self.m = 0.0;
         self.m2 = 0.0;
-        for i in 0..(self.length as usize) {
+        for i in 0..self.length {
             self.vec[i] = 0.0;
         }
     }

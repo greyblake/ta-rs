@@ -42,18 +42,18 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct RateOfChange {
-    length: u32,
+    length: usize,
     prices: VecDeque<f64>,
 }
 
 impl RateOfChange {
-    pub fn new(length: u32) -> Result<Self> {
+    pub fn new(length: usize) -> Result<Self> {
         match length {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
                 let indicator = Self {
                     length: length,
-                    prices: VecDeque::with_capacity(length as usize + 1),
+                    prices: VecDeque::with_capacity(length + 1),
                 };
                 Ok(indicator)
             }
@@ -71,7 +71,7 @@ impl Next<f64> for RateOfChange {
             return 0.0;
         }
 
-        let initial_price = if self.prices.len() > (self.length as usize) {
+        let initial_price = if self.prices.len() > self.length {
             // unwrap is safe, because the check above.
             // At this moment there must be at least 2 items in self.prices
             self.prices.pop_front().unwrap()

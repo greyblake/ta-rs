@@ -34,9 +34,7 @@ pub struct Minimum {
 }
 
 impl Minimum {
-    pub fn new(length: u32) -> Result<Self> {
-        let length = length as usize;
-
+    pub fn new(length: usize) -> Result<Self> {
         if length <= 0 {
             return Err(Error::from_kind(ErrorKind::InvalidParameter));
         }
@@ -78,7 +76,7 @@ impl Next<f64> for Minimum {
             self.min_index = self.find_min_index();
         }
 
-        self.cur_index = if self.cur_index + 1 < self.length as usize {
+        self.cur_index = if self.cur_index + 1 < self.length {
             self.cur_index + 1
         } else {
             0

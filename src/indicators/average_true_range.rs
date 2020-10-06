@@ -64,7 +64,7 @@ pub struct AverageTrueRange {
 }
 
 impl AverageTrueRange {
-    pub fn new(length: u32) -> Result<Self> {
+    pub fn new(length: usize) -> Result<Self> {
         let indicator = Self {
             true_range: TrueRange::new(),
             ema: ExponentialMovingAverage::new(length)?,

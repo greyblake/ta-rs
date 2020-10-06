@@ -56,7 +56,7 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct MoneyFlowIndex {
-    length: u32,
+    length: usize,
     money_flows: VecDeque<f64>,
     prev_typical_price: f64,
     total_positive_money_flow: f64,
@@ -65,13 +65,13 @@ pub struct MoneyFlowIndex {
 }
 
 impl MoneyFlowIndex {
-    pub fn new(length: u32) -> Result<Self> {
+    pub fn new(length: usize) -> Result<Self> {
         match length {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
                 let indicator = Self {
                     length,
-                    money_flows: VecDeque::with_capacity(length as usize + 1),
+                    money_flows: VecDeque::with_capacity(length + 1),
                     prev_typical_price: 0.0,
                     total_positive_money_flow: 0.0,
                     total_absolute_money_flow: 0.0,
@@ -108,7 +108,7 @@ impl<T: High + Low + Close + Volume> Next<&T> for MoneyFlowIndex {
 
             self.total_absolute_money_flow += money_flow;
 
-            if self.money_flows.len() == (self.length as usize) {
+            if self.money_flows.len() == self.length {
                 let old_signed_money_flow = self.money_flows.pop_front().unwrap();
                 if old_signed_money_flow > 0.0 {
                     self.total_positive_money_flow -= old_signed_money_flow;

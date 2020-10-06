@@ -36,7 +36,7 @@ pub struct SlowStochastic {
 }
 
 impl SlowStochastic {
-    pub fn new(stochastic_length: u32, ema_length: u32) -> Result<Self> {
+    pub fn new(stochastic_length: usize, ema_length: usize) -> Result<Self> {
         let indicator = Self {
             fast_stochastic: FastStochastic::new(stochastic_length)?,
             ema: ExponentialMovingAverage::new(ema_length)?,

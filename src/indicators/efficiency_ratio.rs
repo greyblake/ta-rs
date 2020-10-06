@@ -32,18 +32,18 @@ use serde::{Deserialize, Serialize};
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct EfficiencyRatio {
-    length: u32,
+    length: usize,
     prices: VecDeque<f64>,
 }
 
 impl EfficiencyRatio {
-    pub fn new(length: u32) -> Result<Self> {
+    pub fn new(length: usize) -> Result<Self> {
         if length == 0 {
             Err(Error::from_kind(ErrorKind::InvalidParameter))
         } else {
             let indicator = Self {
                 length: length,
-                prices: VecDeque::with_capacity(length as usize + 1),
+                prices: VecDeque::with_capacity(length + 1),
             };
             Ok(indicator)
         }
@@ -77,7 +77,7 @@ impl Next<f64> for EfficiencyRatio {
         let direction = (first - self.prices[last_index]).abs();
 
         // Get rid of the first element
-        if self.prices.len() > (self.length as usize) {
+        if self.prices.len() > self.length {
             self.prices.pop_front();
         }
 

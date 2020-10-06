@@ -55,22 +55,22 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct ExponentialMovingAverage {
-    length: u32,
+    length: usize,
     k: f64,
     current: f64,
     is_new: bool,
 }
 
 impl ExponentialMovingAverage {
-    pub fn new(length: u32) -> Result<Self> {
+    pub fn new(length: usize) -> Result<Self> {
         match length {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
-                let k = 2f64 / (length as f64 + 1f64);
+                let k = 2.0 / (length + 1) as f64;
                 let indicator = Self {
                     length,
                     k,
-                    current: 0f64,
+                    current: 0.0,
                     is_new: true,
                 };
                 Ok(indicator)
@@ -78,7 +78,7 @@ impl ExponentialMovingAverage {
         }
     }
 
-    pub fn length(&self) -> u32 {
+    pub fn length(&self) -> usize {
         self.length
     }
 }
