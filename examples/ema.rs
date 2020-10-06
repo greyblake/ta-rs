@@ -1,15 +1,12 @@
-extern crate csv;
-extern crate ta;
-
 use ta::indicators::ExponentialMovingAverage as Ema;
 use ta::DataItem;
 use ta::Next;
 
 fn main() {
     let mut ema = Ema::new(9).unwrap();
-    let mut reader = csv::Reader::from_file("./examples/data/AMZN.csv").unwrap();
+    let mut reader = csv::Reader::from_path("./examples/data/AMZN.csv").unwrap();
 
-    for record in reader.decode() {
+    for record in reader.deserialize() {
         let (date, open, high, low, close, volume): (String, f64, f64, f64, f64, f64) =
             record.unwrap();
         let dt = DataItem::builder()
