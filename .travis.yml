@@ -9,4 +9,5 @@ script:
   - cargo fmt -- --check
   # - cargo clippy -- -D warnings
   - cargo test
+  - cargo test --features serde
   - cargo package
