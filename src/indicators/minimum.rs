@@ -1,7 +1,7 @@
 use std::f64::INFINITY;
 use std::fmt;
 
-use crate::errors::*;
+use crate::errors::{Error, ErrorKind, Result};
 use crate::{Low, Next, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};

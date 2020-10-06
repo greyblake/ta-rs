@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::errors::*;
+use crate::errors::Result;
 use crate::indicators::{Maximum, Minimum};
 use crate::{Close, High, Low, Next, Reset};
 #[cfg(feature = "serde")]

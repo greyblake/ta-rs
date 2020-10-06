@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::errors::*;
+use crate::errors::Result;
 use crate::indicators::ExponentialMovingAverage as Ema;
 use crate::{Close, Next, Reset};
 #[cfg(feature = "serde")]

@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::errors::*;
+use crate::errors::Result;
 use crate::indicators::{ExponentialMovingAverage, TrueRange};
 use crate::{Close, High, Low, Next, Reset};
 

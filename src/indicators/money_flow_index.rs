@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 use std::fmt;
 
-use crate::errors::*;
+use crate::errors::{Error, ErrorKind, Result};
 use crate::{Close, High, Low, Next, Reset, Volume};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};

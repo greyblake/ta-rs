@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::errors::*;
+use crate::errors::{Error, ErrorKind, Result};
 use crate::indicators::{AverageTrueRange, ExponentialMovingAverage};
 use crate::{Close, High, Low, Next, Reset};
 #[cfg(feature = "serde")]
