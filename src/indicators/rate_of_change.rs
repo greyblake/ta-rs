@@ -20,7 +20,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _length_ - number of periods integer greater than 0
+/// * _period_ - number of periods integer greater than 0
 ///
 /// # Example
 ///
@@ -42,18 +42,18 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct RateOfChange {
-    length: usize,
+    period: usize,
     prices: VecDeque<f64>,
 }
 
 impl RateOfChange {
-    pub fn new(length: usize) -> Result<Self> {
-        match length {
+    pub fn new(period: usize) -> Result<Self> {
+        match period {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
                 let indicator = Self {
-                    length: length,
-                    prices: VecDeque::with_capacity(length + 1),
+                    period: period,
+                    prices: VecDeque::with_capacity(period + 1),
                 };
                 Ok(indicator)
             }
@@ -71,7 +71,7 @@ impl Next<f64> for RateOfChange {
             return 0.0;
         }
 
-        let initial_price = if self.prices.len() > self.length {
+        let initial_price = if self.prices.len() > self.period {
             // unwrap is safe, because the check above.
             // At this moment there must be at least 2 items in self.prices
             self.prices.pop_front().unwrap()
@@ -99,7 +99,7 @@ impl Default for RateOfChange {
 
 impl fmt::Display for RateOfChange {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ROC({})", self.length)
+        write!(f, "ROC({})", self.period)
     }
 }
 

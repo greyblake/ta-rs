@@ -28,11 +28,11 @@ use serde::{Deserialize, Serialize};
 ///
 /// Where:
 ///
-/// * _length_ - number of periods
+/// * _period_ - number of periods
 ///
 /// # Parameters
 ///
-/// * _length_ - number of periods (integer greater than 0)
+/// * _period_ - number of periods (integer greater than 0)
 ///
 /// # Example
 ///
@@ -55,20 +55,20 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct ExponentialMovingAverage {
-    length: usize,
+    period: usize,
     k: f64,
     current: f64,
     is_new: bool,
 }
 
 impl ExponentialMovingAverage {
-    pub fn new(length: usize) -> Result<Self> {
-        match length {
+    pub fn new(period: usize) -> Result<Self> {
+        match period {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
-                let k = 2.0 / (length + 1) as f64;
+                let k = 2.0 / (period + 1) as f64;
                 let indicator = Self {
-                    length,
+                    period,
                     k,
                     current: 0.0,
                     is_new: true,
@@ -78,8 +78,8 @@ impl ExponentialMovingAverage {
         }
     }
 
-    pub fn length(&self) -> usize {
-        self.length
+    pub fn period(&self) -> usize {
+        self.period
     }
 }
 
@@ -120,7 +120,7 @@ impl Default for ExponentialMovingAverage {
 
 impl fmt::Display for ExponentialMovingAverage {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "EMA({})", self.length)
+        write!(f, "EMA({})", self.period)
     }
 }
 

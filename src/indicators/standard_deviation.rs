@@ -21,7 +21,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _length_ - number of periods (integer greater than 0)
+/// * _period_ - number of periods (integer greater than 0)
 ///
 /// # Example
 ///
@@ -41,7 +41,7 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct StandardDeviation {
-    length: usize,
+    period: usize,
     index: usize,
     count: usize,
     m: f64,
@@ -50,17 +50,17 @@ pub struct StandardDeviation {
 }
 
 impl StandardDeviation {
-    pub fn new(length: usize) -> Result<Self> {
-        match length {
+    pub fn new(period: usize) -> Result<Self> {
+        match period {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
                 let std = StandardDeviation {
-                    length,
+                    period,
                     index: 0,
                     count: 0,
                     m: 0.0,
                     m2: 0.0,
-                    vec: vec![0.0; length],
+                    vec: vec![0.0; period],
                 };
                 Ok(std)
             }
@@ -79,13 +79,13 @@ impl Next<f64> for StandardDeviation {
         let old_val = self.vec[self.index];
         self.vec[self.index] = input;
 
-        self.index = if self.index + 1 < self.length {
+        self.index = if self.index + 1 < self.period {
             self.index + 1
         } else {
             0
         };
 
-        if self.count < self.length {
+        if self.count < self.period {
             self.count += 1;
             let delta = input - self.m;
             self.m += delta / self.count as f64;
@@ -94,7 +94,7 @@ impl Next<f64> for StandardDeviation {
         } else {
             let delta = input - old_val;
             let old_m = self.m;
-            self.m += delta / self.length as f64;
+            self.m += delta / self.period as f64;
             let delta2 = input - self.m + old_val - old_m;
             self.m2 += delta * delta2;
         }
@@ -117,7 +117,7 @@ impl Reset for StandardDeviation {
         self.count = 0;
         self.m = 0.0;
         self.m2 = 0.0;
-        for i in 0..self.length {
+        for i in 0..self.period {
             self.vec[i] = 0.0;
         }
     }
@@ -131,7 +131,7 @@ impl Default for StandardDeviation {
 
 impl fmt::Display for StandardDeviation {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "SD({})", self.length)
+        write!(f, "SD({})", self.period)
     }
 }
 

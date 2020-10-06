@@ -30,7 +30,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _length_ - number of periods, integer greater than 0
+/// * _period_ - number of periods, integer greater than 0
 ///
 /// # Example
 ///
@@ -56,7 +56,7 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct MoneyFlowIndex {
-    length: usize,
+    period: usize,
     money_flows: VecDeque<f64>,
     prev_typical_price: f64,
     total_positive_money_flow: f64,
@@ -65,13 +65,13 @@ pub struct MoneyFlowIndex {
 }
 
 impl MoneyFlowIndex {
-    pub fn new(length: usize) -> Result<Self> {
-        match length {
+    pub fn new(period: usize) -> Result<Self> {
+        match period {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => {
                 let indicator = Self {
-                    length,
-                    money_flows: VecDeque::with_capacity(length + 1),
+                    period,
+                    money_flows: VecDeque::with_capacity(period + 1),
                     prev_typical_price: 0.0,
                     total_positive_money_flow: 0.0,
                     total_absolute_money_flow: 0.0,
@@ -108,7 +108,7 @@ impl<T: High + Low + Close + Volume> Next<&T> for MoneyFlowIndex {
 
             self.total_absolute_money_flow += money_flow;
 
-            if self.money_flows.len() == self.length {
+            if self.money_flows.len() == self.period {
                 let old_signed_money_flow = self.money_flows.pop_front().unwrap();
                 if old_signed_money_flow > 0.0 {
                     self.total_positive_money_flow -= old_signed_money_flow;
@@ -135,7 +135,7 @@ impl Default for MoneyFlowIndex {
 
 impl fmt::Display for MoneyFlowIndex {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "MFI({})", self.length)
+        write!(f, "MFI({})", self.period)
     }
 }
 

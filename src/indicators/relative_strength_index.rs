@@ -49,7 +49,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _length_ - number of periods (integer greater than 0). Default value is 14.
+/// * _period_ - number of periods (integer greater than 0). Default value is 14.
 ///
 /// # Example
 ///
@@ -71,7 +71,7 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct RelativeStrengthIndex {
-    length: usize,
+    period: usize,
     up_ema_indicator: Ema,
     down_ema_indicator: Ema,
     prev_val: f64,
@@ -79,11 +79,11 @@ pub struct RelativeStrengthIndex {
 }
 
 impl RelativeStrengthIndex {
-    pub fn new(length: usize) -> Result<Self> {
+    pub fn new(period: usize) -> Result<Self> {
         let rsi = Self {
-            length,
-            up_ema_indicator: Ema::new(length)?,
-            down_ema_indicator: Ema::new(length)?,
+            period,
+            up_ema_indicator: Ema::new(period)?,
+            down_ema_indicator: Ema::new(period)?,
             prev_val: 0.0,
             is_new: true,
         };
@@ -143,7 +143,7 @@ impl Default for RelativeStrengthIndex {
 
 impl fmt::Display for RelativeStrengthIndex {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "RSI({})", self.length)
+        write!(f, "RSI({})", self.period)
     }
 }
 

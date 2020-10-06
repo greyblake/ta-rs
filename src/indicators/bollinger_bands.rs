@@ -48,7 +48,7 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct BollingerBands {
-    length: usize,
+    period: usize,
     multiplier: f64,
     sd: Sd,
 }
@@ -61,19 +61,19 @@ pub struct BollingerBandsOutput {
 }
 
 impl BollingerBands {
-    pub fn new(length: usize, multiplier: f64) -> Result<Self> {
+    pub fn new(period: usize, multiplier: f64) -> Result<Self> {
         if multiplier <= 0.0 {
             return Err(Error::from_kind(ErrorKind::InvalidParameter));
         }
         Ok(Self {
-            length,
+            period,
             multiplier,
-            sd: Sd::new(length)?,
+            sd: Sd::new(period)?,
         })
     }
 
-    pub fn length(&self) -> usize {
-        self.length
+    pub fn period(&self) -> usize {
+        self.period
     }
 
     pub fn multiplier(&self) -> f64 {
@@ -118,7 +118,7 @@ impl Default for BollingerBands {
 
 impl fmt::Display for BollingerBands {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "BB({}, {})", self.length, self.multiplier)
+        write!(f, "BB({}, {})", self.period, self.multiplier)
     }
 }
 

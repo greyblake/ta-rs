@@ -25,7 +25,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _length_ - number of periods (integer greater than 0). Default is 14.
+/// * _period_ - number of periods (integer greater than 0). Default is 14.
 ///
 /// # Example
 ///
@@ -43,23 +43,23 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct FastStochastic {
-    length: usize,
+    period: usize,
     minimum: Minimum,
     maximum: Maximum,
 }
 
 impl FastStochastic {
-    pub fn new(length: usize) -> Result<Self> {
+    pub fn new(period: usize) -> Result<Self> {
         let indicator = Self {
-            length: length,
-            minimum: Minimum::new(length)?,
-            maximum: Maximum::new(length)?,
+            period: period,
+            minimum: Minimum::new(period)?,
+            maximum: Maximum::new(period)?,
         };
         Ok(indicator)
     }
 
-    pub fn length(&self) -> usize {
-        self.length
+    pub fn period(&self) -> usize {
+        self.period
     }
 }
 
@@ -112,7 +112,7 @@ impl Default for FastStochastic {
 
 impl fmt::Display for FastStochastic {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "FAST_STOCH({})", self.length)
+        write!(f, "FAST_STOCH({})", self.period)
     }
 }
 

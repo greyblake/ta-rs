@@ -24,9 +24,9 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _fast_length_ - length for the fast EMA. Default is 12.
-/// * _slow_length_ - length for the slow EMA. Default is 26.
-/// * _signal_length_ - length for the signal EMA. Default is 9.
+/// * _fast_period_ - period for the fast EMA. Default is 12.
+/// * _slow_period_ - period for the slow EMA. Default is 26.
+/// * _signal_period_ - period for the signal EMA. Default is 9.
 ///
 /// # Example
 ///
@@ -59,11 +59,11 @@ pub struct PercentagePriceOscillator {
 }
 
 impl PercentagePriceOscillator {
-    pub fn new(fast_length: usize, slow_length: usize, signal_length: usize) -> Result<Self> {
+    pub fn new(fast_period: usize, slow_period: usize, signal_period: usize) -> Result<Self> {
         Ok(PercentagePriceOscillator {
-            fast_ema: Ema::new(fast_length)?,
-            slow_ema: Ema::new(slow_length)?,
-            signal_ema: Ema::new(signal_length)?,
+            fast_ema: Ema::new(fast_period)?,
+            slow_ema: Ema::new(slow_period)?,
+            signal_ema: Ema::new(signal_period)?,
         })
     }
 }
@@ -127,9 +127,9 @@ impl fmt::Display for PercentagePriceOscillator {
         write!(
             f,
             "PPO({}, {}, {})",
-            self.fast_ema.length(),
-            self.slow_ema.length(),
-            self.signal_ema.length()
+            self.fast_ema.period(),
+            self.slow_ema.period(),
+            self.signal_ema.period()
         )
     }
 }

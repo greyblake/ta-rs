@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _length_ - number of periods (integer greater than 0)
+/// * _period_ - number of periods (integer greater than 0)
 ///
 /// # Example
 ///
@@ -32,18 +32,18 @@ use serde::{Deserialize, Serialize};
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct EfficiencyRatio {
-    length: usize,
+    period: usize,
     prices: VecDeque<f64>,
 }
 
 impl EfficiencyRatio {
-    pub fn new(length: usize) -> Result<Self> {
-        if length == 0 {
+    pub fn new(period: usize) -> Result<Self> {
+        if period == 0 {
             Err(Error::from_kind(ErrorKind::InvalidParameter))
         } else {
             let indicator = Self {
-                length: length,
-                prices: VecDeque::with_capacity(length + 1),
+                period: period,
+                prices: VecDeque::with_capacity(period + 1),
             };
             Ok(indicator)
         }
@@ -77,7 +77,7 @@ impl Next<f64> for EfficiencyRatio {
         let direction = (first - self.prices[last_index]).abs();
 
         // Get rid of the first element
-        if self.prices.len() > self.length {
+        if self.prices.len() > self.period {
             self.prices.pop_front();
         }
 
@@ -108,7 +108,7 @@ impl Default for EfficiencyRatio {
 
 impl fmt::Display for EfficiencyRatio {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ER({})", self.length)
+        write!(f, "ER({})", self.period)
     }
 }
 

@@ -15,16 +15,16 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Formula
 ///
-/// ATR(length)<sub>t</sub> = EMA(length) of TR<sub>t</sub>
+/// ATR(period)<sub>t</sub> = EMA(period) of TR<sub>t</sub>
 ///
 /// Where:
 ///
-/// * _EMA(n)_ - [exponential moving average](struct.ExponentialMovingAverage.html) with smoothing period _length_
+/// * _EMA(period)_ - [exponential moving average](struct.ExponentialMovingAverage.html) with smoothing period
 /// * _TR<sub>t</sub>_ - [true range](struct.TrueRange.html) for period _t_
 ///
 /// # Parameters
 ///
-/// * _length_ - smoothing period of EMA (integer greater than 0)
+/// * _period_ - smoothing period of EMA (integer greater than 0)
 ///
 /// # Example
 ///
@@ -64,10 +64,10 @@ pub struct AverageTrueRange {
 }
 
 impl AverageTrueRange {
-    pub fn new(length: usize) -> Result<Self> {
+    pub fn new(period: usize) -> Result<Self> {
         let indicator = Self {
             true_range: TrueRange::new(),
-            ema: ExponentialMovingAverage::new(length)?,
+            ema: ExponentialMovingAverage::new(period)?,
         };
         Ok(indicator)
     }
@@ -104,7 +104,7 @@ impl Default for AverageTrueRange {
 
 impl fmt::Display for AverageTrueRange {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ATR({})", self.ema.length())
+        write!(f, "ATR({})", self.ema.period())
     }
 }
 

@@ -49,7 +49,7 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct KeltnerChannel {
-    length: usize,
+    period: usize,
     multiplier: f64,
     atr: AverageTrueRange,
     ema: ExponentialMovingAverage,
@@ -63,20 +63,20 @@ pub struct KeltnerChannelOutput {
 }
 
 impl KeltnerChannel {
-    pub fn new(length: usize, multiplier: f64) -> Result<Self> {
+    pub fn new(period: usize, multiplier: f64) -> Result<Self> {
         if multiplier <= 0.0 {
             return Err(Error::from_kind(ErrorKind::InvalidParameter));
         }
         Ok(Self {
-            length,
+            period,
             multiplier,
-            atr: AverageTrueRange::new(length)?,
-            ema: ExponentialMovingAverage::new(length)?,
+            atr: AverageTrueRange::new(period)?,
+            ema: ExponentialMovingAverage::new(period)?,
         })
     }
 
-    pub fn length(&self) -> usize {
-        self.length
+    pub fn period(&self) -> usize {
+        self.period
     }
 
     pub fn multiplier(&self) -> f64 {
@@ -131,7 +131,7 @@ impl Default for KeltnerChannel {
 
 impl fmt::Display for KeltnerChannel {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "KC({}, {})", self.length, self.multiplier)
+        write!(f, "KC({}, {})", self.period, self.multiplier)
     }
 }
 
