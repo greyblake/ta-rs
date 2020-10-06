@@ -99,7 +99,7 @@ impl Next<f64> for KeltnerChannel {
     }
 }
 
-impl<'a, T: Close + High + Low> Next<&T> for KeltnerChannel {
+impl<T: Close + High + Low> Next<&T> for KeltnerChannel {
     type Output = KeltnerChannelOutput;
 
     fn next(&mut self, input: &T) -> Self::Output {

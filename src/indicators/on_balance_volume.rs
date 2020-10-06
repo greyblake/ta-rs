@@ -74,7 +74,7 @@ impl OnBalanceVolume {
     }
 }
 
-impl<'a, T: Close + Volume> Next<&'a T> for OnBalanceVolume {
+impl<T: Close + Volume> Next<&T> for OnBalanceVolume {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> f64 {

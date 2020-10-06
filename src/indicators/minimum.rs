@@ -88,7 +88,7 @@ impl Next<f64> for Minimum {
     }
 }
 
-impl<'a, T: Low> Next<&'a T> for Minimum {
+impl<T: Low> Next<&T> for Minimum {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> Self::Output {

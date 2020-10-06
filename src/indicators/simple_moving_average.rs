@@ -92,7 +92,7 @@ impl Next<f64> for SimpleMovingAverage {
     }
 }
 
-impl<'a, T: Close> Next<&'a T> for SimpleMovingAverage {
+impl<T: Close> Next<&T> for SimpleMovingAverage {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> Self::Output {

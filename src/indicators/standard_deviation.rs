@@ -103,7 +103,7 @@ impl Next<f64> for StandardDeviation {
     }
 }
 
-impl<'a, T: Close> Next<&'a T> for StandardDeviation {
+impl<T: Close> Next<&T> for StandardDeviation {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> Self::Output {

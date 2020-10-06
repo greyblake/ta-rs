@@ -118,7 +118,7 @@ impl Next<f64> for RelativeStrengthIndex {
     }
 }
 
-impl<'a, T: Close> Next<&'a T> for RelativeStrengthIndex {
+impl<T: Close> Next<&T> for RelativeStrengthIndex {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> Self::Output {

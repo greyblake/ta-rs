@@ -86,7 +86,7 @@ impl Next<f64> for TrueRange {
     }
 }
 
-impl<'a, T: High + Low + Close> Next<&'a T> for TrueRange {
+impl<T: High + Low + Close> Next<&T> for TrueRange {
     type Output = f64;
 
     fn next(&mut self, bar: &T) -> Self::Output {

@@ -53,7 +53,7 @@ impl Next<f64> for SlowStochastic {
     }
 }
 
-impl<'a, T: High + Low + Close> Next<&'a T> for SlowStochastic {
+impl<T: High + Low + Close> Next<&T> for SlowStochastic {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> Self::Output {

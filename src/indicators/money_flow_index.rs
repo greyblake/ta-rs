@@ -83,7 +83,7 @@ impl MoneyFlowIndex {
     }
 }
 
-impl<'a, T: High + Low + Close + Volume> Next<&'a T> for MoneyFlowIndex {
+impl<T: High + Low + Close + Volume> Next<&T> for MoneyFlowIndex {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> f64 {
