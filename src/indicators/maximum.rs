@@ -3,6 +3,8 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::{High, Next, Reset};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// Returns the highest value in a given time frame.
 ///
@@ -23,6 +25,7 @@ use crate::{High, Next, Reset};
 /// assert_eq!(max.next(4.0), 5.0);
 /// assert_eq!(max.next(8.0), 8.0);
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct Maximum {
     n: usize,

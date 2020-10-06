@@ -3,6 +3,8 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::{Close, High, Low, Next, Reset, Volume};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// Money Flow Index (MFI).
 ///
@@ -51,6 +53,7 @@ use crate::{Close, High, Low, Next, Reset, Volume};
 /// * [Money Flow Index, Wikipedia](https://en.wikipedia.org/wiki/Money_flow_index)
 /// * [Money Flow Index, stockcharts](https://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:money_flow_index_mfi)
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct MoneyFlowIndex {
     n: u32,

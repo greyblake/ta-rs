@@ -2,6 +2,8 @@ use std::fmt;
 
 use crate::helpers::max3;
 use crate::{Close, High, Low, Next, Reset};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// The range of a day's trading is simply _high_ - _low_.
 /// The true range extends it to yesterday's closing price if it was outside of today's range.
@@ -47,6 +49,7 @@ use crate::{Close, High, Low, Next, Reset};
 ///     }
 /// }
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct TrueRange {
     prev_close: Option<f64>,

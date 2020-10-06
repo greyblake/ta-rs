@@ -2,6 +2,8 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::{Close, Next, Reset};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// Simple moving average (SMA).
 ///
@@ -36,6 +38,7 @@ use crate::{Close, Next, Reset};
 ///
 /// * [Simple Moving Average, Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average)
 ///
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct SimpleMovingAverage {
     length: u32,

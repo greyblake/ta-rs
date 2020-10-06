@@ -2,6 +2,8 @@ use std::fmt;
 
 use crate::errors::*;
 use crate::{Close, Next, Reset};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// Standard deviation (SD).
 ///
@@ -36,6 +38,7 @@ use crate::{Close, Next, Reset};
 ///
 /// * [Standard Deviation, Wikipedia](https://en.wikipedia.org/wiki/Standard_deviation)
 ///
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct StandardDeviation {
     n: u32,

@@ -3,6 +3,8 @@ use std::fmt;
 use crate::errors::*;
 use crate::indicators::ExponentialMovingAverage as Ema;
 use crate::{Close, Next, Reset};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// Percentage Price Oscillator (PPO).
 ///
@@ -48,6 +50,7 @@ use crate::{Close, Next, Reset};
 ///     (n0, n1, n2)
 /// }
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct PercentagePriceOscillator {
     fast_ema: Ema,

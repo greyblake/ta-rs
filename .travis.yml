@@ -1,4 +1,5 @@
 language: rust
+cache: cargo # cache dependencies to reduce compilation times
 rust:
   - stable
 install:
@@ -8,4 +9,5 @@ script:
   - cargo fmt -- --check
   # - cargo clippy -- -D warnings
   - cargo test
+  - cargo test --features serde
   - cargo package
