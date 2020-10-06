@@ -18,7 +18,7 @@ Technical analysis library for Rust.
 Add to you `Cargo.toml`:
 ```
 [dependencies]
-ta = "0.2.0"
+ta = "0.3.0"
 ```
 
 Example:
@@ -86,6 +86,11 @@ So far there are the following indicators available.
   * Rate of Change (ROC)
   * On Balance Volume (OBV)
 
+
+## Features
+
+* `serde` - allows to serialize and deserialize indicators
+
 ## Running benchmarks
 
 ```
@@ -105,3 +110,4 @@ cargo bench
 - [edwardycl](https://github.com/edwardycl) - StandardDeviation Implementation & More Efficient BollingerBands
 - [rideron89](https://github.com/rideron89) Ron Rider - Keltner Channel
 - [tirz](https://github.com/tirz) - Percentage Price Oscillator
+- [Devin Gunay](https://github.com/dgunay) - serde support

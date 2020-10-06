@@ -1,4 +1,4 @@
-#### Unreleased
+#### v0.3.0 - 2020-10-06
 
 * Implement Percentage Price Oscillator (PPO)
 * More efficient BollingerBands
@@ -8,6 +8,7 @@
 * More efficient Minimum
 * More efficient Maximum
 * More efficient SimpleMovingAverage
+* Serde support
 
 #### v0.2.0 - 2020-08-31
 
