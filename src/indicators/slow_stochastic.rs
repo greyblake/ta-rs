@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 /// # Parameters
 ///
 /// * _stochastic_n_ - number of periods for fast stochastic (integer greater than 0). Default is 14.
-/// *_ema_n_ - length for EMA (integer greater than 0). Default is 3.
+/// * _ema_n_ - length for EMA (integer greater than 0). Default is 3.
 ///
 /// # Example
 ///
