@@ -28,9 +28,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone)]
 pub struct Minimum {
     period: usize,
-    vec: Vec<f64>,
     min_index: usize,
     cur_index: usize,
+    deque: Box<[f64]>,
 }
 
 impl Minimum {
@@ -39,9 +39,9 @@ impl Minimum {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => Ok(Self {
                 period,
-                vec: vec![INFINITY; period],
                 min_index: 0,
                 cur_index: 0,
+                deque: vec![INFINITY; period].into_boxed_slice(),
             }),
         }
     }
@@ -50,7 +50,7 @@ impl Minimum {
         let mut min = ::std::f64::INFINITY;
         let mut index: usize = 0;
 
-        for (i, &val) in self.vec.iter().enumerate() {
+        for (i, &val) in self.deque.iter().enumerate() {
             if val < min {
                 min = val;
                 index = i;
@@ -71,9 +71,9 @@ impl Next<f64> for Minimum {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        self.vec[self.cur_index] = input;
+        self.deque[self.cur_index] = input;
 
-        if input < self.vec[self.min_index] {
+        if input < self.deque[self.min_index] {
             self.min_index = self.cur_index;
         } else if self.min_index == self.cur_index {
             self.min_index = self.find_min_index();
@@ -85,7 +85,7 @@ impl Next<f64> for Minimum {
             0
         };
 
-        self.vec[self.min_index]
+        self.deque[self.min_index]
     }
 }
 
@@ -100,7 +100,7 @@ impl<T: Low> Next<&T> for Minimum {
 impl Reset for Minimum {
     fn reset(&mut self) {
         for i in 0..self.period {
-            self.vec[i] = INFINITY;
+            self.deque[i] = INFINITY;
         }
     }
 }

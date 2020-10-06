@@ -45,7 +45,7 @@ pub struct SimpleMovingAverage {
     index: usize,
     count: usize,
     sum: f64,
-    vec: Vec<f64>,
+    deque: Box<[f64]>,
 }
 
 impl SimpleMovingAverage {
@@ -57,7 +57,7 @@ impl SimpleMovingAverage {
                 index: 0,
                 count: 0,
                 sum: 0.0,
-                vec: vec![0.0; period],
+                deque: vec![0.0; period].into_boxed_slice(),
             }),
         }
     }
@@ -73,8 +73,8 @@ impl Next<f64> for SimpleMovingAverage {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        let old_val = self.vec[self.index];
-        self.vec[self.index] = input;
+        let old_val = self.deque[self.index];
+        self.deque[self.index] = input;
 
         self.index = if self.index + 1 < self.period {
             self.index + 1
@@ -105,7 +105,7 @@ impl Reset for SimpleMovingAverage {
         self.count = 0;
         self.sum = 0.0;
         for i in 0..self.period {
-            self.vec[i] = 0.0;
+            self.deque[i] = 0.0;
         }
     }
 }

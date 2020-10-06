@@ -29,9 +29,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone)]
 pub struct Maximum {
     period: usize,
-    vec: Vec<f64>,
     max_index: usize,
     cur_index: usize,
+    deque: Box<[f64]>,
 }
 
 impl Maximum {
@@ -40,9 +40,9 @@ impl Maximum {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => Ok(Self {
                 period,
-                vec: vec![-INFINITY; period],
                 max_index: 0,
                 cur_index: 0,
+                deque: vec![-INFINITY; period].into_boxed_slice(),
             }),
         }
     }
@@ -51,7 +51,7 @@ impl Maximum {
         let mut max = -INFINITY;
         let mut index: usize = 0;
 
-        for (i, &val) in self.vec.iter().enumerate() {
+        for (i, &val) in self.deque.iter().enumerate() {
             if val > max {
                 max = val;
                 index = i;
@@ -72,9 +72,9 @@ impl Next<f64> for Maximum {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        self.vec[self.cur_index] = input;
+        self.deque[self.cur_index] = input;
 
-        if input > self.vec[self.max_index] {
+        if input > self.deque[self.max_index] {
             self.max_index = self.cur_index;
         } else if self.max_index == self.cur_index {
             self.max_index = self.find_max_index();
@@ -86,7 +86,7 @@ impl Next<f64> for Maximum {
             0
         };
 
-        self.vec[self.max_index]
+        self.deque[self.max_index]
     }
 }
 
@@ -101,7 +101,7 @@ impl<T: High> Next<&T> for Maximum {
 impl Reset for Maximum {
     fn reset(&mut self) {
         for i in 0..self.period {
-            self.vec[i] = -INFINITY;
+            self.deque[i] = -INFINITY;
         }
     }
 }
