@@ -98,6 +98,9 @@ impl Next<f64> for StandardDeviation {
             let delta2 = input - self.m + old_val - old_m;
             self.m2 += delta * delta2;
         }
+        if self.m2 < 0.0 {
+            self.m2 = 0.0;
+        }
 
         (self.m2 / self.count as f64).sqrt()
     }
@@ -157,6 +160,18 @@ mod tests {
         assert_eq!(round(sd.next(20.0)), 7.071);
         assert_eq!(round(sd.next(10.0)), 7.071);
         assert_eq!(round(sd.next(100.0)), 35.355);
+    }
+
+    #[test]
+    fn test_next_floating_point_error() {
+        let mut sd = StandardDeviation::new(6).unwrap();
+        assert_eq!(sd.next(1.872), 0.0);
+        assert_eq!(round(sd.next(1.0)), 0.436);
+        assert_eq!(round(sd.next(1.0)), 0.411);
+        assert_eq!(round(sd.next(1.0)), 0.378);
+        assert_eq!(round(sd.next(1.0)), 0.349);
+        assert_eq!(round(sd.next(1.0)), 0.325);
+        assert_eq!(round(sd.next(1.0)), 0.0);
     }
 
     #[test]
