@@ -111,3 +111,4 @@ cargo bench
 - [rideron89](https://github.com/rideron89) Ron Rider - Keltner Channel
 - [tirz](https://github.com/tirz) - Percentage Price Oscillator
 - [Devin Gunay](https://github.com/dgunay) - serde support
+- [Youngchan Lee](https://github.com/edwardycl) - bugfix
