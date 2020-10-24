@@ -1,8 +1,8 @@
 use std::fmt;
 
-use crate::errors::*;
+use crate::errors::Result;
 use crate::indicators::ExponentialMovingAverage as Ema;
-use crate::{Close, Next, Reset};
+use crate::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -49,7 +49,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _n_ - number of periods (integer greater than 0). Default value is 14.
+/// * _period_ - number of periods (integer greater than 0). Default value is 14.
 ///
 /// # Example
 ///
@@ -71,7 +71,7 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct RelativeStrengthIndex {
-    n: u32,
+    period: usize,
     up_ema_indicator: Ema,
     down_ema_indicator: Ema,
     prev_val: f64,
@@ -79,15 +79,20 @@ pub struct RelativeStrengthIndex {
 }
 
 impl RelativeStrengthIndex {
-    pub fn new(n: u32) -> Result<Self> {
-        let rsi = Self {
-            n,
-            up_ema_indicator: Ema::new(n)?,
-            down_ema_indicator: Ema::new(n)?,
+    pub fn new(period: usize) -> Result<Self> {
+        Ok(Self {
+            period,
+            up_ema_indicator: Ema::new(period)?,
+            down_ema_indicator: Ema::new(period)?,
             prev_val: 0.0,
             is_new: true,
-        };
-        Ok(rsi)
+        })
+    }
+}
+
+impl Period for RelativeStrengthIndex {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 
@@ -143,7 +148,7 @@ impl Default for RelativeStrengthIndex {
 
 impl fmt::Display for RelativeStrengthIndex {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "RSI({})", self.n)
+        write!(f, "RSI({})", self.period)
     }
 }
 

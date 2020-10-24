@@ -1,8 +1,8 @@
 use std::fmt;
 
-use crate::errors::*;
+use crate::errors::Result;
 use crate::indicators::ExponentialMovingAverage as Ema;
-use crate::{Close, Next, Reset};
+use crate::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -24,9 +24,9 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _fast_length_ - length for the fast EMA. Default is 12.
-/// * _slow_length_ - length for the slow EMA. Default is 26.
-/// * _signal_length_ - length for the signal EMA. Default is 9.
+/// * _fast_period_ - period for the fast EMA. Default is 12.
+/// * _slow_period_ - period for the slow EMA. Default is 26.
+/// * _signal_period_ - period for the signal EMA. Default is 9.
 ///
 /// # Example
 ///
@@ -59,13 +59,12 @@ pub struct MovingAverageConvergenceDivergence {
 }
 
 impl MovingAverageConvergenceDivergence {
-    pub fn new(fast_length: u32, slow_length: u32, signal_length: u32) -> Result<Self> {
-        let indicator = Self {
-            fast_ema: Ema::new(fast_length)?,
-            slow_ema: Ema::new(slow_length)?,
-            signal_ema: Ema::new(signal_length)?,
-        };
-        Ok(indicator)
+    pub fn new(fast_period: usize, slow_period: usize, signal_period: usize) -> Result<Self> {
+        Ok(Self {
+            fast_ema: Ema::new(fast_period)?,
+            slow_ema: Ema::new(slow_period)?,
+            signal_ema: Ema::new(signal_period)?,
+        })
     }
 }
 
@@ -94,9 +93,9 @@ impl Next<f64> for MovingAverageConvergenceDivergence {
         let histogram = macd - signal;
 
         MovingAverageConvergenceDivergenceOutput {
-            macd: macd,
-            signal: signal,
-            histogram: histogram,
+            macd,
+            signal,
+            histogram,
         }
     }
 }
@@ -128,9 +127,9 @@ impl fmt::Display for MovingAverageConvergenceDivergence {
         write!(
             f,
             "MACD({}, {}, {})",
-            self.fast_ema.length(),
-            self.slow_ema.length(),
-            self.signal_ema.length()
+            self.fast_ema.period(),
+            self.slow_ema.period(),
+            self.signal_ema.period()
         )
     }
 }

@@ -1,8 +1,8 @@
 use std::fmt;
 
-use crate::errors::*;
+use crate::errors::Result;
 use crate::indicators::{AverageTrueRange, ExponentialMovingAverage};
-use crate::{Close, High, Low, Next, Reset};
+use crate::{Close, High, Low, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -49,7 +49,7 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct KeltnerChannel {
-    length: u32,
+    period: usize,
     multiplier: f64,
     atr: AverageTrueRange,
     ema: ExponentialMovingAverage,
@@ -63,24 +63,23 @@ pub struct KeltnerChannelOutput {
 }
 
 impl KeltnerChannel {
-    pub fn new(length: u32, multiplier: f64) -> Result<Self> {
-        if multiplier <= 0.0 {
-            return Err(Error::from_kind(ErrorKind::InvalidParameter));
-        }
+    pub fn new(period: usize, multiplier: f64) -> Result<Self> {
         Ok(Self {
-            length,
+            period,
             multiplier,
-            atr: AverageTrueRange::new(length)?,
-            ema: ExponentialMovingAverage::new(length)?,
+            atr: AverageTrueRange::new(period)?,
+            ema: ExponentialMovingAverage::new(period)?,
         })
-    }
-
-    pub fn length(&self) -> u32 {
-        self.length
     }
 
     pub fn multiplier(&self) -> f64 {
         self.multiplier
+    }
+}
+
+impl Period for KeltnerChannel {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 
@@ -131,7 +130,7 @@ impl Default for KeltnerChannel {
 
 impl fmt::Display for KeltnerChannel {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "KC({}, {})", self.length, self.multiplier)
+        write!(f, "KC({}, {})", self.period, self.multiplier)
     }
 }
 

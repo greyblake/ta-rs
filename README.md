@@ -79,6 +79,7 @@ So far there are the following indicators available.
   * Minimum
   * Maximum
   * True Range
+  * Standard Deviation (SD)
   * Average True Range (AR)
   * Efficiency Ratio (ER)
   * Bollinger Bands (BB)

@@ -1,8 +1,8 @@
 use std::fmt;
 
-use crate::errors::*;
+use crate::errors::Result;
 use crate::indicators::{ExponentialMovingAverage, TrueRange};
-use crate::{Close, High, Low, Next, Reset};
+use crate::{Close, High, Low, Next, Period, Reset};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -15,16 +15,16 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Formula
 ///
-/// ATR(length)<sub>t</sub> = EMA(length) of TR<sub>t</sub>
+/// ATR(period)<sub>t</sub> = EMA(period) of TR<sub>t</sub>
 ///
 /// Where:
 ///
-/// * _EMA(n)_ - [exponential moving average](struct.ExponentialMovingAverage.html) with smoothing period _length_
+/// * _EMA(period)_ - [exponential moving average](struct.ExponentialMovingAverage.html) with smoothing period
 /// * _TR<sub>t</sub>_ - [true range](struct.TrueRange.html) for period _t_
 ///
 /// # Parameters
 ///
-/// * _length_ - smoothing period of EMA (integer greater than 0)
+/// * _period_ - smoothing period of EMA (integer greater than 0)
 ///
 /// # Example
 ///
@@ -64,12 +64,11 @@ pub struct AverageTrueRange {
 }
 
 impl AverageTrueRange {
-    pub fn new(length: u32) -> Result<Self> {
-        let indicator = Self {
+    pub fn new(period: usize) -> Result<Self> {
+        Ok(Self {
             true_range: TrueRange::new(),
-            ema: ExponentialMovingAverage::new(length)?,
-        };
-        Ok(indicator)
+            ema: ExponentialMovingAverage::new(period)?,
+        })
     }
 }
 
@@ -104,7 +103,7 @@ impl Default for AverageTrueRange {
 
 impl fmt::Display for AverageTrueRange {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ATR({})", self.ema.length())
+        write!(f, "ATR({})", self.ema.period())
     }
 }
 

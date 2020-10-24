@@ -1,8 +1,8 @@
 use std::collections::VecDeque;
 use std::fmt;
 
-use crate::errors::*;
-use crate::traits::{Close, Next, Reset};
+use crate::errors::{Error, ErrorKind, Result};
+use crate::traits::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -20,7 +20,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _length_ - number of periods (_n_), integer greater than 0
+/// * _period_ - number of periods integer greater than 0
 ///
 /// # Example
 ///
@@ -42,22 +42,25 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct RateOfChange {
-    length: u32,
+    period: usize,
     prices: VecDeque<f64>,
 }
 
 impl RateOfChange {
-    pub fn new(length: u32) -> Result<Self> {
-        match length {
+    pub fn new(period: usize) -> Result<Self> {
+        match period {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
-            _ => {
-                let indicator = Self {
-                    length: length,
-                    prices: VecDeque::with_capacity(length as usize + 1),
-                };
-                Ok(indicator)
-            }
+            _ => Ok(Self {
+                period,
+                prices: VecDeque::with_capacity(period + 1),
+            }),
         }
+    }
+}
+
+impl Period for RateOfChange {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 
@@ -71,7 +74,7 @@ impl Next<f64> for RateOfChange {
             return 0.0;
         }
 
-        let initial_price = if self.prices.len() > (self.length as usize) {
+        let initial_price = if self.prices.len() > self.period {
             // unwrap is safe, because the check above.
             // At this moment there must be at least 2 items in self.prices
             self.prices.pop_front().unwrap()
@@ -99,7 +102,7 @@ impl Default for RateOfChange {
 
 impl fmt::Display for RateOfChange {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ROC({})", self.length)
+        write!(f, "ROC({})", self.period)
     }
 }
 

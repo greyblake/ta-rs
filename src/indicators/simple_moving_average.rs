@@ -1,7 +1,7 @@
 use std::fmt;
 
-use crate::errors::*;
-use crate::{Close, Next, Reset};
+use crate::errors::{Error, ErrorKind, Result};
+use crate::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -14,12 +14,12 @@ use serde::{Deserialize, Serialize};
 /// Where:
 ///
 /// * _SMA<sub>t</sub>_ - value of simple moving average at a point of time _t_
-/// * _length_ - number of periods (length)
+/// * _period_ - number of periods (period)
 /// * _p<sub>t</sub>_ - input value at a point of time _t_
 ///
 /// # Parameters
 ///
-/// * _length_ - number of periods (integer greater than 0)
+/// * _period_ - number of periods (integer greater than 0)
 ///
 /// # Example
 ///
@@ -41,32 +41,31 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct SimpleMovingAverage {
-    length: u32,
+    period: usize,
     index: usize,
-    count: u32,
+    count: usize,
     sum: f64,
-    vec: Vec<f64>,
+    deque: Box<[f64]>,
 }
 
 impl SimpleMovingAverage {
-    pub fn new(length: u32) -> Result<Self> {
-        match length {
+    pub fn new(period: usize) -> Result<Self> {
+        match period {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
-            _ => {
-                let indicator = Self {
-                    length,
-                    index: 0,
-                    count: 0,
-                    sum: 0.0,
-                    vec: vec![0.0; length as usize],
-                };
-                Ok(indicator)
-            }
+            _ => Ok(Self {
+                period,
+                index: 0,
+                count: 0,
+                sum: 0.0,
+                deque: vec![0.0; period].into_boxed_slice(),
+            }),
         }
     }
+}
 
-    pub fn length(&self) -> u32 {
-        self.length
+impl Period for SimpleMovingAverage {
+    fn period(&self) -> usize {
+        self.period
     }
 }
 
@@ -74,16 +73,16 @@ impl Next<f64> for SimpleMovingAverage {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        let old_val = self.vec[self.index];
-        self.vec[self.index] = input;
+        let old_val = self.deque[self.index];
+        self.deque[self.index] = input;
 
-        self.index = if self.index + 1 < self.length as usize {
+        self.index = if self.index + 1 < self.period {
             self.index + 1
         } else {
             0
         };
 
-        if self.count < self.length {
+        if self.count < self.period {
             self.count += 1;
         }
 
@@ -105,8 +104,8 @@ impl Reset for SimpleMovingAverage {
         self.index = 0;
         self.count = 0;
         self.sum = 0.0;
-        for i in 0..(self.length as usize) {
-            self.vec[i] = 0.0;
+        for i in 0..self.period {
+            self.deque[i] = 0.0;
         }
     }
 }
@@ -119,7 +118,7 @@ impl Default for SimpleMovingAverage {
 
 impl fmt::Display for SimpleMovingAverage {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "SMA({})", self.length)
+        write!(f, "SMA({})", self.period)
     }
 }
 
