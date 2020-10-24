@@ -83,6 +83,7 @@ So far there are the following indicators available.
   * Average True Range (AR)
   * Efficiency Ratio (ER)
   * Bollinger Bands (BB)
+  * Chandelier Exit (CE)
   * Keltner Channel (KC)
   * Rate of Change (ROC)
   * On Balance Volume (OBV)
@@ -110,6 +111,6 @@ cargo bench
 - [shreyasdeotare](https://github.com/shreyasdeotare) Shreyas Deotare - MoneyFlowIndex, OnBalanceVolume
 - [edwardycl](https://github.com/edwardycl) - StandardDeviation Implementation & More Efficient BollingerBands
 - [rideron89](https://github.com/rideron89) Ron Rider - Keltner Channel
-- [tirz](https://github.com/tirz) - Percentage Price Oscillator, refactorings
+- [tirz](https://github.com/tirz) - Chandelier Exit, Percentage Price Oscillator, refactorings
 - [Devin Gunay](https://github.com/dgunay) - serde support
 - [Youngchan Lee](https://github.com/edwardycl) - bugfix

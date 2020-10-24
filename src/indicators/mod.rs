@@ -44,6 +44,9 @@ pub use self::efficiency_ratio::EfficiencyRatio;
 mod bollinger_bands;
 pub use self::bollinger_bands::{BollingerBands, BollingerBandsOutput};
 
+mod chandelier_exit;
+pub use self::chandelier_exit::{ChandelierExit, ChandelierExitOutput};
+
 mod keltner_channel;
 pub use self::keltner_channel::{KeltnerChannel, KeltnerChannelOutput};
 
