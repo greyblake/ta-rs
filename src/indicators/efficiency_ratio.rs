@@ -1,4 +1,3 @@
-use std::collections::VecDeque;
 use std::fmt;
 
 use crate::errors::{Error, ErrorKind, Result};
@@ -33,7 +32,9 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct EfficiencyRatio {
     period: usize,
-    prices: VecDeque<f64>,
+    index: usize,
+    count: usize,
+    deque: Box<[f64]>,
 }
 
 impl EfficiencyRatio {
@@ -42,7 +43,9 @@ impl EfficiencyRatio {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => Ok(Self {
                 period,
-                prices: VecDeque::with_capacity(period + 1),
+                index: 0,
+                count: 0,
+                deque: vec![0.0; period].into_boxed_slice(),
             }),
         }
     }
@@ -58,35 +61,32 @@ impl Next<f64> for EfficiencyRatio {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> f64 {
-        self.prices.push_back(input);
+        let first = if self.count >= self.period {
+            self.deque[self.index]
+        } else {
+            self.count += 1;
+            self.deque[0]
+        };
+        self.deque[self.index] = input;
 
-        if self.prices.len() <= 2 {
-            return 1.0;
+        self.index = if self.index + 1 < self.period {
+            self.index + 1
+        } else {
+            0
+        };
+
+        let mut volatility = 0.0;
+        let mut previous = first;
+        for n in &self.deque[self.index..self.count] {
+            volatility += (previous - n).abs();
+            previous = *n;
+        }
+        for n in &self.deque[0..self.index] {
+            volatility += (previous - n).abs();
+            previous = *n;
         }
 
-        let first = self.prices[0];
-
-        // Calculate volatility
-        let volatility = self
-            .prices
-            .iter()
-            .skip(1)
-            .fold((first, 0.0), |(prev, sum), &val| {
-                (val, sum + (prev - val).abs())
-            })
-            .1;
-
-        // Calculate direction
-        let last_index = self.prices.len() - 1;
-        let direction = (first - self.prices[last_index]).abs();
-
-        // Get rid of the first element
-        if self.prices.len() > self.period {
-            self.prices.pop_front();
-        }
-
-        // Return actual efficiency ratio
-        direction / volatility
+        (first - input).abs() / volatility
     }
 }
 
@@ -100,7 +100,11 @@ impl<T: Close> Next<&T> for EfficiencyRatio {
 
 impl Reset for EfficiencyRatio {
     fn reset(&mut self) {
-        self.prices.clear();
+        self.index = 0;
+        self.count = 0;
+        for i in 0..self.period {
+            self.deque[i] = 0.0;
+        }
     }
 }
 
@@ -130,7 +134,7 @@ mod tests {
     }
 
     #[test]
-    fn test_next_f64() {
+    fn test_next() {
         let mut er = EfficiencyRatio::new(3).unwrap();
 
         assert_eq!(round(er.next(3.0)), 1.0);
@@ -141,8 +145,17 @@ mod tests {
         assert_eq!(round(er.next(3.0)), 0.2);
         assert_eq!(round(er.next(4.0)), 0.2);
         assert_eq!(round(er.next(6.0)), 1.0);
+    }
+
+    #[test]
+    fn test_reset() {
+        let mut er = EfficiencyRatio::new(3).unwrap();
+
+        er.next(3.0);
+        er.next(5.0);
 
         er.reset();
+
         assert_eq!(round(er.next(3.0)), 1.0);
         assert_eq!(round(er.next(5.0)), 1.0);
         assert_eq!(round(er.next(2.0)), 0.2);
