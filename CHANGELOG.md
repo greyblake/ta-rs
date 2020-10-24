@@ -1,3 +1,7 @@
+#### Unreleased
+
+* [breaking] Unify parameters for the indicators
+
 #### v0.3.1 - 2020-10-20
 
 * Fix NaN bug in StandardDeviation
