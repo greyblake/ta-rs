@@ -18,7 +18,7 @@ Technical analysis library for Rust.
 Add to you `Cargo.toml`:
 ```
 [dependencies]
-ta = "0.3.0"
+ta = "0.4.0"
 ```
 
 Example:
@@ -91,7 +91,8 @@ So far there are the following indicators available.
 
 ## Features
 
-* `serde` - allows to serialize and deserialize indicators
+* `serde` - allows to serialize and deserialize indicators. NOTE: the backward compatibility of serialized
+data with the future versions of ta is not guaranteed because internal implementation of the indicators is a subject to change.
 
 ## Running benchmarks
 
