@@ -1,4 +1,3 @@
-use std::collections::VecDeque;
 use std::fmt;
 
 use crate::errors::{Error, ErrorKind, Result};
@@ -43,7 +42,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone)]
 pub struct RateOfChange {
     period: usize,
-    prices: VecDeque<f64>,
+    index: usize,
+    count: usize,
+    deque: Box<[f64]>,
 }
 
 impl RateOfChange {
@@ -52,7 +53,9 @@ impl RateOfChange {
             0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
             _ => Ok(Self {
                 period,
-                prices: VecDeque::with_capacity(period + 1),
+                index: 0,
+                count: 0,
+                deque: vec![0.0; period].into_boxed_slice(),
             }),
         }
     }
@@ -68,21 +71,25 @@ impl Next<f64> for RateOfChange {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> f64 {
-        self.prices.push_back(input);
-
-        if self.prices.len() == 1 {
-            return 0.0;
-        }
-
-        let initial_price = if self.prices.len() > self.period {
-            // unwrap is safe, because the check above.
-            // At this moment there must be at least 2 items in self.prices
-            self.prices.pop_front().unwrap()
+        let previous = if self.count > self.period {
+            self.deque[self.index]
         } else {
-            self.prices[0]
+            self.count += 1;
+            if self.count == 1 {
+                input
+            } else {
+                self.deque[0]
+            }
+        };
+        self.deque[self.index] = input;
+
+        self.index = if self.index + 1 < self.period {
+            self.index + 1
+        } else {
+            0
         };
 
-        (input - initial_price) / initial_price * 100.0
+        (input - previous) / previous * 100.0
     }
 }
 
@@ -108,7 +115,11 @@ impl fmt::Display for RateOfChange {
 
 impl Reset for RateOfChange {
     fn reset(&mut self) {
-        self.prices.clear();
+        self.index = 0;
+        self.count = 0;
+        for i in 0..self.period {
+            self.deque[i] = 0.0;
+        }
     }
 }
 
