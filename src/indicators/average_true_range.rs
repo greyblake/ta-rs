@@ -72,6 +72,12 @@ impl AverageTrueRange {
     }
 }
 
+impl Period for AverageTrueRange {
+    fn period(&self) -> usize {
+        self.ema.period()
+    }
+}
+
 impl Next<f64> for AverageTrueRange {
     type Output = f64;
 

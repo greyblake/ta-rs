@@ -1,6 +1,7 @@
 #### Unreleased
 
 * [breaking] Unify parameters for the indicators
+* Implement Chandelier Exit (CE)
 
 #### v0.3.1 - 2020-10-20
 
