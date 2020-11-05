@@ -1,8 +1,9 @@
 # Technical Analysis for Rust (ta)
 
-[![Build Status](https://travis-ci.org/greyblake/ta-rs.svg?branch=master)](https://travis-ci.org/greyblake/ta-rs)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/greyblake/ta-rs/master/LICENSE)
-[![Documentation](https://docs.rs/ta/badge.svg)](https://docs.rs/ta)
+[![Build Status](https://img.shields.io/travis/greyblake/ta-rs)](https://travis-ci.org/greyblake/ta-rs)
+[![Crates.io](https://img.shields.io/crates/v/ta)](https://crates.io/crates/ta)
+[![Docs.rs](https://docs.rs/ta/badge.svg)](https://docs.rs/ta)
+[![License](https://img.shields.io/crates/l/ta)](https://raw.githubusercontent.com/greyblake/ta-rs/master/LICENSE)
 
 Technical analysis library for Rust.
 
