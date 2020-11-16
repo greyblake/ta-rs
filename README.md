@@ -75,12 +75,14 @@ So far there are the following indicators available.
   * Slow Stochastic
   * Moving Average Convergence Divergence (MACD)
   * Percentage Price Oscillator (PPO)
+  * Commodity Channel Index (CCI)
   * Money Flow Index (MFI)
 * Other
   * Minimum
   * Maximum
   * True Range
   * Standard Deviation (SD)
+  * Mean Absolute Deviation (MAD)
   * Average True Range (AR)
   * Efficiency Ratio (ER)
   * Bollinger Bands (BB)
@@ -113,7 +115,7 @@ cargo bench
 - [shreyasdeotare](https://github.com/shreyasdeotare) Shreyas Deotare - MoneyFlowIndex, OnBalanceVolume
 - [edwardycl](https://github.com/edwardycl) - StandardDeviation Implementation & More Efficient BollingerBands
 - [rideron89](https://github.com/rideron89) Ron Rider - Keltner Channel
-- [tirz](https://github.com/tirz) - Chandelier Exit, Percentage Price Oscillator, refactorings
+- [tirz](https://github.com/tirz) - CCI, CE, MAD, PPO, refactorings
 - [Devin Gunay](https://github.com/dgunay) - serde support
 - [Youngchan Lee](https://github.com/edwardycl) - bugfix
 - [tommady](https://github.com/tommady) - get rid of error-chain dependency

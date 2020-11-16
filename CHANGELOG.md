@@ -1,6 +1,8 @@
 #### Unreleased
 
 * [breaking] - get rid of error-chain. ta::Error -> ta::TaError
+* Implement Mean Absolute Deviation (MAD)
+* Implement Commodity Channel Index (CCI)
 
 #### v0.4.0 - 2020-11-03
 
