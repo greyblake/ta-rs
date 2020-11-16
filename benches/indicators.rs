@@ -5,10 +5,11 @@ extern crate ta;
 use bencher::Bencher;
 use rand::Rng;
 use ta::indicators::{
-    BollingerBands, ChandelierExit, EfficiencyRatio, ExponentialMovingAverage, FastStochastic,
-    KeltnerChannel, Maximum, Minimum, MoneyFlowIndex, MovingAverageConvergenceDivergence,
-    OnBalanceVolume, PercentagePriceOscillator, RateOfChange, RelativeStrengthIndex,
-    SimpleMovingAverage, SlowStochastic, StandardDeviation, TrueRange,
+    BollingerBands, ChandelierExit, CommodityChannelIndex, EfficiencyRatio,
+    ExponentialMovingAverage, FastStochastic, KeltnerChannel, Maximum, MeanAbsoluteDeviation,
+    Minimum, MoneyFlowIndex, MovingAverageConvergenceDivergence, OnBalanceVolume,
+    PercentagePriceOscillator, RateOfChange, RelativeStrengthIndex, SimpleMovingAverage,
+    SlowStochastic, StandardDeviation, TrueRange,
 };
 use ta::DataItem;
 use ta::Next;
@@ -58,6 +59,7 @@ bench_indicators!(
     SimpleMovingAverage,
     ExponentialMovingAverage,
     StandardDeviation,
+    MeanAbsoluteDeviation,
     BollingerBands,
     ChandelierExit,
     KeltnerChannel,
@@ -67,6 +69,7 @@ bench_indicators!(
     Minimum,
     MovingAverageConvergenceDivergence,
     PercentagePriceOscillator,
+    CommodityChannelIndex,
     RateOfChange,
     RelativeStrengthIndex,
     SlowStochastic,

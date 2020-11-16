@@ -35,9 +35,11 @@
 //!   * [Slow Stochastic](indicators/struct.SlowStochastic.html)
 //!   * [Moving Average Convergence Divergence (MACD)](indicators/struct.MovingAverageConvergenceDivergence.html)
 //!   * [Percentage Price Oscillator (PPO)](indicators/struct.PercentagePriceOscillator.html)
+//!   * [Commodity Channel Index (CCI)](indicators/struct.CommodityChannelIndex.html)
 //!   * [Money Flow Index (MFI)](indicators/struct.MoneyFlowIndex.html)
 //! * Other
 //!   * [Standard Deviation (SD)](indicators/struct.StandardDeviation.html)
+//!   * [Mean Absolute Deviation (MAD)](indicators/struct.MeanAbsoluteDeviation.html)
 //!   * [Bollinger Bands (BB)](indicators/struct.BollingerBands.html)
 //!   * [Chandelier Exit (CE)](indicators/struct.ChandelierExit.html)
 //!   * [Keltner Channel (KC)](indicators/struct.KeltnerChannel.html)

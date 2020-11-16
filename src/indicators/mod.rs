@@ -7,6 +7,9 @@ pub use self::simple_moving_average::SimpleMovingAverage;
 mod standard_deviation;
 pub use self::standard_deviation::StandardDeviation;
 
+mod mean_absolute_deviation;
+pub use self::mean_absolute_deviation::MeanAbsoluteDeviation;
+
 mod relative_strength_index;
 pub use self::relative_strength_index::RelativeStrengthIndex;
 
@@ -37,6 +40,9 @@ mod percentage_price_oscillator;
 pub use self::percentage_price_oscillator::{
     PercentagePriceOscillator, PercentagePriceOscillatorOutput,
 };
+
+mod commodity_channel_index;
+pub use self::commodity_channel_index::CommodityChannelIndex;
 
 mod efficiency_ratio;
 pub use self::efficiency_ratio::EfficiencyRatio;

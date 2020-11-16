@@ -1,3 +1,8 @@
+#### Unreleased
+
+* Implement Mean Absolute Deviation (MAD)
+* Implement Commodity Channel Index (CCI)
+
 #### v0.4.0 - 2020-11-03
 
 * [breaking] Unify parameters for the indicators
