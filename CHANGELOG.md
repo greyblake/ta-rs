@@ -1,3 +1,8 @@
+#### Unreleased
+
+* More efficient MoneyFlowIndex
+* Fix identical TypicalPrice bug in MoneyFlowIndex
+
 #### v0.4.0 - 2020-11-03
 
 * [breaking] Unify parameters for the indicators
