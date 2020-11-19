@@ -52,6 +52,7 @@ use serde::{Deserialize, Serialize};
 /// * [Exponential moving average, Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
 ///
 
+#[doc(alias = "EMA")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct ExponentialMovingAverage {

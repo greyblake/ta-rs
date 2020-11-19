@@ -68,6 +68,7 @@ use serde::{Deserialize, Serialize};
 /// * [Relative strength index (Wikipedia)](https://en.wikipedia.org/wiki/Relative_strength_index)
 /// * [RSI (Investopedia)](http://www.investopedia.com/terms/r/rsi.asp)
 ///
+#[doc(alias = "RSI")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct RelativeStrengthIndex {

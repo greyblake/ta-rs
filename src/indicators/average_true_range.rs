@@ -56,6 +56,7 @@ use serde::{Deserialize, Serialize};
 ///         assert_approx_eq!(indicator.next(&di), atr);
 ///     }
 /// }
+#[doc(alias = "ATR")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct AverageTrueRange {

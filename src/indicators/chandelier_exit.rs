@@ -50,6 +50,7 @@ use crate::{Close, High, Low, Next, Period, Reset};
 ///
 /// * [Chandelier Exit, StockCharts](https://school.stockcharts.com/doku.php?id=technical_indicators:chandelier_exit)
 ///
+#[doc(alias = "CE")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct ChandelierExit {

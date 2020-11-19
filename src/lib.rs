@@ -27,27 +27,27 @@
 //! # List of indicators
 //!
 //! * Trend
-//!   * [Exponential Moving Average (EMA)](indicators/struct.ExponentialMovingAverage.html)
-//!   * [Simple Moving Average (SMA)](indicators/struct.SimpleMovingAverage.html)
+//!   * [Exponential Moving Average (EMA)](crate::indicators::ExponentialMovingAverage)
+//!   * [Simple Moving Average (SMA)](crate::indicators::SimpleMovingAverage)
 //! * Oscillators
-//!   * [Relative Strength Index (RSI)](indicators/struct.RelativeStrengthIndex.html)
-//!   * [Fast Stochastic](indicators/struct.FastStochastic.html)
-//!   * [Slow Stochastic](indicators/struct.SlowStochastic.html)
-//!   * [Moving Average Convergence Divergence (MACD)](indicators/struct.MovingAverageConvergenceDivergence.html)
-//!   * [Percentage Price Oscillator (PPO)](indicators/struct.PercentagePriceOscillator.html)
-//!   * [Money Flow Index (MFI)](indicators/struct.MoneyFlowIndex.html)
+//!   * [Relative Strength Index (RSI)](crate::indicators::RelativeStrengthIndex)
+//!   * [Fast Stochastic](crate::indicators::FastStochastic)
+//!   * [Slow Stochastic](crate::indicators::SlowStochastic)
+//!   * [Moving Average Convergence Divergence (MACD)](crate::indicators::MovingAverageConvergenceDivergence)
+//!   * [Percentage Price Oscillator (PPO)](crate::indicators::PercentagePriceOscillator)
+//!   * [Money Flow Index (MFI)](crate::indicators::MoneyFlowIndex)
 //! * Other
-//!   * [Standard Deviation (SD)](indicators/struct.StandardDeviation.html)
-//!   * [Bollinger Bands (BB)](indicators/struct.BollingerBands.html)
-//!   * [Chandelier Exit (CE)](indicators/struct.ChandelierExit.html)
-//!   * [Keltner Channel (KC)](indicators/struct.KeltnerChannel.html)
-//!   * [Maximum](indicators/struct.Maximum.html)
-//!   * [Minimum](indicators/struct.Minimum.html)
-//!   * [True Range](indicators/struct.TrueRange.html)
-//!   * [Average True Range (ATR)](indicators/struct.AverageTrueRange.html)
-//!   * [Efficiency Ratio (ER)](indicators/struct.EfficiencyRatio.html)
-//!   * [Rate of Change (ROC)](indicators/struct.RateOfChange.html)
-//!   * [On Balance Volume (OBV)](indicators/struct.OnBalanceVolume.html)
+//!   * [Standard Deviation (SD)](crate::indicators::StandardDeviation)
+//!   * [Bollinger Bands (BB)](crate::indicators::BollingerBands)
+//!   * [Chandelier Exit (CE)](crate::indicators::ChandelierExit)
+//!   * [Keltner Channel (KC)](crate::indicators::KeltnerChannel)
+//!   * [Maximum](crate::indicators::Maximum)
+//!   * [Minimum](crate::indicators::Minimum)
+//!   * [True Range](crate::indicators::TrueRange)
+//!   * [Average True Range (ATR)](crate::indicators::AverageTrueRange)
+//!   * [Efficiency Ratio (ER)](crate::indicators::EfficiencyRatio)
+//!   * [Rate of Change (ROC)](crate::indicators::RateOfChange)
+//!   * [On Balance Volume (OBV)](crate::indicators::OnBalanceVolume)
 //!
 #[macro_use]
 extern crate error_chain;

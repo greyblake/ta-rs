@@ -58,6 +58,7 @@ use serde::{Deserialize, Serialize};
 /// * [On Balance Volume, Wikipedia](https://en.wikipedia.org/wiki/On-balance_volume)
 /// * [On Balance Volume, stockcharts](https://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:on_balance_volume_obv)
 
+#[doc(alias = "OBV")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct OnBalanceVolume {

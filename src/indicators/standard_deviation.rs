@@ -38,6 +38,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// * [Standard Deviation, Wikipedia](https://en.wikipedia.org/wiki/Standard_deviation)
 ///
+#[doc(alias = "SD")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct StandardDeviation {

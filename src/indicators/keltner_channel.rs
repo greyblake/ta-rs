@@ -46,6 +46,7 @@ use serde::{Deserialize, Serialize};
 /// # Links
 ///
 /// * [Keltner channel, Wikipedia](https://en.wikipedia.org/wiki/Keltner_channel)
+#[doc(alias = "KC")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct KeltnerChannel {
