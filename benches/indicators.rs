@@ -1,17 +1,12 @@
-#[macro_use]
-extern crate bencher;
-extern crate ta;
-
-use bencher::Bencher;
+use bencher::{benchmark_group, benchmark_main, Bencher};
 use rand::Rng;
 use ta::indicators::{
-    BollingerBands, ChandelierExit, EfficiencyRatio, ExponentialMovingAverage, FastStochastic,
-    KeltnerChannel, Maximum, Minimum, MoneyFlowIndex, MovingAverageConvergenceDivergence,
-    OnBalanceVolume, PercentagePriceOscillator, RateOfChange, RelativeStrengthIndex,
-    SimpleMovingAverage, SlowStochastic, StandardDeviation, TrueRange,
+    AverageTrueRange, BollingerBands, ChandelierExit, EfficiencyRatio, ExponentialMovingAverage,
+    FastStochastic, KeltnerChannel, Maximum, Minimum, MoneyFlowIndex,
+    MovingAverageConvergenceDivergence, OnBalanceVolume, PercentagePriceOscillator, RateOfChange,
+    RelativeStrengthIndex, SimpleMovingAverage, SlowStochastic, StandardDeviation, TrueRange,
 };
-use ta::DataItem;
-use ta::Next;
+use ta::{DataItem, Next};
 
 const ITEMS_COUNT: usize = 5_000;
 
@@ -37,6 +32,7 @@ fn rand_data_item() -> DataItem {
 macro_rules! bench_indicators {
     ($($indicator:ident), *) => {
         $(
+            #[allow(non_snake_case)]
             fn $indicator(bench: &mut Bencher) {
                 let items: Vec<DataItem> = (0..ITEMS_COUNT).map( |_| rand_data_item() ).collect();
                 let mut indicator = $indicator::default();
@@ -55,22 +51,23 @@ macro_rules! bench_indicators {
 }
 
 bench_indicators!(
-    SimpleMovingAverage,
-    ExponentialMovingAverage,
-    StandardDeviation,
+    AverageTrueRange,
     BollingerBands,
     ChandelierExit,
-    KeltnerChannel,
     EfficiencyRatio,
+    ExponentialMovingAverage,
     FastStochastic,
+    KeltnerChannel,
     Maximum,
     Minimum,
+    MoneyFlowIndex,
     MovingAverageConvergenceDivergence,
+    OnBalanceVolume,
     PercentagePriceOscillator,
     RateOfChange,
     RelativeStrengthIndex,
+    SimpleMovingAverage,
     SlowStochastic,
-    TrueRange,
-    MoneyFlowIndex,
-    OnBalanceVolume
+    StandardDeviation,
+    TrueRange
 );
