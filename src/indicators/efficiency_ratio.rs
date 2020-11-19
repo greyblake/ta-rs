@@ -30,6 +30,7 @@ use serde::{Deserialize, Serialize};
 /// ```
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone)]
 pub struct EfficiencyRatio {
     period: usize,
     index: usize,
