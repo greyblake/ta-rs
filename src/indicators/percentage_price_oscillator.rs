@@ -50,6 +50,7 @@ use serde::{Deserialize, Serialize};
 ///     (n0, n1, n2)
 /// }
 /// ```
+#[doc(alias = "PPO")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct PercentagePriceOscillator {
