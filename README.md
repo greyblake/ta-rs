@@ -116,3 +116,4 @@ cargo bench
 - [tirz](https://github.com/tirz) - Chandelier Exit, Percentage Price Oscillator, refactorings
 - [Devin Gunay](https://github.com/dgunay) - serde support
 - [Youngchan Lee](https://github.com/edwardycl) - bugfix
+- [tommady](https://github.com/tommady) - get rid of error-chain dependency
