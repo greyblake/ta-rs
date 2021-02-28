@@ -140,7 +140,7 @@ impl DataItemBuilder {
                 };
                 Ok(item)
             } else {
-                Err(TaError::InvalidParameter)
+                Err(TaError::DataItemInvalid)
             }
         } else {
             Err(TaError::DataItemIncomplete)
