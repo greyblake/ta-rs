@@ -140,10 +140,10 @@ impl DataItemBuilder {
                 };
                 Ok(item)
             } else {
-                Err(Error::from_kind(ErrorKind::DataItemInvalid))
+                Err(TaError::DataItemInvalid)
             }
         } else {
-            Err(Error::from_kind(ErrorKind::DataItemIncomplete))
+            Err(TaError::DataItemIncomplete)
         }
     }
 }

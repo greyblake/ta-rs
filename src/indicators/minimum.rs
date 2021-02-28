@@ -1,7 +1,7 @@
 use std::f64::INFINITY;
 use std::fmt;
 
-use crate::errors::{Error, ErrorKind, Result};
+use crate::errors::{Result, TaError};
 use crate::{Low, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -36,7 +36,7 @@ pub struct Minimum {
 impl Minimum {
     pub fn new(period: usize) -> Result<Self> {
         match period {
-            0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
+            0 => Err(TaError::InvalidParameter),
             _ => Ok(Self {
                 period,
                 min_index: 0,
