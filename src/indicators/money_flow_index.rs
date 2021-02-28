@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 use std::fmt;
 
-use crate::errors::{Error, ErrorKind, Result};
+use crate::errors::{Result, TaError};
 use crate::{Close, High, Low, Next, Period, Reset, Volume};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -68,7 +68,7 @@ pub struct MoneyFlowIndex {
 impl MoneyFlowIndex {
     pub fn new(period: usize) -> Result<Self> {
         match period {
-            0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
+            0 => Err(TaError::InvalidParameter),
             _ => Ok(Self {
                 period,
                 money_flows: VecDeque::with_capacity(period + 1),

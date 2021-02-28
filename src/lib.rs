@@ -49,9 +49,6 @@
 //!   * [Rate of Change (ROC)](crate::indicators::RateOfChange)
 //!   * [On Balance Volume (OBV)](crate::indicators::OnBalanceVolume)
 //!
-#[macro_use]
-extern crate error_chain;
-
 #[cfg(test)]
 #[macro_use]
 mod test_helper;

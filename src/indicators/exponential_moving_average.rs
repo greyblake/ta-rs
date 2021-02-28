@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::errors::{Error, ErrorKind, Result};
+use crate::errors::{Result, TaError};
 use crate::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -65,7 +65,7 @@ pub struct ExponentialMovingAverage {
 impl ExponentialMovingAverage {
     pub fn new(period: usize) -> Result<Self> {
         match period {
-            0 => Err(Error::from_kind(ErrorKind::InvalidParameter)),
+            0 => Err(TaError::InvalidParameter),
             _ => Ok(Self {
                 period,
                 k: 2.0 / (period + 1) as f64,
