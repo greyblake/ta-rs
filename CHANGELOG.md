@@ -1,4 +1,4 @@
-#### Unreleased
+#### v0.5.0 - 2021-06-27
 
 * [breaking] - get rid of error-chain. ta::Error -> ta::TaError
 * Implement Mean Absolute Deviation (MAD)
