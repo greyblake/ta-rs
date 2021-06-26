@@ -1,8 +1,8 @@
-use std::collections::VecDeque;
 use std::fmt;
 
 use crate::errors::{Result, TaError};
 use crate::{Close, High, Low, Next, Period, Reset, Volume};
+
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -58,11 +58,12 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone)]
 pub struct MoneyFlowIndex {
     period: usize,
-    money_flows: VecDeque<f64>,
-    prev_typical_price: f64,
+    index: usize,
+    count: usize,
+    previous_typical_price: f64,
     total_positive_money_flow: f64,
-    total_absolute_money_flow: f64,
-    is_new: bool,
+    total_negative_money_flow: f64,
+    deque: Box<[f64]>,
 }
 
 impl MoneyFlowIndex {
@@ -71,11 +72,12 @@ impl MoneyFlowIndex {
             0 => Err(TaError::InvalidParameter),
             _ => Ok(Self {
                 period,
-                money_flows: VecDeque::with_capacity(period + 1),
-                prev_typical_price: 0.0,
+                index: 0,
+                count: 0,
+                previous_typical_price: 0.0,
                 total_positive_money_flow: 0.0,
-                total_absolute_money_flow: 0.0,
-                is_new: true,
+                total_negative_money_flow: 0.0,
+                deque: vec![0.0; period].into_boxed_slice(),
             }),
         }
     }
@@ -91,43 +93,45 @@ impl<T: High + Low + Close + Volume> Next<&T> for MoneyFlowIndex {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> f64 {
-        let typical_price = (input.high() + input.low() + input.close()) / 3.0;
+        let tp = (input.close() + input.high() + input.low()) / 3.0;
 
-        if self.is_new {
-            // money flow is 0, because without having previous typical_price
-            // it is not possible to determine is it positive or negative.
-            self.money_flows.push_back(0.0);
-            self.prev_typical_price = typical_price;
-            self.is_new = false;
-            return 50.0;
+        self.index = if self.index + 1 < self.period {
+            self.index + 1
         } else {
-            let money_flow = typical_price * input.volume();
+            0
+        };
 
-            let signed_money_flow = if typical_price >= self.prev_typical_price {
-                self.total_positive_money_flow += money_flow;
-                money_flow
-            } else {
-                -money_flow
-            };
-
-            self.total_absolute_money_flow += money_flow;
-
-            if self.money_flows.len() == self.period {
-                let old_signed_money_flow = self.money_flows.pop_front().unwrap();
-                if old_signed_money_flow > 0.0 {
-                    self.total_positive_money_flow -= old_signed_money_flow;
-                    self.total_absolute_money_flow -= old_signed_money_flow;
-                } else {
-                    // it is actually subtraction, because old_signed_money_flow is negative
-                    self.total_absolute_money_flow += old_signed_money_flow;
-                }
+        if self.count < self.period {
+            self.count = self.count + 1;
+            if self.count == 1 {
+                self.previous_typical_price = tp;
+                return 50.0;
             }
-
-            self.money_flows.push_back(signed_money_flow);
-            self.prev_typical_price = typical_price;
-
-            (self.total_positive_money_flow / self.total_absolute_money_flow) * 100.0
+        } else {
+            let popped = self.deque[self.index];
+            if popped.is_sign_positive() {
+                self.total_positive_money_flow -= popped;
+            } else {
+                self.total_negative_money_flow += popped;
+            }
         }
+
+        if tp > self.previous_typical_price {
+            let raw_money_flow = tp * input.volume();
+            self.total_positive_money_flow += raw_money_flow;
+            self.deque[self.index] = raw_money_flow;
+        } else if tp < self.previous_typical_price {
+            let raw_money_flow = tp * input.volume();
+            self.total_negative_money_flow += raw_money_flow;
+            self.deque[self.index] = -raw_money_flow;
+        } else {
+            self.deque[self.index] = 0.0;
+        }
+        self.previous_typical_price = tp;
+
+        self.total_positive_money_flow
+            / (self.total_positive_money_flow + self.total_negative_money_flow)
+            * 100.0
     }
 }
 
@@ -145,11 +149,14 @@ impl fmt::Display for MoneyFlowIndex {
 
 impl Reset for MoneyFlowIndex {
     fn reset(&mut self) {
-        self.money_flows.clear();
-        self.prev_typical_price = 0.0;
+        self.index = 0;
+        self.count = 0;
+        self.previous_typical_price = 0.0;
         self.total_positive_money_flow = 0.0;
-        self.total_absolute_money_flow = 0.0;
-        self.is_new = true;
+        self.total_negative_money_flow = 0.0;
+        for i in 0..self.period {
+            self.deque[i] = 0.0;
+        }
     }
 }
 
@@ -168,61 +175,45 @@ mod tests {
     fn test_next_bar() {
         let mut mfi = MoneyFlowIndex::new(3).unwrap();
 
-        // tp = 2.0
         let bar1 = Bar::new().high(3).low(1).close(2).volume(500.0);
-        assert_eq!(mfi.next(&bar1), 50.0);
+        assert_eq!(round(mfi.next(&bar1)), 50.0);
 
-        // tp = 2.2, fm = 2.2*1000 = 2200, abs_total = 2200, pos_total = 2200
         let bar2 = Bar::new().high(2.3).low(2.0).close(2.3).volume(1000.0);
-        assert_eq!(mfi.next(&bar2), 100.0);
+        assert_eq!(round(mfi.next(&bar2)), 100.0);
 
-        // tp = 8.0, fm = 8*200 = 1600, abs_total = 3800, pos_total = 3800
         let bar3 = Bar::new().high(9).low(7).close(8).volume(200.0);
-        assert_eq!(mfi.next(&bar3), 100.0);
+        assert_eq!(round(mfi.next(&bar3)), 100.0);
 
-        // tp = 4.0, fm = -4.0*500 = -2000, abs_total = 5800 , pos_total = 3800
         let bar4 = Bar::new().high(5).low(3).close(4).volume(500.0);
-        assert_eq!(mfi.next(&bar4), 3800.0 / 5800.0 * 100.0);
+        assert_eq!(round(mfi.next(&bar4)), 65.517);
 
-        // tp = 3.0, fm = -3 * 5000 = -15000, abs_total = 5800+15000-2200=18600, pos_total=3800-2200=1600
         let bar5 = Bar::new().high(4).low(2).close(3).volume(5000.0);
-        assert_eq!(mfi.next(&bar5), 1600.0 / 18600.0 * 100.0);
+        assert_eq!(round(mfi.next(&bar5)), 8.602);
 
-        // tp = 1.5, fm = -1.5*6000= -9000, abs_total=18600+9000-1600=26000, pos_total=0
         let bar6 = Bar::new().high(2).low(1).close(1.5).volume(6000.0);
-        assert_eq!(mfi.next(&bar6), 0.0 / 23800.0 * 100.0);
+        assert_eq!(round(mfi.next(&bar6)), 0.0);
 
-        // tp = 2, fm = 2*7000=14000, abs_total=26000+14000-2000=38000, pos_total=14000
         let bar7 = Bar::new().high(2).low(2).close(2).volume(7000.0);
-        assert_eq!(mfi.next(&bar7), 14000.0 / 38000.0 * 100.0);
+        assert_eq!(round(mfi.next(&bar7)), 36.842);
+
+        let bar8 = Bar::new().high(2).low(2).close(2).volume(7000.0);
+        assert_eq!(round(mfi.next(&bar8)), 60.87);
     }
 
     #[test]
     fn test_reset() {
         let mut mfi = MoneyFlowIndex::new(3).unwrap();
 
-        let bar1 = Bar::new().high(2).low(1).close(1.5).volume(1000.0);
-        let bar2 = Bar::new().high(5).low(3).close(4).volume(2000.0);
-        let bar3 = Bar::new().high(9).low(7).close(8).volume(3000.0);
-        let bar4 = Bar::new().high(5).low(3).close(4).volume(4000.0);
-        let bar5 = Bar::new().high(5).low(3).close(4).volume(5000.0);
-        let bar6 = Bar::new().high(2).low(1).close(1.5).volume(6000.0);
+        let bar1 = Bar::new().high(3).low(1).close(2).volume(500.0);
+        let bar2 = Bar::new().high(2.3).low(2.0).close(2.3).volume(1000.0);
 
-        assert_eq!(mfi.next(&bar1), 50.0);
-        assert_eq!(mfi.next(&bar2), 100.0);
-        assert_eq!(mfi.next(&bar3), 100.0);
-        assert_eq!(round(mfi.next(&bar4)), 66.667);
-        assert_eq!(round(mfi.next(&bar5)), 73.333);
-        assert_eq!(round(mfi.next(&bar6)), 44.444);
+        assert_eq!(round(mfi.next(&bar1)), 50.0);
+        assert_eq!(round(mfi.next(&bar2)), 100.0);
 
         mfi.reset();
 
-        assert_eq!(mfi.next(&bar1), 50.0);
-        assert_eq!(mfi.next(&bar2), 100.0);
-        assert_eq!(mfi.next(&bar3), 100.0);
-        assert_eq!(round(mfi.next(&bar4)), 66.667);
-        assert_eq!(round(mfi.next(&bar5)), 73.333);
-        assert_eq!(round(mfi.next(&bar6)), 44.444);
+        assert_eq!(round(mfi.next(&bar1)), 50.0);
+        assert_eq!(round(mfi.next(&bar2)), 100.0);
     }
 
     #[test]
