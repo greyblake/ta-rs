@@ -11,6 +11,7 @@ Technical analysis library for Rust.
 * [Basic ideas](#basic-ideas)
 * [List of indicators](#list-of-indicators)
 * [Running benchmarks](#running-benchmarks)
+* [Donations](#donations)
 * [License](#license)
 * [Contributors](#contributors)
 
@@ -102,6 +103,13 @@ data with the future versions of ta is not guaranteed because internal implement
 ```
 cargo bench
 ```
+
+## Donations
+
+You can support the project by donating [NEAR tokens](https://near.org).
+
+Our NEAR wallet address is `ta-rs.near`
+
 
 ## License
 
