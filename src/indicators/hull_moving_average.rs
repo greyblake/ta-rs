@@ -27,7 +27,7 @@ use serde::{Deserialize, Serialize};
 /// * [Hull Moving Average, Alan Hull](https://alanhull.com/hull-moving-average)
 ///
 
-#[doc(alias = "WMA")]
+#[doc(alias = "HMA")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct HullMovingAverage {
