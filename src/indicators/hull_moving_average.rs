@@ -1,6 +1,7 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
+use crate::indicators::WeightedMovingAverage;
 use crate::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -17,9 +18,9 @@ use serde::{Deserialize, Serialize};
 ///
 /// let mut hma = HullMovingAverage::new(3).unwrap();
 /// assert_eq!(hma.next(10.0), 10.0);
-/// assert_eq!(hma.next(13.0), 12.0);
-/// assert_eq!(hma.next(16.0), 14.0);
-/// assert_eq!(hma.next(14.0), 14.5);
+/// assert_eq!(hma.next(13.0), 14.0);
+/// assert_eq!(hma.next(16.0), 18.0);
+/// assert_eq!(hma.next(14.0), 13.5);
 /// ```
 ///
 /// # Links
@@ -32,14 +33,20 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone)]
 pub struct HullMovingAverage {
     period: usize,
+    short_wma: WeightedMovingAverage,
+    regular_wma: WeightedMovingAverage,
+    wrapping_wma: WeightedMovingAverage,
 }
 
 impl HullMovingAverage {
     pub fn new(period: usize) -> Result<Self> {
         match period {
-            0 => Err(TaError::InvalidParameter),
+            0 | 1 => Err(TaError::InvalidParameter),
             _ => Ok(Self {
                 period,
+                short_wma: WeightedMovingAverage::new(period / 2)?,
+                regular_wma: WeightedMovingAverage::new(period)?,
+                wrapping_wma: WeightedMovingAverage::new((period as f64).sqrt() as usize)?,
             }),
         }
     }
@@ -55,7 +62,10 @@ impl Next<f64> for HullMovingAverage {
     type Output = f64;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        input
+        // pinescript formula
+        // hma = wma(2*wma(src, length/2)-wma(src, length), round(sqrt(length)))
+        let source = (2.0 * self.short_wma.next(input)) - self.regular_wma.next(input);
+        self.wrapping_wma.next(source)
     }
 }
 
@@ -69,7 +79,9 @@ impl<T: Close> Next<&T> for HullMovingAverage {
 
 impl Reset for HullMovingAverage {
     fn reset(&mut self) {
-
+        self.short_wma.reset();
+        self.regular_wma.reset();
+        self.wrapping_wma.reset();
     }
 }
 
@@ -95,22 +107,24 @@ mod tests {
     #[test]
     fn test_new() {
         assert!(HullMovingAverage::new(0).is_err());
-        assert!(HullMovingAverage::new(1).is_ok());
+        assert!(HullMovingAverage::new(1).is_err());
+        assert!(HullMovingAverage::new(2).is_ok());
+        assert!(HullMovingAverage::new(9).is_ok());
     }
 
     #[test]
     fn test_next() {
         let mut hma = HullMovingAverage::new(3).unwrap();
 
-        assert_eq!(hma.next(12.0), 12.0);
-        assert_eq!(hma.next(3.0), 6.0);
-        assert_eq!(hma.next(3.0), 4.5);
-        assert_eq!(hma.next(5.0), 4.0);
+        assert_eq!(round(hma.next(12.0)), 12.0);
+        assert_eq!(round(hma.next(9.0)), 8.0);
+        assert_eq!(round(hma.next(7.0)), 5.5);
+        assert_eq!(round(hma.next(13.0)), 15.667);
 
         let mut hma = HullMovingAverage::new(3).unwrap();
-        let bar1 = Bar::new().close(2);
+        let bar1 = Bar::new().close(8);
         let bar2 = Bar::new().close(5);
-        assert_eq!(hma.next(&bar1), 2.0);
+        assert_eq!(hma.next(&bar1), 8.0);
         assert_eq!(hma.next(&bar2), 4.0);
     }
 
