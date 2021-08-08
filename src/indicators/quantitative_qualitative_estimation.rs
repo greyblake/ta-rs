@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
-use crate::indicators::ExponentialMovingAverage;
+use crate::indicators::{RelativeStrengthIndex, SimpleMovingAverage, ExponentialMovingAverage};
 use crate::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -20,9 +20,9 @@ use serde::{Deserialize, Serialize};
 /// use ta::indicators::QuantitativeQualitativeEstimation;
 /// use ta::Next;
 ///
-/// let mut qqe = QuantitativeQualitativeEstimation::new(3).unwrap();
+/// let mut qqe = QuantitativeQualitativeEstimation::new(5, 5, 3.0).unwrap();
 /// assert_eq!(qqe.next(10.0), 10.0); // TODO: Fix these at the same time as the tests.
-/// assert_eq!(qqe.next(13.0), 14.0);
+/// assert_eq!(qqe.next(13.0), 14.0); // tomorrow morning ('21-08-07)
 /// assert_eq!(qqe.next(16.0), 18.0);
 /// assert_eq!(qqe.next(14.0), 13.5);
 /// ```
@@ -38,15 +38,39 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone)]
 pub struct QuantitativeQualitativeEstimation {
     period: usize,
+    wilders_multiplier: f64,
+    rsi: RelativeStrengthIndex,
+    // This should really be an option between different moving averages,
+    // but I'm unsure on the best way to implement that. MA marker trait maybe?
+    rsi_smoother: ExponentialMovingAverage,
+    wilders_smoother: ExponentialMovingAverage,
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub struct QuantitativeQualitativeEstimationOutput {
+    pub rsi_ma: f64,
+    pub qqe_short: f64,
+    pub qqe_long: f64,
+}
+
+
 impl QuantitativeQualitativeEstimation {
-    pub fn new(period: usize) -> Result<Self> {
-        match period {
-            0 | 1 => Err(TaError::InvalidParameter),
-            _ => Ok(Self {
+    pub fn new(
+        period: usize, 
+        smooth_length: usize, 
+        wilders_multiplier: f64,
+    ) -> Result<Self> {
+        if wilders_multiplier < 1.0 {
+            Err(TaError::InvalidParameter)
+        } else {
+            let wilders_length = 2 * period - 1;
+            Ok(Self {
                 period,
-            }),
+                wilders_multiplier,
+                rsi: RelativeStrengthIndex::new(period)?,
+                rsi_smoother: ExponentialMovingAverage::new(smooth_length)?,
+                wilders_smoother: ExponentialMovingAverage::new(wilders_length)?,
+            })
         }
     }
 }
@@ -58,15 +82,20 @@ impl Period for QuantitativeQualitativeEstimation {
 }
 
 impl Next<f64> for QuantitativeQualitativeEstimation {
-    type Output = f64;
+    type Output = QuantitativeQualitativeEstimationOutput;
 
     fn next(&mut self, input: f64) -> Self::Output {
-        input
+        
+        Self::Output {
+            rsi_ma: input.clone(),
+            qqe_long: input.clone(),
+            qqe_short: input.clone(),
+        }
     }
 }
 
 impl<T: Close> Next<&T> for QuantitativeQualitativeEstimation {
-    type Output = f64;
+    type Output = QuantitativeQualitativeEstimationOutput;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
@@ -75,18 +104,24 @@ impl<T: Close> Next<&T> for QuantitativeQualitativeEstimation {
 
 impl Reset for QuantitativeQualitativeEstimation {
     fn reset(&mut self) {
+        self.rsi.reset();
+        self.rsi_smoother.reset();
+        self.wilders_smoother.reset();
     }
 }
 
 impl Default for QuantitativeQualitativeEstimation {
     fn default() -> Self {
-        Self::new(9).unwrap()
+        Self::new(14, 5, 4.236).unwrap()
     }
 }
 
 impl fmt::Display for QuantitativeQualitativeEstimation {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "QQE({})", self.period)
+        write!(f, "QQE({}, {}, {})", 
+            self.period, 
+            self.rsi_smoother.period(), 
+            self.wilders_multiplier)
     }
 }
 
@@ -99,40 +134,43 @@ mod tests {
 
     #[test]
     fn test_new() {
-        assert!(QuantitativeQualitativeEstimation::new(0).is_err());
-        assert!(QuantitativeQualitativeEstimation::new(1).is_err());
-        assert!(QuantitativeQualitativeEstimation::new(2).is_ok());
-        assert!(QuantitativeQualitativeEstimation::new(9).is_ok());
+        assert!(QuantitativeQualitativeEstimation::new(0, 5, 4.236).is_err());
+        assert!(QuantitativeQualitativeEstimation::new(14, 0, 4.236).is_err());
+        assert!(QuantitativeQualitativeEstimation::new(14, 5, 0.0).is_err());
+        assert!(QuantitativeQualitativeEstimation::new(14, 5, 0.5).is_err());
+        assert!(QuantitativeQualitativeEstimation::new(14, 5, -4.236).is_err());
+        assert!(QuantitativeQualitativeEstimation::new(3, 3, 2.0).is_ok());
+        assert!(QuantitativeQualitativeEstimation::new(14, 3, 5.45).is_ok());
     }
 
     #[test]
     fn test_next() {
-        let mut qqe = QuantitativeQualitativeEstimation::new(3).unwrap();
+        let mut qqe = QuantitativeQualitativeEstimation::default();
 
-        assert_eq!(round(qqe.next(12.0)), 12.0);
-        assert_eq!(round(qqe.next(9.0)), 8.0);
-        assert_eq!(round(qqe.next(7.0)), 5.5);
-        assert_eq!(round(qqe.next(13.0)), 15.667);
+        // assert_eq!(round(qqe.next(12.0)), 12.0); // TODO: tomorrow morning
+        // assert_eq!(round(qqe.next(9.0)), 8.0);
+        // assert_eq!(round(qqe.next(7.0)), 5.5);
+        // assert_eq!(round(qqe.next(13.0)), 15.667);
 
-        let mut qqe = QuantitativeQualitativeEstimation::new(3).unwrap();
+        let mut qqe = QuantitativeQualitativeEstimation::default();
         let bar1 = Bar::new().close(8);
         let bar2 = Bar::new().close(5);
-        assert_eq!(qqe.next(&bar1), 8.0);
-        assert_eq!(qqe.next(&bar2), 4.0);
+        // assert_eq!(qqe.next(&bar1), 8.0);
+        // assert_eq!(qqe.next(&bar2), 4.0);
     }
 
     #[test]
     fn test_reset() {
-        let mut qqe = QuantitativeQualitativeEstimation::new(5).unwrap();
+        let mut qqe = QuantitativeQualitativeEstimation::new(5, 5, 3.0).unwrap();
 
-        assert_eq!(qqe.next(4.0), 4.0);
+        // assert_eq!(qqe.next(4.0), 4.0);
         qqe.next(10.0);
         qqe.next(15.0);
         qqe.next(20.0);
-        assert_ne!(qqe.next(4.0), 4.0);
+        // assert_ne!(qqe.next(4.0), 4.0);
 
         qqe.reset();
-        assert_eq!(qqe.next(4.0), 4.0);
+        // assert_eq!(qqe.next(4.0), 4.0);
     }
 
     #[test]
@@ -142,7 +180,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let qqe = QuantitativeQualitativeEstimation::new(7).unwrap();
-        assert_eq!(format!("{}", qqe), "QQE(7)");
+        let qqe = QuantitativeQualitativeEstimation::new(7, 3, 5.33).unwrap();
+        assert_eq!(format!("{}", qqe), "QQE(7, 3, 5.33)");
     }
 }
