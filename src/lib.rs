@@ -50,6 +50,7 @@
 //!   * [Efficiency Ratio (ER)](indicators/struct.EfficiencyRatio.html)
 //!   * [Rate of Change (ROC)](indicators/struct.RateOfChange.html)
 //!   * [On Balance Volume (OBV)](indicators/struct.OnBalanceVolume.html)
+//!   * [Quantitative Qualitative Estimation (QQE)](indicators/struct.QuantitativeQualitativeEstimation.html)
 //!
 #[cfg(test)]
 #[macro_use]
