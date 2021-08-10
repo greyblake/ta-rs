@@ -69,6 +69,8 @@ So far there are the following indicators available.
 
 * Trend
   * Exponential Moving Average (EMA)
+  * Hull Moving Average (HMA)
+  * Weighted Moving Average (WMA)
   * Simple Moving Average (SMA)
 * Oscillators
   * Relative Strength Index (RSI)
@@ -127,3 +129,4 @@ Our NEAR wallet address is `ta-rs.near`
 - [Devin Gunay](https://github.com/dgunay) - serde support
 - [Youngchan Lee](https://github.com/edwardycl) - bugfix
 - [tommady](https://github.com/tommady) - get rid of error-chain dependency
+- [menkaru](https://github.com/menkaru) - WMA, HMA
