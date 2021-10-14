@@ -24,7 +24,7 @@
 //! assert_eq!(ema.next(6.25), 4.25);
 //! ```
 //!
-//! # List of indicators
+//! # List of Indicators
 //!
 //! * Trend
 //!   * [Exponential Moving Average (EMA)](crate::indicators::ExponentialMovingAverage)
