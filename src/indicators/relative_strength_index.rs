@@ -109,12 +109,10 @@ impl Next<f64> for RelativeStrengthIndex {
             // Initialize with some small seed numbers to avoid division by zero
             up = 0.1;
             down = 0.1;
+        } else if input > self.prev_val {
+            up = input - self.prev_val;
         } else {
-            if input > self.prev_val {
-                up = input - self.prev_val;
-            } else {
-                down = self.prev_val - input;
-            }
+            down = self.prev_val - input;
         }
 
         self.prev_val = input;

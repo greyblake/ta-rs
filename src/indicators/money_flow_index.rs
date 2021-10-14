@@ -102,7 +102,7 @@ impl<T: High + Low + Close + Volume> Next<&T> for MoneyFlowIndex {
         };
 
         if self.count < self.period {
-            self.count = self.count + 1;
+            self.count += 1;
             if self.count == 1 {
                 self.previous_typical_price = tp;
                 return 50.0;

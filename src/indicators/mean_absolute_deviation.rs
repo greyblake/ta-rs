@@ -63,7 +63,7 @@ impl Next<f64> for MeanAbsoluteDeviation {
 
     fn next(&mut self, input: f64) -> Self::Output {
         self.sum = if self.count < self.period {
-            self.count = self.count + 1;
+            self.count += 1;
             self.sum + input
         } else {
             self.sum + input - self.deque[self.index]
