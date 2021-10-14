@@ -64,4 +64,4 @@ mod traits;
 pub use crate::traits::*;
 
 mod data_item;
-pub use crate::data_item::DataItem;
+pub use crate::data_item::{DataItem, DataItemBuilder};

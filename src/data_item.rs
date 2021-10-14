@@ -27,20 +27,29 @@ use serde::{Deserialize, Serialize};
 /// assert_eq!(item.close(), 21.0);
 /// assert_eq!(item.volume(), 7500.0);
 /// ```
-///
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct DataItem {
-    open: f64,
-    high: f64,
-    low: f64,
-    close: f64,
-    volume: f64,
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
 }
 
 impl DataItem {
     pub fn builder() -> DataItemBuilder {
         DataItemBuilder::new()
+    }
+
+    pub fn is_ok(&self) -> bool {
+        self.low <= self.open
+            && self.low <= self.close
+            && self.low <= self.high
+            && self.high >= self.open
+            && self.high >= self.close
+            && self.volume >= 0.0
+            && self.low >= 0.0
     }
 }
 
@@ -74,6 +83,7 @@ impl Volume for DataItem {
     }
 }
 
+#[derive(Default)]
 pub struct DataItemBuilder {
     open: Option<f64>,
     high: Option<f64>,
@@ -82,6 +92,7 @@ pub struct DataItemBuilder {
     volume: Option<f64>,
 }
 
+/// Helper to construct a [`DataItem`].
 impl DataItemBuilder {
     pub fn new() -> Self {
         Self {
@@ -122,23 +133,16 @@ impl DataItemBuilder {
         if let (Some(open), Some(high), Some(low), Some(close), Some(volume)) =
             (self.open, self.high, self.low, self.close, self.volume)
         {
+            let data_item = DataItem {
+                open,
+                high,
+                low,
+                close,
+                volume,
+            };
             // validate
-            if low <= open
-                && low <= close
-                && low <= high
-                && high >= open
-                && high >= close
-                && volume >= 0.0
-                && low >= 0.0
-            {
-                let item = DataItem {
-                    open,
-                    high,
-                    low,
-                    close,
-                    volume,
-                };
-                Ok(item)
+            if data_item.is_ok() {
+                Ok(data_item)
             } else {
                 Err(TaError::DataItemInvalid)
             }
