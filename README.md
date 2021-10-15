@@ -15,12 +15,12 @@ Technical analysis library for Rust.
 * [License](#license)
 * [Contributors](#contributors)
 
-## Getting started
+## Getting Started
 
 Add to you `Cargo.toml`:
 ```
 [dependencies]
-ta = "0.4.0"
+ta = "0.5.0"
 ```
 
 Example:
@@ -41,7 +41,7 @@ assert_eq!(ema.next(6.25), 4.25);
 See more in the examples [here](https://github.com/greyblake/ta-rs/tree/master/examples).
 Check also the [documentation](https://docs.rs/ta).
 
-## Basic ideas
+## Basic Ideas
 
 A data item which represent a stock quote may implement the following traits:
 
@@ -63,9 +63,9 @@ Indicators typically implement the following traits:
 * `Default`
 * `Clone`
 
-## List of indicators
+## List of Indicators
 
-So far there are the following indicators available.
+The following indicators are available:
 
 * Trend
   * Exponential Moving Average (EMA)
@@ -98,7 +98,7 @@ So far there are the following indicators available.
 * `serde` - allows to serialize and deserialize indicators. NOTE: the backward compatibility of serialized
 data with the future versions of ta is not guaranteed because internal implementation of the indicators is a subject to change.
 
-## Running benchmarks
+## Running Benchmarks
 
 ```
 cargo bench
