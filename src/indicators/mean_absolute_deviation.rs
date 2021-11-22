@@ -8,25 +8,26 @@ use crate::{Close, Next, Period, Reset};
 
 /// Mean Absolute Deviation (MAD)
 ///
-/// The mean absolute deviation of a data set is the average of the absolute deviations from a
-/// central point. It is a summary statistic of statistical dispersion or variability.
-/// In the general form, the central point can be a mean, median, mode, or the result of any other
-/// measure of central tendency or any random data point related to the given data set.
-/// The absolute values of the differences between the data points and their central tendency are
+/// The mean absolute deviation of a data set is the average of the absolute
+/// deviations from a central point. It is a summary statistic of statistical
+/// dispersion or variability. In the general form, the central point can be a
+/// mean, median, mode, or the result of any other measure of central tendency
+/// or any random data point related to the given data set. The absolute values
+/// of the differences between the data points and their central tendency are
 /// totaled and divided by the number of data points.
 ///
 /// # Formula
 ///
-/// MAD(_period_) = { x<sub>1</sub> - ABS(AVG(_period_)), ..., x<sub>_period_</sub> - ABS(AVG(_period_)) } / _period_
+/// MAD(_period_) = { x<sub>1</sub> - ABS(AVG(_period_)), ...,
+/// x<sub>_period_</sub> - ABS(AVG(_period_)) } / _period_
 ///
 /// # Parameters
 ///
-/// * _period_ - number of periods (integer greater than 0). Default is 9.
+/// * `period` - Number of periods (integer greater than 0). Default is 9.
 ///
 /// # Links
 ///
 /// * [Mean Absolute Deviation, Wikipedia](https://en.wikipedia.org/wiki/Mean_absolute_deviation)
-///
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct MeanAbsoluteDeviation {

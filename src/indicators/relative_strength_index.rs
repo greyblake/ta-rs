@@ -20,13 +20,16 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Formula
 ///
-/// RSI<sub>t</sub> = EMA<sub>Ut</sub> * 100 / (EMA<sub>Ut</sub> + EMA<sub>Dt</sub>)
+/// RSI<sub>t</sub> = EMA<sub>Ut</sub> * 100 / (EMA<sub>Ut</sub> +
+/// EMA<sub>Dt</sub>)
 ///
 /// Where:
 ///
 /// * RSI<sub>t</sub> - value of RSI indicator in a moment of time _t_
-/// * EMA<sub>Ut</sub> - value of [EMA](struct.ExponentialMovingAverage.html) of up periods in a moment of time _t_
-/// * EMA<sub>Dt</sub> - value of [EMA](struct.ExponentialMovingAverage.html) of down periods in a moment of time _t_
+/// * EMA<sub>Ut</sub> - value of [EMA](struct.ExponentialMovingAverage.html) of
+///   up periods in a moment of time _t_
+/// * EMA<sub>Dt</sub> - value of [EMA](struct.ExponentialMovingAverage.html) of
+///   down periods in a moment of time _t_
 ///
 /// If current period has value higher than previous period, than:
 ///
@@ -49,7 +52,8 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _period_ - number of periods (integer greater than 0). Default value is 14.
+/// * `period` - Number of periods (integer greater than 0). Default value is
+///   14.
 ///
 /// # Example
 ///
@@ -67,7 +71,6 @@ use serde::{Deserialize, Serialize};
 /// # Links
 /// * [Relative strength index (Wikipedia)](https://en.wikipedia.org/wiki/Relative_strength_index)
 /// * [RSI (Investopedia)](http://www.investopedia.com/terms/r/rsi.asp)
-///
 #[doc(alias = "RSI")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]

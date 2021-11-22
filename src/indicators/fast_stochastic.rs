@@ -8,8 +8,9 @@ use serde::{Deserialize, Serialize};
 
 /// Fast stochastic oscillator.
 ///
-/// The stochastic oscillator is a momentum indicator comparing the closing price
-/// of a security to the range of its prices over a certain period of time.
+/// The stochastic oscillator is a momentum indicator comparing the closing
+/// price of a security to the range of its prices over a certain period of
+/// time.
 ///
 /// # Formula
 ///
@@ -25,7 +26,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _period_ - number of periods (integer greater than 0). Default is 14.
+/// * `period` - Number of periods (integer greater than 0). Default is 14.
 ///
 /// # Example
 ///

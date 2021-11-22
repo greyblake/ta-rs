@@ -19,8 +19,10 @@ use serde::{Deserialize, Serialize};
 /// KC is composed as:
 ///
 ///  * _KC<sub>Middle Band</sub>_ - Exponential Moving Average (EMA).
-///  * _KC<sub>Upper Band</sub>_ = EMA + ATR of observation * multipler (usually 2.0)
-///  * _KC<sub>Lower Band</sub>_ = EMA - ATR of observation * multipler (usually 2.0)
+///  * _KC<sub>Upper Band</sub>_ = EMA + ATR of observation * multipler (usually
+///    2.0)
+///  * _KC<sub>Lower Band</sub>_ = EMA - ATR of observation * multipler (usually
+///    2.0)
 ///
 /// # Example
 ///

@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// ```
 /// use ta::DataItem;
-/// use ta::{Open, High, Low, Close, Volume};
+/// use ta::{Close, High, Low, Open, Volume};
 ///
 /// let item = DataItem::builder()
 ///     .open(20.0)

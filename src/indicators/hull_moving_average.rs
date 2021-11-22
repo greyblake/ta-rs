@@ -8,7 +8,8 @@ use serde::{Deserialize, Serialize};
 
 /// Hull Moving Average (HMA).
 ///
-/// A moving average that attemps to reduce or remove price lag while maintaining curve smoothness.
+/// A moving average that attemps to reduce or remove price lag while
+/// maintaining curve smoothness.
 ///
 /// # Example
 ///
@@ -26,7 +27,6 @@ use serde::{Deserialize, Serialize};
 /// # Links
 ///
 /// * [Hull Moving Average, Alan Hull](https://alanhull.com/hull-moving-average)
-///
 
 #[doc(alias = "HMA")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]

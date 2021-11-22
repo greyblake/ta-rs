@@ -19,7 +19,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _period_ - number of periods (integer greater than 0)
+/// * `period` - Number of periods (integer greater than 0).
 ///
 /// # Example
 ///
@@ -37,7 +37,6 @@ use serde::{Deserialize, Serialize};
 /// # Links
 ///
 /// * [Simple Moving Average, Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average)
-///
 #[doc(alias = "SMA")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]

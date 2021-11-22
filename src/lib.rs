@@ -1,14 +1,15 @@
-//! ta is a Rust library for technical analysis. It provides number of technical indicators
-//! that can be used to build trading strategies for stock markets, futures, forex, cryptocurrencies, etc.
+//! ta is a Rust library for technical analysis. It provides number of technical
+//! indicators that can be used to build trading strategies for stock markets,
+//! futures, forex, cryptocurrencies, etc.
 //!
-//! Every indicator is implemented as a data structure with fields, that define parameters and
-//! state.
+//! Every indicator is implemented as a data structure with fields, that define
+//! parameters and state.
 //!
-//! Every indicator implements [Next<T>](trait.Next.html) and [Reset](trait.Reset.html) traits,
-//! which are the core concept of the library.
+//! Every indicator implements [`Next`](traits::Next) and
+//! [`Reset`](traits::Reset) traits, which are the core concept of the library.
 //!
-//! Since `Next<T>` is a generic trait, most of the indicators can work with both input types: `f64` and more complex
-//! structures like [DataItem](struct.DataItem.html).
+//! Since `Next` is a generic trait, most of the indicators can work with both
+//! input types: [`f64`] and more complex structures like [`DataItem`].
 //!
 //! # Example
 //! ```
@@ -26,34 +27,36 @@
 //!
 //! # List of Indicators
 //!
-//! * Trend
-//!   * [Exponential Moving Average (EMA)](crate::indicators::ExponentialMovingAverage)
-//!   * [Hull Moving Average (HMA)](crate::indicators::HullMovingAverage)
-//!   * [Weighted Moving Average (WMA)](crate::indicators::WeightedMovingAverage)
-//!   * [Simple Moving Average (SMA)](crate::indicators::SimpleMovingAverage)
+//! * Trends
+//!   * [Exponential Moving Average (EMA)](indicators::ExponentialMovingAverage)
+//!   * [Hull Moving Average (HMA)](indicators::HullMovingAverage)
+//!   * [Weighted Moving Average (WMA)](indicators::WeightedMovingAverage)
+//!   * [Simple Moving Average (SMA)](indicators::SimpleMovingAverage)
 //! * Oscillators
-//!   * [Relative Strength Index (RSI)](indicators/struct.RelativeStrengthIndex.html)
-//!   * [Fast Stochastic](indicators/struct.FastStochastic.html)
-//!   * [Slow Stochastic](indicators/struct.SlowStochastic.html)
-//!   * [Moving Average Convergence Divergence (MACD)](indicators/struct.MovingAverageConvergenceDivergence.html)
-//!   * [Percentage Price Oscillator (PPO)](indicators/struct.PercentagePriceOscillator.html)
-//!   * [Commodity Channel Index (CCI)](indicators/struct.CommodityChannelIndex.html)
-//!   * [Money Flow Index (MFI)](indicators/struct.MoneyFlowIndex.html)
-//! * Other
-//!   * [Standard Deviation (SD)](indicators/struct.StandardDeviation.html)
-//!   * [Mean Absolute Deviation (MAD)](indicators/struct.MeanAbsoluteDeviation.html)
-//!   * [Bollinger Bands (BB)](indicators/struct.BollingerBands.html)
-//!   * [Chandelier Exit (CE)](indicators/struct.ChandelierExit.html)
-//!   * [Keltner Channel (KC)](indicators/struct.KeltnerChannel.html)
-//!   * [Maximum](indicators/struct.Maximum.html)
-//!   * [Minimum](indicators/struct.Minimum.html)
-//!   * [True Range](indicators/struct.TrueRange.html)
-//!   * [Average True Range (ATR)](indicators/struct.AverageTrueRange.html)
-//!   * [Efficiency Ratio (ER)](indicators/struct.EfficiencyRatio.html)
-//!   * [Rate of Change (ROC)](indicators/struct.RateOfChange.html)
-//!   * [On Balance Volume (OBV)](indicators/struct.OnBalanceVolume.html)
-//!   * [Quantitative Qualitative Estimation (QQE)](indicators/struct.QuantitativeQualitativeEstimation.html)
-//!
+//!   * [Relative Strength Index (RSI)](indicators::RelativeStrengthIndex)
+//!   * [Fast Stochastic](indicators::FastStochastic)
+//!   * [Slow Stochastic](indicators::SlowStochastic)
+//!   * [Moving Average Convergence Divergence
+//!     (MACD)](indicators::MovingAverageConvergenceDivergence)
+//!   * [Percentage Price Oscillator
+//!     (PPO)](indicators::PercentagePriceOscillator)
+//!   * [Commodity Channel Index (CCI)](indicators::CommodityChannelIndex)
+//!   * [Money Flow Index (MFI)](indicators::MoneyFlowIndex)
+//! * Others
+//!   * [Standard Deviation (SD)](indicators::StandardDeviation)
+//!   * [Mean Absolute Deviation (MAD)](indicators::MeanAbsoluteDeviation)
+//!   * [Bollinger Bands (BB)](indicators::BollingerBands)
+//!   * [Chandelier Exit (CE)](indicators::ChandelierExit)
+//!   * [Keltner Channel (KC)](indicators::KeltnerChannel)
+//!   * [Maximum](indicators::Maximum)
+//!   * [Minimum](indicators::Minimum)
+//!   * [True Range (TR)](indicators::TrueRange)
+//!   * [Average True Range (ATR)](indicators::AverageTrueRange)
+//!   * [Efficiency Ratio (ER)](indicators::EfficiencyRatio)
+//!   * [Rate of Change (ROC)](indicators::RateOfChange)
+//!   * [On Balance Volume (OBV)](indicators::OnBalanceVolume)
+//!   * [Quantitative Qualitative Estimation
+//!     (QQE)](indicators::QuantitativeQualitativeEstimation)
 #[cfg(test)]
 #[macro_use]
 mod test_helper;
@@ -64,7 +67,7 @@ pub mod errors;
 pub mod indicators;
 
 mod traits;
-pub use crate::traits::*;
+pub use traits::*;
 
 mod data_item;
-pub use crate::data_item::{DataItem, DataItemBuilder};
+pub use data_item::{DataItem, DataItemBuilder};

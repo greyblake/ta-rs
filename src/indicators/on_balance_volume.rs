@@ -6,8 +6,8 @@ use serde::{Deserialize, Serialize};
 
 /// On Balance Volume (OBV).
 ///
-/// The OBV is an volume and price based oscillator which gives cumulative total volumes.
-/// OBV measures buying and selling pressure as a cumulative indicator,
+/// The OBV is an volume and price based oscillator which gives cumulative total
+/// volumes. OBV measures buying and selling pressure as a cumulative indicator,
 /// adding volume on up days and subtracting it on down days.
 ///
 /// # Formula
@@ -29,25 +29,27 @@ use serde::{Deserialize, Serialize};
 ///
 /// ```
 /// use ta::indicators::OnBalanceVolume;
-/// use ta::{Next, DataItem};
+/// use ta::{DataItem, Next};
 ///
 /// let mut obv = OnBalanceVolume::new();
 ///
 /// let di1 = DataItem::builder()
-///             .high(3.0)
-///             .low(1.0)
-///             .close(2.0)
-///             .open(1.5)
-///             .volume(1000.0)
-///             .build().unwrap();
+///     .high(3.0)
+///     .low(1.0)
+///     .close(2.0)
+///     .open(1.5)
+///     .volume(1000.0)
+///     .build()
+///     .unwrap();
 ///
 /// let di2 = DataItem::builder()
-///             .high(3.0)
-///             .low(1.0)
-///             .close(1.5)
-///             .open(1.5)
-///             .volume(300.0)
-///             .build().unwrap();
+///     .high(3.0)
+///     .low(1.0)
+///     .close(1.5)
+///     .open(1.5)
+///     .volume(300.0)
+///     .build()
+///     .unwrap();
 ///
 /// assert_eq!(obv.next(&di1), 1000.0);
 /// assert_eq!(obv.next(&di2), 700.0);

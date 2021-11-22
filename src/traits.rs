@@ -13,13 +13,13 @@ pub trait Period {
 
 /// Consumes a data item of type `T` and returns `Output`.
 ///
-/// Typically `T` can be `f64` or a struct similar to [DataItem](struct.DataItem.html), that implements
-/// traits necessary to calculate value of a particular indicator.
+/// Typically `T` can be [`f64`] or a struct similar to
+/// [`DataItem`](crate::DataItem), that implements traits necessary to calculate
+/// value of a particular indicator.
 ///
-/// In most cases `Output` is `f64`, but sometimes it can be different. For example for
-/// [MACD](indicators/struct.MovingAverageConvergenceDivergence.html) it is `(f64, f64, f64)` since
-/// MACD returns 3 values.
-///
+/// In most cases `Output` is `f64`, but sometimes it can be different. For
+/// example for [MACD](crate::indicators::MovingAverageConvergenceDivergence) it
+/// is `(f64, f64, f64)` since MACD returns three values.
 pub trait Next<T> {
     type Output;
     fn next(&mut self, input: T) -> Self::Output;

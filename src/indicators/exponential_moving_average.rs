@@ -5,11 +5,12 @@ use crate::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-/// An exponential moving average (EMA), also known as an exponentially weighted moving average
-/// (EWMA).
+/// An exponential moving average (EMA), also known as an exponentially weighted
+/// moving average (EWMA).
 ///
-/// It is a type of infinite impulse response filter that applies weighting factors which decrease exponentially.
-/// The weighting for each older datum decreases exponentially, never reaching zero.
+/// It is a type of infinite impulse response filter that applies weighting
+/// factors which decrease exponentially. The weighting for each older datum
+/// decreases exponentially, never reaching zero.
 ///
 /// # Formula
 ///
@@ -18,21 +19,19 @@ use serde::{Deserialize, Serialize};
 /// Where:
 ///
 /// * _EMA<sub>t</sub>_ - is the value of the EMA at any time period _t_.
-/// * _EMA<sub>t-1</sub>_ - is the value of the EMA at the previous period _t-1_.
+/// * _EMA<sub>t-1</sub>_ - is the value of the EMA at the previous period
+///   _t-1_.
 /// * _p<sub>t</sub>_ - is the input value at a time period t.
-/// * _α_ - is the coefficient that represents the degree of weighting decrease, a constant smoothing factor between 0 and 1.
+/// * _α_ - is the coefficient that represents the degree of weighting decrease,
+///   a constant smoothing factor between 0 and 1.
 ///
 /// _α_ is calculated with the following formula:
 ///
 /// ![alpha formula](https://wikimedia.org/api/rest_v1/media/math/render/svg/d9f6258e152db0644af548972bd6c50a8becf7ee)
 ///
-/// Where:
-///
-/// * _period_ - number of periods
-///
 /// # Parameters
 ///
-/// * _period_ - number of periods (integer greater than 0)
+/// * `period` - Number of periods (integer greater than 0).
 ///
 /// # Example
 ///
@@ -50,7 +49,6 @@ use serde::{Deserialize, Serialize};
 /// # Links
 ///
 /// * [Exponential moving average, Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
-///
 
 #[doc(alias = "EMA")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]

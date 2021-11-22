@@ -21,7 +21,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _period_ - number of periods (integer greater than 0)
+/// * `period` - number of periods (integer greater than 0)
 ///
 /// # Example
 ///
@@ -37,7 +37,6 @@ use serde::{Deserialize, Serialize};
 /// # Links
 ///
 /// * [Standard Deviation, Wikipedia](https://en.wikipedia.org/wiki/Standard_deviation)
-///
 #[doc(alias = "SD")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]

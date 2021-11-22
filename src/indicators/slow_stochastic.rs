@@ -8,12 +8,14 @@ use serde::{Deserialize, Serialize};
 
 /// Slow stochastic oscillator.
 ///
-/// Basically it is a fast stochastic oscillator smoothed with exponential moving average.
+/// Basically it is a fast stochastic oscillator smoothed with exponential
+/// moving average.
 ///
 /// # Parameters
 ///
-/// * _stochastic_period_ - number of periods for fast stochastic (integer greater than 0). Default is 14.
-/// * _ema_period_ - period for EMA (integer greater than 0). Default is 3.
+/// * `stochastic_period` - number of periods for fast stochastic (integer
+///   greater than 0). Default is 14.
+/// * `ema_period` - period for EMA (integer greater than 0). Default is 3.
 ///
 /// # Example
 ///

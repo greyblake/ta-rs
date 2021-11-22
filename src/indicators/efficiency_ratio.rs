@@ -7,12 +7,14 @@ use serde::{Deserialize, Serialize};
 
 /// Kaufman's Efficiency Ratio (ER).
 ///
-/// It is calculated by dividing the price change over a period by the absolute sum of the price movements that occurred to achieve that change.
-/// The resulting ratio ranges between 0.0 and 1.0 with higher values representing a more efficient or trending market.
+/// It is calculated by dividing the price change over a period by the absolute
+/// sum of the price movements that occurred to achieve that change.
+/// The resulting ratio ranges between 0.0 and 1.0 with higher values
+/// representing a more efficient or trending market.
 ///
 /// # Parameters
 ///
-/// * _period_ - number of periods (integer greater than 0)
+/// * `period` - Number of periods (integer greater than 0).
 ///
 /// # Example
 ///

@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 
 /// Moving average converge divergence (MACD).
 ///
-/// The MACD indicator (or "oscillator") is a collection of three time series
+/// The MACD indicator (or 'oscillator') is a collection of three time series
 /// calculated from historical price data, most often the closing price.
 /// These three series are:
 ///
@@ -16,17 +16,17 @@ use serde::{Deserialize, Serialize};
 /// * The "signal" or "average" series
 /// * The "divergence" series which is the difference between the two
 ///
-/// The MACD series is the difference between a "fast" (short period) exponential
-/// moving average (EMA), and a "slow" (longer period) EMA of the price series.
-/// The average series is an EMA of the MACD series itself.
+/// The MACD series is the difference between a 'fast' (short period)
+/// exponential moving average (EMA), and a 'slow' (longer period) EMA of the
+/// price series. The average series is an EMA of the MACD series itself.
 ///
 /// # Formula
 ///
 /// # Parameters
 ///
-/// * _fast_period_ - period for the fast EMA. Default is 12.
-/// * _slow_period_ - period for the slow EMA. Default is 26.
-/// * _signal_period_ - period for the signal EMA. Default is 9.
+/// * `fast_period` - Period for the fast EMA. Default is 12.
+/// * `slow_period` - Period for the slow EMA. Default is 26.
+/// * `signal_period` - Period for the signal EMA. Default is 9.
 ///
 /// # Example
 ///

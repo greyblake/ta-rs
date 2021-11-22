@@ -8,8 +8,10 @@ use serde::{Deserialize, Serialize};
 
 /// A Bollinger Bands (BB).
 /// (BB).
-/// It is a type of infinite impulse response filter that calculates Bollinger Bands using Exponential Moving Average.
-/// The Bollinger Bands are represented by Average EMA and standard deviaton that is moved 'k' times away in both directions from calculated average value.
+/// It is a type of infinite impulse response filter that calculates Bollinger
+/// Bands using Exponential Moving Average. The Bollinger Bands are represented
+/// by Average EMA and standard deviaton that is moved 'k' times away in both
+/// directions from calculated average value.
 ///
 /// # Formula
 ///
@@ -18,8 +20,10 @@ use serde::{Deserialize, Serialize};
 /// BB is composed as:
 ///
 ///  * _BB<sub>Middle Band</sub>_ - Simple Moving Average (SMA).
-///  * _BB<sub>Upper Band</sub>_ = SMA + SD of observation * multipler (usually 2.0)
-///  * _BB<sub>Lower Band</sub>_ = SMA - SD of observation * multipler (usually 2.0)
+///  * _BB<sub>Upper Band</sub>_ = SMA + SD of observation * multipler (usually
+///    2.0)
+///  * _BB<sub>Lower Band</sub>_ = SMA - SD of observation * multipler (usually
+///    2.0)
 ///
 /// # Example
 ///

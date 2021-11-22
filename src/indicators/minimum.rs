@@ -10,7 +10,8 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Parameters
 ///
-/// * _period_ - size of the time frame (integer greater than 0). Default value is 14.
+/// * `period` - Size of the time frame (integer greater than 0). Default value
+///   is 14.
 ///
 /// # Example
 ///

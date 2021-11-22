@@ -9,10 +9,11 @@ use crate::{Close, High, Low, Next, Period, Reset};
 
 /// Chandelier Exit (CE).
 ///
-/// Developed by Charles Le Beau and featured in Alexander Elder's books, the Chandelier Exit sets
-/// a trailing stop-loss based on the Average True Range (ATR). The indicator is designed to keep
-/// traders in a trend and prevent an early exit as long as the trend extends. Typically, the
-/// Chandelier Exit will be above prices during a downtrend and below prices during an uptrend.
+/// Developed by Charles Le Beau and featured in Alexander Elder's books, the
+/// Chandelier Exit sets a trailing stop-loss based on the Average True Range
+/// (ATR). The indicator is designed to keep traders in a trend and prevent an
+/// early exit as long as the trend extends. Typically, the Chandelier Exit will
+/// be above prices during a downtrend and below prices during an uptrend.
 ///
 /// # Formula
 ///
@@ -21,19 +22,31 @@ use crate::{Close, High, Low, Next, Period, Reset};
 ///
 /// # Parameters
 ///
-/// * _period_ - number of periods (integer greater than 0). Default is 22.
-/// * _multipler_ - ATR factor. Default is 3.
+/// * `period` - number of periods (integer greater than 0). Default is 22.
+/// * `multipler` - ATR factor. Default is 3.
 ///
 /// # Example
 ///
 /// ```
 /// use ta::indicators::ChandelierExit;
-/// use ta::{Next, DataItem};
+/// use ta::{DataItem, Next};
 ///
 /// let value1 = DataItem::builder()
-/// .open(21.0).high(22.0).low(20.0).close(21.0).volume(1.0).build().unwrap();
+///     .open(21.0)
+///     .high(22.0)
+///     .low(20.0)
+///     .close(21.0)
+///     .volume(1.0)
+///     .build()
+///     .unwrap();
 /// let value2 = DataItem::builder()
-/// .open(23.0).high(24.0).low(22.0).close(23.0).volume(1.0).build().unwrap();
+///     .open(23.0)
+///     .high(24.0)
+///     .low(22.0)
+///     .close(23.0)
+///     .volume(1.0)
+///     .build()
+///     .unwrap();
 ///
 /// let mut ce = ChandelierExit::default();
 ///
@@ -49,7 +62,6 @@ use crate::{Close, High, Low, Next, Period, Reset};
 /// # Links
 ///
 /// * [Chandelier Exit, StockCharts](https://school.stockcharts.com/doku.php?id=technical_indicators:chandelier_exit)
-///
 #[doc(alias = "CE")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]

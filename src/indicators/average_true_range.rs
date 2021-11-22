@@ -9,9 +9,10 @@ use serde::{Deserialize, Serialize};
 
 /// Average True Range (ATR).
 ///
-/// A technical analysis volatility indicator, originally developed by J. Welles Wilder.
-/// The average true range is an N-day smoothed moving average of the true range values.
-/// This implementation uses exponential moving average.
+/// A technical analysis volatility indicator, originally developed by J. Welles
+/// Wilder. The average true range is an N-day smoothed moving average of the
+/// true range values. This implementation uses exponential moving average
+/// (EMA).
 ///
 /// # Formula
 ///
@@ -19,12 +20,15 @@ use serde::{Deserialize, Serialize};
 ///
 /// Where:
 ///
-/// * _EMA(period)_ - [exponential moving average](struct.ExponentialMovingAverage.html) with smoothing period
-/// * _TR<sub>t</sub>_ - [true range](struct.TrueRange.html) for period _t_
+/// * _EMA(period)_ - [Exponential moving
+///   average](crate::indicators::ExponentialMovingAverage) with smoothing
+///   period.
+/// * _TR<sub>t</sub>_ - [True range](crate::indicators::TrueRange) for period
+///   _t_.
 ///
 /// # Parameters
 ///
-/// * _period_ - smoothing period of EMA (integer greater than 0)
+/// * `period` - Smoothing period of EMA (integer greater than 0).
 ///
 /// # Example
 ///
@@ -34,16 +38,16 @@ use serde::{Deserialize, Serialize};
 /// # use assert_approx_eq::assert_approx_eq;
 /// let data = [
 ///     // open, high, low, close, atr
-///     (9.7   , 10.0, 9.0, 9.5  , 1.0),    // tr = high - low = 10.0 - 9.0 = 1.0
-///     (9.9   , 10.4, 9.8, 10.2 , 0.95),   // tr = high - prev_close = 10.4 - 9.5 = 0.9
-///     (10.1  , 10.7, 9.4, 9.7  , 1.125),  // tr = high - low = 10.7 - 9.4 = 1.3
-///     (9.1   , 9.2 , 8.1, 8.4  , 1.3625), // tr = prev_close - low = 9.7 - 8.1 = 1.6
+///     (9.7, 10.0, 9.0, 9.5, 1.0),   // tr = high - low = 10.0 - 9.0 = 1.0
+///     (9.9, 10.4, 9.8, 10.2, 0.95), // tr = high - prev_close = 10.4 - 9.5 = 0.9
+///     (10.1, 10.7, 9.4, 9.7, 1.125), // tr = high - low = 10.7 - 9.4 = 1.3
+///     (9.1, 9.2, 8.1, 8.4, 1.3625), // tr = prev_close - low = 9.7 - 8.1 = 1.6
 /// ];
 ///
 /// let mut indicator = AverageTrueRange::new(3).unwrap();
 ///
 /// for (open, high, low, close, atr) in data {
-///     let di = DataItem{
+///     let di = DataItem {
 ///         high,
 ///         low,
 ///         close,

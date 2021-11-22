@@ -9,11 +9,13 @@ use crate::{Close, High, Low, Next, Period, Reset};
 
 /// Commodity Channel Index (CCI)
 ///
-/// The commodity channel index is an oscillator originally introduced by Donald Lambert in 1980.
+/// The commodity channel index is an oscillator originally introduced by Donald
+/// Lambert in 1980.
 ///
-/// Since its introduction, the indicator has grown in popularity and is now a very common tool for
-/// traders in identifying cyclical trends not only in commodities but also equities and currencies.
-/// The CCI can be adjusted to the timeframe of the market traded on by changing the averaging period.
+/// Since its introduction, the indicator has grown in popularity and is now a
+/// very common tool for traders in identifying cyclical trends not only in
+/// commodities but also equities and currencies. The CCI can be adjusted to the
+/// timeframe of the market traded on by changing the averaging period.
 ///
 /// # Formula
 ///
@@ -21,13 +23,12 @@ use crate::{Close, High, Low, Next, Period, Reset};
 ///
 /// # Parameters
 ///
-/// * _period_ - number of periods (integer greater than 0). Default is 20.
+/// * `period` - number of periods (integer greater than 0). Default is 20.
 ///
 /// # Links
 ///
 /// * [Commodity Channel Index, Wikipedia](https://en.wikipedia.org/wiki/Commodity_channel_index)
 /// * [Commodity Channel Index, StockCharts](https://school.stockcharts.com/doku.php?id=technical_indicators:commodity_channel_index_cci)
-///
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct CommodityChannelIndex {

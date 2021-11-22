@@ -8,8 +8,8 @@ use serde::{Deserialize, Serialize};
 
 /// Money Flow Index (MFI).
 ///
-/// The MFI is an volume and price based oscillator which gives moneyflow over n periods.
-/// MFI is used to measure buying and selling pressure.
+/// The MFI is an volume and price based oscillator which gives moneyflow over n
+/// periods. MFI is used to measure buying and selling pressure.
 /// MFI is also known as volume-weighted RSI.
 ///
 /// # Formula
@@ -21,33 +21,35 @@ use serde::{Deserialize, Serialize};
 /// MF is positive when currennt TP is greater that previous period TP and
 /// negative when current TP is less than preivous TP.
 ///
-/// Positive money flow (PMF)- calculated by adding the money flow of all the days RMF is positive.
+/// Positive money flow (PMF)- calculated by adding the money flow of all the
+/// days RMF is positive.
 ///
-/// Negative money flow (NMF)- calculated by adding the money flow of all the days RMF is negative.
+/// Negative money flow (NMF)- calculated by adding the money flow of all the
+/// days RMF is negative.
 ///
 /// Money Flow Index(MFI) = PMF / (PMF + NMF) * 100
 ///
 ///
 /// # Parameters
 ///
-/// * _period_ - number of periods, integer greater than 0
+/// * `period` - Number of periods, integer greater than 0
 ///
 /// # Example
 ///
 /// ```
 /// use ta::indicators::MoneyFlowIndex;
-/// use ta::{Next, DataItem};
+/// use ta::{DataItem, Next};
 ///
 /// let mut mfi = MoneyFlowIndex::new(3).unwrap();
 /// let di = DataItem::builder()
-///             .high(3.0)
-///             .low(1.0)
-///             .close(2.0)
-///             .open(1.5)
-///             .volume(1000.0)
-///             .build().unwrap();
+///     .high(3.0)
+///     .low(1.0)
+///     .close(2.0)
+///     .open(1.5)
+///     .volume(1000.0)
+///     .build()
+///     .unwrap();
 /// mfi.next(&di);
-///
 /// ```
 /// # Links
 /// * [Money Flow Index, Wikipedia](https://en.wikipedia.org/wiki/Money_flow_index)

@@ -9,8 +9,9 @@ use serde::{Deserialize, Serialize};
 /// Quantitative Qualitative Estimation (QQE).
 ///
 /// An indicator similar to SuperTrend that uses a smoothed RSI as a base for
-/// two trailing (upper & lower) bands. The band width is derived from a true range of
-/// the smoothed RSI base which is then doubly smoothed with a Wilder's Smoothing Function.
+/// two trailing (upper & lower) bands. The band width is derived from a true
+/// range of the smoothed RSI base which is then doubly smoothed with a Wilder's
+/// Smoothing Function.
 ///
 /// # Example
 ///
@@ -29,7 +30,6 @@ use serde::{Deserialize, Serialize};
 ///
 /// * [Quantitative Qualitative Estimation, Tradingpedia](https://www.tradingpedia.com/forex-trading-indicators/quantitative-qualitative-estimation)
 /// * [Pinescript Implementation, TradingView](https://www.tradingview.com/script/IYfA9R2k-QQE-MT4/)
-///
 
 #[doc(alias = "QQE")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -76,7 +76,7 @@ impl From<QuantitativeQualitativeEstimationOutput> for (f64, f64) {
 
 impl QuantitativeQualitativeEstimation {
     pub fn new(period: usize, smooth_period: usize, wilders_multiplier: f64) -> Result<Self> {
-        if wilders_multiplier < 1.0 || period <= 0 {
+        if wilders_multiplier < 1.0 || 0 == period {
             Err(TaError::InvalidParameter)
         } else {
             let wilders_period = 2 * period - 1;

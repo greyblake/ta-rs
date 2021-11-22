@@ -7,8 +7,9 @@ use serde::{Deserialize, Serialize};
 
 /// Weighted moving average (WMA).
 ///
-/// A moving average that assigns weights that decrease in arithmetical progression.
-/// In an _n_-day WMA the latest day has weight _n_, the second latest _n−1_, etc., down to one.
+/// A moving average that assigns weights that decrease in arithmetical
+/// progression. In an _n_-day WMA the latest day has weight _n_, the second
+/// latest _n−1_, etc., down to one.
 ///
 /// # Formula
 ///
@@ -36,7 +37,6 @@ use serde::{Deserialize, Serialize};
 /// # Links
 ///
 /// * [Weighted moving average, Wikipedia](https://en.wikipedia.org/wiki/Moving_average#Weighted_moving_average)
-///
 
 #[doc(alias = "WMA")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
