@@ -48,7 +48,7 @@ pub struct WeightedMovingAverage {
     weight: f64,
     sum: f64,
     sum_flat: f64,
-    deque: Box<[f64]>
+    deque: Box<[f64]>,
 }
 
 impl WeightedMovingAverage {

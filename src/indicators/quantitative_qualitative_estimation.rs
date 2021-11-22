@@ -1,14 +1,14 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
-use crate::indicators::{RelativeStrengthIndex, ExponentialMovingAverage};
+use crate::indicators::{ExponentialMovingAverage, RelativeStrengthIndex};
 use crate::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /// Quantitative Qualitative Estimation (QQE).
-/// 
-/// An indicator similar to SuperTrend that uses a smoothed RSI as a base for 
+///
+/// An indicator similar to SuperTrend that uses a smoothed RSI as a base for
 /// two trailing (upper & lower) bands. The band width is derived from a true range of
 /// the smoothed RSI base which is then doubly smoothed with a Wilder's Smoothing Function.
 ///
@@ -59,7 +59,12 @@ pub struct QuantitativeQualitativeEstimationOutput {
 
 impl From<QuantitativeQualitativeEstimationOutput> for (f64, f64, f64, f64) {
     fn from(qqe_out: QuantitativeQualitativeEstimationOutput) -> Self {
-        (qqe_out.rsi_ma, qqe_out.qqe_combined, qqe_out.qqe_upperband, qqe_out.qqe_lowerband)
+        (
+            qqe_out.rsi_ma,
+            qqe_out.qqe_combined,
+            qqe_out.qqe_upperband,
+            qqe_out.qqe_lowerband,
+        )
     }
 }
 
@@ -70,11 +75,7 @@ impl From<QuantitativeQualitativeEstimationOutput> for (f64, f64) {
 }
 
 impl QuantitativeQualitativeEstimation {
-    pub fn new(
-        period: usize, 
-        smooth_period: usize, 
-        wilders_multiplier: f64,
-    ) -> Result<Self> {
+    pub fn new(period: usize, smooth_period: usize, wilders_multiplier: f64) -> Result<Self> {
         if wilders_multiplier < 1.0 || period <= 0 {
             Err(TaError::InvalidParameter)
         } else {
@@ -116,32 +117,39 @@ impl Next<f64> for QuantitativeQualitativeEstimation {
 
         // Band calculations
         let new_upper = smoothed_rsi + band_gap;
-        let upperband = if
-                (self.last_smoothed_rsi > self.last_upperband) & 
-                (smoothed_rsi > self.last_upperband) &
-                (new_upper < self.last_upperband)
-            { self.last_upperband } else { new_upper };
-        
+        let upperband = if (self.last_smoothed_rsi > self.last_upperband)
+            & (smoothed_rsi > self.last_upperband)
+            & (new_upper < self.last_upperband)
+        {
+            self.last_upperband
+        } else {
+            new_upper
+        };
+
         let new_lower = smoothed_rsi - band_gap;
-        let lowerband = if
-                (self.last_smoothed_rsi < self.last_lowerband) & 
-                (smoothed_rsi < self.last_lowerband) &
-                (new_lower > self.last_lowerband)
-            { self.last_lowerband } else { new_lower };
+        let lowerband = if (self.last_smoothed_rsi < self.last_lowerband)
+            & (smoothed_rsi < self.last_lowerband)
+            & (new_lower > self.last_lowerband)
+        {
+            self.last_lowerband
+        } else {
+            new_lower
+        };
 
         // Calculate crossovers to determine if we need to update trend direction
-        if ((smoothed_rsi > lowerband) & (self.last_smoothed_rsi < self.last_lowerband)) ||
-           ((smoothed_rsi <= lowerband) & (self.last_smoothed_rsi >= self.last_lowerband)) 
-            { self.trend = true; } // long
-        else if ((smoothed_rsi > upperband) & (self.last_smoothed_rsi < self.last_upperband)) ||
-                ((smoothed_rsi <= upperband) & (self.last_smoothed_rsi >= self.last_upperband)) 
-            { self.trend = false; } // short
+        if ((smoothed_rsi > lowerband) & (self.last_smoothed_rsi < self.last_lowerband))
+            || ((smoothed_rsi <= lowerband) & (self.last_smoothed_rsi >= self.last_lowerband))
+        {
+            self.trend = true;
+        }
+        // long
+        else if ((smoothed_rsi > upperband) & (self.last_smoothed_rsi < self.last_upperband))
+            || ((smoothed_rsi <= upperband) & (self.last_smoothed_rsi >= self.last_upperband))
+        {
+            self.trend = false;
+        } // short
 
-        let combined = if self.trend {
-            upperband
-        } else {
-            lowerband
-        };
+        let combined = if self.trend { upperband } else { lowerband };
 
         self.last_smoothed_rsi = smoothed_rsi;
         self.last_upperband = upperband;
@@ -185,10 +193,13 @@ impl Default for QuantitativeQualitativeEstimation {
 
 impl fmt::Display for QuantitativeQualitativeEstimation {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "QQE({}, {}, {})", 
-            self.period, 
-            self.rsi_smoother.period(), 
-            self.wilders_multiplier)
+        write!(
+            f,
+            "QQE({}, {}, {})",
+            self.period,
+            self.rsi_smoother.period(),
+            self.wilders_multiplier
+        )
     }
 }
 
