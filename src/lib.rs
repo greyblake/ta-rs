@@ -28,6 +28,7 @@
 //!
 //! * Trend
 //!   * [Exponential Moving Average (EMA)](crate::indicators::ExponentialMovingAverage)
+//!   * [Weighted Moving Average] (WMA)(crate::indicators::WeightedMovingAverage)
 //!   * [Simple Moving Average (SMA)](crate::indicators::SimpleMovingAverage)
 //! * Oscillators
 //!   * [Relative Strength Index (RSI)](indicators/struct.RelativeStrengthIndex.html)
