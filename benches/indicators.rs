@@ -5,7 +5,8 @@ use ta::indicators::{
     ExponentialMovingAverage, FastStochastic, KeltnerChannel, Maximum, MeanAbsoluteDeviation,
     Minimum, MoneyFlowIndex, MovingAverageConvergenceDivergence, OnBalanceVolume,
     PercentagePriceOscillator, RateOfChange, RelativeStrengthIndex, SimpleMovingAverage,
-    SlowStochastic, StandardDeviation, TrueRange, WeightedMovingAverage, HullMovingAverage
+    SlowStochastic, StandardDeviation, TrueRange, WeightedMovingAverage, HullMovingAverage,
+    QuantitativeQualitativeEstimation
 };
 use ta::{DataItem, Next};
 
@@ -73,6 +74,10 @@ bench_indicators!(
     SlowStochastic,
     StandardDeviation,
     TrueRange,
+<<<<<<< HEAD
     WeightedMovingAverage,
     HullMovingAverage
+=======
+    QuantitativeQualitativeEstimation
+>>>>>>> c49eab139000f150079d653c3f8aa799b942cafe
 );
