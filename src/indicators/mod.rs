@@ -4,6 +4,9 @@ pub use self::exponential_moving_average::ExponentialMovingAverage;
 mod weighted_moving_average;
 pub use self::weighted_moving_average::WeightedMovingAverage;
 
+mod hull_moving_average;
+pub use self::hull_moving_average::HullMovingAverage;
+
 mod simple_moving_average;
 pub use self::simple_moving_average::SimpleMovingAverage;
 

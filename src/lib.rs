@@ -28,6 +28,7 @@
 //!
 //! * Trend
 //!   * [Exponential Moving Average (EMA)](crate::indicators::ExponentialMovingAverage)
+//!   * [Hull Moving Average (HMA)](crate::indicators::HullMovingAverage)
 //!   * [Weighted Moving Average] (WMA)(crate::indicators::WeightedMovingAverage)
 //!   * [Simple Moving Average (SMA)](crate::indicators::SimpleMovingAverage)
 //! * Oscillators
