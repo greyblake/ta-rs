@@ -1,4 +1,3 @@
-use std::f64::INFINITY;
 use std::fmt;
 
 use crate::errors::{Result, TaError};
@@ -41,13 +40,13 @@ impl Minimum {
                 period,
                 min_index: 0,
                 cur_index: 0,
-                deque: vec![INFINITY; period].into_boxed_slice(),
+                deque: vec![f64::INFINITY; period].into_boxed_slice(),
             }),
         }
     }
 
     fn find_min_index(&self) -> usize {
-        let mut min = ::std::f64::INFINITY;
+        let mut min = f64::INFINITY;
         let mut index: usize = 0;
 
         for (i, &val) in self.deque.iter().enumerate() {
@@ -100,7 +99,7 @@ impl<T: Low> Next<&T> for Minimum {
 impl Reset for Minimum {
     fn reset(&mut self) {
         for i in 0..self.period {
-            self.deque[i] = INFINITY;
+            self.deque[i] = f64::INFINITY;
         }
     }
 }
