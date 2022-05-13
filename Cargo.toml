@@ -2,7 +2,7 @@
 name = "ta"
 version = "0.5.0"
 authors = ["Sergey Potapov <blake131313@gmail.com>"]
-edition = "2018"
+edition = "2021"
 description = "Technical analysis library. Implements number of indicators: EMA, SMA, RSI, MACD, Stochastic, etc."
 keywords = ["technical-analysis", "financial", "ema", "indicators", "trading"]
 license = "MIT"
