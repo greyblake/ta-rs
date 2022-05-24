@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::StandardDeviation as Sd;
-use crate::{Close, Next, Period, Reset};
+use crate::{Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -50,19 +50,19 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone)]
 pub struct BollingerBands {
     period: usize,
-    multiplier: f64,
+    multiplier: NumberType,
     sd: Sd,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct BollingerBandsOutput {
-    pub average: f64,
-    pub upper: f64,
-    pub lower: f64,
+    pub average: NumberType,
+    pub upper: NumberType,
+    pub lower: NumberType,
 }
 
 impl BollingerBands {
-    pub fn new(period: usize, multiplier: f64) -> Result<Self> {
+    pub fn new(period: usize, multiplier: NumberType) -> Result<Self> {
         Ok(Self {
             period,
             multiplier,
@@ -70,7 +70,7 @@ impl BollingerBands {
         })
     }
 
-    pub fn multiplier(&self) -> f64 {
+    pub fn multiplier(&self) -> NumberType {
         self.multiplier
     }
 }
@@ -81,10 +81,10 @@ impl Period for BollingerBands {
     }
 }
 
-impl Next<f64> for BollingerBands {
+impl Next<NumberType> for BollingerBands {
     type Output = BollingerBandsOutput;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         let sd = self.sd.next(input);
         let mean = self.sd.mean();
 

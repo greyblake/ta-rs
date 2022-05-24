@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::{ExponentialMovingAverage, TrueRange};
-use crate::{Close, High, Low, Next, Period, Reset};
+use crate::{Close, High, Low, Next, NumberType, Period, Reset};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -79,16 +79,16 @@ impl Period for AverageTrueRange {
     }
 }
 
-impl Next<f64> for AverageTrueRange {
-    type Output = f64;
+impl Next<NumberType> for AverageTrueRange {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         self.ema.next(self.true_range.next(input))
     }
 }
 
 impl<T: High + Low + Close> Next<&T> for AverageTrueRange {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.ema.next(self.true_range.next(input))

@@ -1,5 +1,9 @@
 // Indicator traits
-//
+
+#[cfg(not(feature = "rust_decimal"))]
+pub(crate) type NumberType = f64;
+#[cfg(feature = "rust_decimal")]
+pub(crate) type NumberType = rust_decimal::Decimal;
 
 /// Resets an indicator to the initial state.
 pub trait Reset {
@@ -27,25 +31,25 @@ pub trait Next<T> {
 
 /// Open price of a particular period.
 pub trait Open {
-    fn open(&self) -> f64;
+    fn open(&self) -> NumberType;
 }
 
 /// Close price of a particular period.
 pub trait Close {
-    fn close(&self) -> f64;
+    fn close(&self) -> NumberType;
 }
 
 /// Lowest price of a particular period.
 pub trait Low {
-    fn low(&self) -> f64;
+    fn low(&self) -> NumberType;
 }
 
 /// Highest price of a particular period.
 pub trait High {
-    fn high(&self) -> f64;
+    fn high(&self) -> NumberType;
 }
 
 /// Trading volume of a particular trading period.
 pub trait Volume {
-    fn volume(&self) -> f64;
+    fn volume(&self) -> NumberType;
 }

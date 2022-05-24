@@ -22,6 +22,7 @@ travis-ci = { repository = "greyblake/ta-rs", branch = "master" }
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"], optional = true }
+rust_decimal = { version = "1", optional = true }
 
 [dev-dependencies]
 assert_approx_eq = "1.0.0"
