@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
-use crate::traits::{Close, Next, Period, Reset};
+use crate::{lit, Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -45,7 +45,7 @@ pub struct RateOfChange {
     period: usize,
     index: usize,
     count: usize,
-    deque: Box<[f64]>,
+    deque: Box<[NumberType]>,
 }
 
 impl RateOfChange {
@@ -56,7 +56,7 @@ impl RateOfChange {
                 period,
                 index: 0,
                 count: 0,
-                deque: vec![0.0; period].into_boxed_slice(),
+                deque: vec![lit!(0.0); period].into_boxed_slice(),
             }),
         }
     }
@@ -68,10 +68,10 @@ impl Period for RateOfChange {
     }
 }
 
-impl Next<f64> for RateOfChange {
-    type Output = f64;
+impl Next<NumberType> for RateOfChange {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> f64 {
+    fn next(&mut self, input: NumberType) -> NumberType {
         let previous = if self.count > self.period {
             self.deque[self.index]
         } else {
@@ -90,14 +90,14 @@ impl Next<f64> for RateOfChange {
             0
         };
 
-        (input - previous) / previous * 100.0
+        (input - previous) / previous * lit!(100.0)
     }
 }
 
 impl<T: Close> Next<&T> for RateOfChange {
-    type Output = f64;
+    type Output = NumberType;
 
-    fn next(&mut self, input: &T) -> f64 {
+    fn next(&mut self, input: &T) -> NumberType {
         self.next(input.close())
     }
 }
@@ -119,7 +119,7 @@ impl Reset for RateOfChange {
         self.index = 0;
         self.count = 0;
         for i in 0..self.period {
-            self.deque[i] = 0.0;
+            self.deque[i] = lit!(0.0);
         }
     }
 }

@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
-use crate::{Close, Next, Period, Reset};
+use crate::{int, lit, Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -45,9 +45,9 @@ pub struct StandardDeviation {
     period: usize,
     index: usize,
     count: usize,
-    m: f64,
-    m2: f64,
-    deque: Box<[f64]>,
+    m: NumberType,
+    m2: NumberType,
+    deque: Box<[NumberType]>,
 }
 
 impl StandardDeviation {
@@ -58,14 +58,14 @@ impl StandardDeviation {
                 period,
                 index: 0,
                 count: 0,
-                m: 0.0,
-                m2: 0.0,
-                deque: vec![0.0; period].into_boxed_slice(),
+                m: lit!(0.0),
+                m2: lit!(0.0),
+                deque: vec![lit!(0.0); period].into_boxed_slice(),
             }),
         }
     }
 
-    pub(super) fn mean(&self) -> f64 {
+    pub(super) fn mean(&self) -> NumberType {
         self.m
     }
 }
@@ -76,10 +76,10 @@ impl Period for StandardDeviation {
     }
 }
 
-impl Next<f64> for StandardDeviation {
-    type Output = f64;
+impl Next<NumberType> for StandardDeviation {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         let old_val = self.deque[self.index];
         self.deque[self.index] = input;
 
@@ -92,26 +92,26 @@ impl Next<f64> for StandardDeviation {
         if self.count < self.period {
             self.count += 1;
             let delta = input - self.m;
-            self.m += delta / self.count as f64;
+            self.m += delta / int!(self.count);
             let delta2 = input - self.m;
             self.m2 += delta * delta2;
         } else {
             let delta = input - old_val;
             let old_m = self.m;
-            self.m += delta / self.period as f64;
+            self.m += delta / int!(self.period);
             let delta2 = input - self.m + old_val - old_m;
             self.m2 += delta * delta2;
         }
-        if self.m2 < 0.0 {
-            self.m2 = 0.0;
+        if self.m2 < lit!(0.0) {
+            self.m2 = lit!(0.0);
         }
 
-        (self.m2 / self.count as f64).sqrt()
+        (self.m2 / int!(self.count)).sqrt()
     }
 }
 
 impl<T: Close> Next<&T> for StandardDeviation {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
@@ -122,10 +122,10 @@ impl Reset for StandardDeviation {
     fn reset(&mut self) {
         self.index = 0;
         self.count = 0;
-        self.m = 0.0;
-        self.m2 = 0.0;
+        self.m = lit!(0.0);
+        self.m2 = lit!(0.0);
         for i in 0..self.period {
-            self.deque[i] = 0.0;
+            self.deque[i] = lit!(0.0);
         }
     }
 }

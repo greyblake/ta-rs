@@ -1,9 +1,6 @@
-// Indicator traits
+use crate::NumberType;
 
-#[cfg(not(feature = "rust_decimal"))]
-pub(crate) type NumberType = f64;
-#[cfg(feature = "rust_decimal")]
-pub(crate) type NumberType = rust_decimal::Decimal;
+// Indicator traits
 
 /// Resets an indicator to the initial state.
 pub trait Reset {

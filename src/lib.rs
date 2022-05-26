@@ -56,6 +56,7 @@
 mod test_helper;
 
 mod helpers;
+pub(crate) use helpers::NumberType;
 
 pub mod errors;
 pub mod indicators;

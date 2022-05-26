@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::{ExponentialMovingAverage, FastStochastic};
-use crate::{Close, High, Low, Next, Period, Reset};
+use crate::{Close, High, Low, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -44,16 +44,16 @@ impl SlowStochastic {
     }
 }
 
-impl Next<f64> for SlowStochastic {
-    type Output = f64;
+impl Next<NumberType> for SlowStochastic {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         self.ema.next(self.fast_stochastic.next(input))
     }
 }
 
 impl<T: High + Low + Close> Next<&T> for SlowStochastic {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.ema.next(self.fast_stochastic.next(input))

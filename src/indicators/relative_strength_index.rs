@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::ExponentialMovingAverage as Ema;
-use crate::{Close, Next, Period, Reset};
+use crate::{lit, Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -75,7 +75,7 @@ pub struct RelativeStrengthIndex {
     period: usize,
     up_ema_indicator: Ema,
     down_ema_indicator: Ema,
-    prev_val: f64,
+    prev_val: NumberType,
     is_new: bool,
 }
 
@@ -97,10 +97,10 @@ impl Period for RelativeStrengthIndex {
     }
 }
 
-impl Next<f64> for RelativeStrengthIndex {
-    type Output = f64;
+impl Next<NumberType> for RelativeStrengthIndex {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         let mut up = 0.0;
         let mut down = 0.0;
 
@@ -109,12 +109,10 @@ impl Next<f64> for RelativeStrengthIndex {
             // Initialize with some small seed numbers to avoid division by zero
             up = 0.1;
             down = 0.1;
+        } else if input > self.prev_val {
+            up = input - self.prev_val;
         } else {
-            if input > self.prev_val {
-                up = input - self.prev_val;
-            } else {
-                down = self.prev_val - input;
-            }
+            down = self.prev_val - input;
         }
 
         self.prev_val = input;
@@ -125,7 +123,7 @@ impl Next<f64> for RelativeStrengthIndex {
 }
 
 impl<T: Close> Next<&T> for RelativeStrengthIndex {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
@@ -135,7 +133,7 @@ impl<T: Close> Next<&T> for RelativeStrengthIndex {
 impl Reset for RelativeStrengthIndex {
     fn reset(&mut self) {
         self.is_new = true;
-        self.prev_val = 0.0;
+        self.prev_val = lit!(0.0);
         self.up_ema_indicator.reset();
         self.down_ema_indicator.reset();
     }

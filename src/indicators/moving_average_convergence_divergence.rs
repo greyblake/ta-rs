@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::ExponentialMovingAverage as Ema;
-use crate::{Close, Next, Period, Reset};
+use crate::{Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -71,21 +71,21 @@ impl MovingAverageConvergenceDivergence {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct MovingAverageConvergenceDivergenceOutput {
-    pub macd: f64,
-    pub signal: f64,
-    pub histogram: f64,
+    pub macd: NumberType,
+    pub signal: NumberType,
+    pub histogram: NumberType,
 }
 
-impl From<MovingAverageConvergenceDivergenceOutput> for (f64, f64, f64) {
+impl From<MovingAverageConvergenceDivergenceOutput> for (NumberType, NumberType, NumberType) {
     fn from(mo: MovingAverageConvergenceDivergenceOutput) -> Self {
         (mo.macd, mo.signal, mo.histogram)
     }
 }
 
-impl Next<f64> for MovingAverageConvergenceDivergence {
+impl Next<NumberType> for MovingAverageConvergenceDivergence {
     type Output = MovingAverageConvergenceDivergenceOutput;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         let fast_val = self.fast_ema.next(input);
         let slow_val = self.slow_ema.next(input);
 
@@ -138,15 +138,16 @@ impl fmt::Display for MovingAverageConvergenceDivergence {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::lit;
     use crate::test_helper::*;
     type Macd = MovingAverageConvergenceDivergence;
 
     test_indicator!(Macd);
 
-    fn round(nums: (f64, f64, f64)) -> (f64, f64, f64) {
-        let n0 = (nums.0 * 100.0).round() / 100.0;
-        let n1 = (nums.1 * 100.0).round() / 100.0;
-        let n2 = (nums.2 * 100.0).round() / 100.0;
+    fn round(nums: (NumberType, NumberType, NumberType)) -> (NumberType, NumberType, NumberType) {
+        let n0 = (nums.0 * lit!(100.0)).round() / lit!(100.0);
+        let n1 = (nums.1 * lit!(100.0)).round() / lit!(100.0);
+        let n2 = (nums.2 * lit!(100.0)).round() / lit!(100.0);
         (n0, n1, n2)
     }
 
@@ -162,25 +163,55 @@ mod tests {
     fn test_macd() {
         let mut macd = Macd::new(3, 6, 4).unwrap();
 
-        assert_eq!(round(macd.next(2.0).into()), (0.0, 0.0, 0.0));
-        assert_eq!(round(macd.next(3.0).into()), (0.21, 0.09, 0.13));
-        assert_eq!(round(macd.next(4.2).into()), (0.52, 0.26, 0.26));
-        assert_eq!(round(macd.next(7.0).into()), (1.15, 0.62, 0.54));
-        assert_eq!(round(macd.next(6.7).into()), (1.15, 0.83, 0.32));
-        assert_eq!(round(macd.next(6.5).into()), (0.94, 0.87, 0.07));
+        assert_eq!(
+            round(macd.next(lit!(2.0)).into()),
+            (lit!(0.0), lit!(0.0), lit!(0.0))
+        );
+        assert_eq!(
+            round(macd.next(lit!(3.0)).into()),
+            (lit!(0.21), lit!(0.09), lit!(0.13))
+        );
+        assert_eq!(
+            round(macd.next(lit!(4.2)).into()),
+            (lit!(0.52), lit!(0.26), lit!(0.26))
+        );
+        assert_eq!(
+            round(macd.next(lit!(7.0)).into()),
+            (lit!(1.15), lit!(0.62), lit!(0.54))
+        );
+        assert_eq!(
+            round(macd.next(lit!(6.7)).into()),
+            (lit!(1.15), lit!(0.83), lit!(0.32))
+        );
+        assert_eq!(
+            round(macd.next(lit!(6.5)).into()),
+            (lit!(0.94), lit!(0.87), lit!(0.07))
+        );
     }
 
     #[test]
     fn test_reset() {
         let mut macd = Macd::new(3, 6, 4).unwrap();
 
-        assert_eq!(round(macd.next(2.0).into()), (0.0, 0.0, 0.0));
-        assert_eq!(round(macd.next(3.0).into()), (0.21, 0.09, 0.13));
+        assert_eq!(
+            round(macd.next(lit!(2.0)).into()),
+            (lit!(0.0), lit!(0.0), lit!(0.0))
+        );
+        assert_eq!(
+            round(macd.next(lit!(3.0)).into()),
+            (lit!(0.21), lit!(0.09), lit!(0.13))
+        );
 
         macd.reset();
 
-        assert_eq!(round(macd.next(2.0).into()), (0.0, 0.0, 0.0));
-        assert_eq!(round(macd.next(3.0).into()), (0.21, 0.09, 0.13));
+        assert_eq!(
+            round(macd.next(lit!(2.0)).into()),
+            (lit!(0.0), lit!(0.0), lit!(0.0))
+        );
+        assert_eq!(
+            round(macd.next(lit!(3.0)).into()),
+            (lit!(0.21), lit!(0.09), lit!(0.13))
+        );
     }
 
     #[test]

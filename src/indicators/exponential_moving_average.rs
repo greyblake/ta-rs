@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
-use crate::{Close, Next, Period, Reset};
+use crate::{lit, Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -57,8 +57,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone)]
 pub struct ExponentialMovingAverage {
     period: usize,
-    k: f64,
-    current: f64,
+    k: NumberType,
+    current: NumberType,
     is_new: bool,
 }
 
@@ -68,8 +68,8 @@ impl ExponentialMovingAverage {
             0 => Err(TaError::InvalidParameter),
             _ => Ok(Self {
                 period,
-                k: 2.0 / (period + 1) as f64,
-                current: 0.0,
+                k: lit!(2.0) / lit!((period + 1) as f64),
+                current: NumberType::default(),
                 is_new: true,
             }),
         }
@@ -82,22 +82,22 @@ impl Period for ExponentialMovingAverage {
     }
 }
 
-impl Next<f64> for ExponentialMovingAverage {
-    type Output = f64;
+impl Next<NumberType> for ExponentialMovingAverage {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         if self.is_new {
             self.is_new = false;
             self.current = input;
         } else {
-            self.current = self.k * input + (1.0 - self.k) * self.current;
+            self.current = self.k * input + (lit!(1.0) - self.k) * self.current;
         }
         self.current
     }
 }
 
 impl<T: Close> Next<&T> for ExponentialMovingAverage {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
@@ -106,7 +106,7 @@ impl<T: Close> Next<&T> for ExponentialMovingAverage {
 
 impl Reset for ExponentialMovingAverage {
     fn reset(&mut self) {
-        self.current = 0.0;
+        self.current = NumberType::default();
         self.is_new = true;
     }
 }
@@ -140,30 +140,30 @@ mod tests {
     fn test_next() {
         let mut ema = ExponentialMovingAverage::new(3).unwrap();
 
-        assert_eq!(ema.next(2.0), 2.0);
-        assert_eq!(ema.next(5.0), 3.5);
-        assert_eq!(ema.next(1.0), 2.25);
-        assert_eq!(ema.next(6.25), 4.25);
+        assert_eq!(ema.next(lit!(2.0)), lit!(2.0));
+        assert_eq!(ema.next(lit!(5.0)), lit!(3.5));
+        assert_eq!(ema.next(lit!(1.0)), lit!(2.25));
+        assert_eq!(ema.next(lit!(6.25)), lit!(4.25));
 
         let mut ema = ExponentialMovingAverage::new(3).unwrap();
         let bar1 = Bar::new().close(2);
         let bar2 = Bar::new().close(5);
-        assert_eq!(ema.next(&bar1), 2.0);
-        assert_eq!(ema.next(&bar2), 3.5);
+        assert_eq!(ema.next(&bar1), lit!(2.0));
+        assert_eq!(ema.next(&bar2), lit!(3.5));
     }
 
     #[test]
     fn test_reset() {
         let mut ema = ExponentialMovingAverage::new(5).unwrap();
 
-        assert_eq!(ema.next(4.0), 4.0);
-        ema.next(10.0);
-        ema.next(15.0);
-        ema.next(20.0);
-        assert_ne!(ema.next(4.0), 4.0);
+        assert_eq!(ema.next(lit!(4.0)), lit!(4.0));
+        ema.next(lit!(10.0));
+        ema.next(lit!(15.0));
+        ema.next(lit!(20.0));
+        assert_ne!(ema.next(lit!(4.0)), lit!(4.0));
 
         ema.reset();
-        assert_eq!(ema.next(4.0), 4.0);
+        assert_eq!(ema.next(lit!(4.0)), lit!(4.0));
     }
 
     #[test]

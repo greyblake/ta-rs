@@ -1,5 +1,6 @@
 use crate::errors::*;
-use crate::traits::{Close, High, Low, NumberType, Open, Volume};
+use crate::traits::{Close, High, Low, Open, Volume};
+use crate::NumberType;
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};

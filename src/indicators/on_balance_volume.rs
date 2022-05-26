@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::{Close, Next, Reset, Volume};
+use crate::{lit, Close, Next, NumberType, Reset, Volume};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -62,27 +62,27 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct OnBalanceVolume {
-    obv: f64,
-    prev_close: f64,
+    obv: NumberType,
+    prev_close: NumberType,
 }
 
 impl OnBalanceVolume {
     pub fn new() -> Self {
         Self {
-            obv: 0.0,
-            prev_close: 0.0,
+            obv: lit!(0.0),
+            prev_close: lit!(0.0),
         }
     }
 }
 
 impl<T: Close + Volume> Next<&T> for OnBalanceVolume {
-    type Output = f64;
+    type Output = NumberType;
 
-    fn next(&mut self, input: &T) -> f64 {
+    fn next(&mut self, input: &T) -> NumberType {
         if input.close() > self.prev_close {
-            self.obv = self.obv + input.volume();
+            self.obv += input.volume();
         } else if input.close() < self.prev_close {
-            self.obv = self.obv - input.volume();
+            self.obv -= input.volume();
         }
         self.prev_close = input.close();
         self.obv
@@ -103,8 +103,8 @@ impl fmt::Display for OnBalanceVolume {
 
 impl Reset for OnBalanceVolume {
     fn reset(&mut self) {
-        self.obv = 0.0;
-        self.prev_close = 0.0;
+        self.obv = lit!(0.0);
+        self.prev_close = lit!(0.0);
     }
 }
 
@@ -117,40 +117,40 @@ mod tests {
     fn test_next_bar() {
         let mut obv = OnBalanceVolume::new();
 
-        let bar1 = Bar::new().close(1.5).volume(1000.0);
-        let bar2 = Bar::new().close(5).volume(5000.0);
-        let bar3 = Bar::new().close(4).volume(9000.0);
-        let bar4 = Bar::new().close(4).volume(4000.0);
+        let bar1 = Bar::new().close(lit!(1.5)).volume(1000);
+        let bar2 = Bar::new().close(5).volume(5000);
+        let bar3 = Bar::new().close(4).volume(9000);
+        let bar4 = Bar::new().close(4).volume(4000);
 
-        assert_eq!(obv.next(&bar1), 1000.0);
+        assert_eq!(obv.next(&bar1), lit!(1000.0));
 
         //close > prev_close
-        assert_eq!(obv.next(&bar2), 6000.0);
+        assert_eq!(obv.next(&bar2), lit!(6000.0));
 
         // close < prev_close
-        assert_eq!(obv.next(&bar3), -3000.0);
+        assert_eq!(obv.next(&bar3), lit!(-3000.0));
 
         // close == prev_close
-        assert_eq!(obv.next(&bar4), -3000.0);
+        assert_eq!(obv.next(&bar4), lit!(-3000.0));
     }
 
     #[test]
     fn test_reset() {
         let mut obv = OnBalanceVolume::new();
 
-        let bar1 = Bar::new().close(1.5).volume(1000.0);
-        let bar2 = Bar::new().close(4).volume(2000.0);
-        let bar3 = Bar::new().close(8).volume(3000.0);
+        let bar1 = Bar::new().close(lit!(1.5)).volume(1000);
+        let bar2 = Bar::new().close(4).volume(2000);
+        let bar3 = Bar::new().close(8).volume(3000);
 
-        assert_eq!(obv.next(&bar1), 1000.0);
-        assert_eq!(obv.next(&bar2), 3000.0);
-        assert_eq!(obv.next(&bar3), 6000.0);
+        assert_eq!(obv.next(&bar1), lit!(1000.0));
+        assert_eq!(obv.next(&bar2), lit!(3000.0));
+        assert_eq!(obv.next(&bar3), lit!(6000.0));
 
         obv.reset();
 
-        assert_eq!(obv.next(&bar1), 1000.0);
-        assert_eq!(obv.next(&bar2), 3000.0);
-        assert_eq!(obv.next(&bar3), 6000.0);
+        assert_eq!(obv.next(&bar1), lit!(1000.0));
+        assert_eq!(obv.next(&bar2), lit!(3000.0));
+        assert_eq!(obv.next(&bar3), lit!(6000.0));
     }
 
     #[test]

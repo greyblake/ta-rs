@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::{Maximum, Minimum};
-use crate::{Close, High, Low, Next, Period, Reset};
+use crate::{lit, Close, High, Low, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -64,25 +64,25 @@ impl Period for FastStochastic {
     }
 }
 
-impl Next<f64> for FastStochastic {
-    type Output = f64;
+impl Next<NumberType> for FastStochastic {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         let min = self.minimum.next(input);
         let max = self.maximum.next(input);
 
         if min == max {
             // When only 1 input was given, than min and max are the same,
             // therefore it makes sense to return 50
-            50.0
+            lit!(50.0)
         } else {
-            (input - min) / (max - min) * 100.0
+            (input - min) / (max - min) * lit!(100.0)
         }
     }
 }
 
 impl<T: High + Low + Close> Next<&T> for FastStochastic {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         let highest = self.maximum.next(input.high());
@@ -91,9 +91,9 @@ impl<T: High + Low + Close> Next<&T> for FastStochastic {
 
         if highest == lowest {
             // To avoid division by zero, return 50.0
-            50.0
+            lit!(50.0)
         } else {
-            (close - lowest) / (highest - lowest) * 100.0
+            (close - lowest) / (highest - lowest) * lit!(100.0)
         }
     }
 }
@@ -133,23 +133,23 @@ mod tests {
     #[test]
     fn test_next_with_f64() {
         let mut stoch = FastStochastic::new(3).unwrap();
-        assert_eq!(stoch.next(0.0), 50.0);
-        assert_eq!(stoch.next(200.0), 100.0);
-        assert_eq!(stoch.next(100.0), 50.0);
-        assert_eq!(stoch.next(120.0), 20.0);
-        assert_eq!(stoch.next(115.0), 75.0);
+        assert_eq!(stoch.next(lit!(0.0)), lit!(50.0));
+        assert_eq!(stoch.next(lit!(200.0)), lit!(100.0));
+        assert_eq!(stoch.next(lit!(100.0)), lit!(50.0));
+        assert_eq!(stoch.next(lit!(120.0)), lit!(20.0));
+        assert_eq!(stoch.next(lit!(115.0)), lit!(75.0));
     }
 
     #[test]
     fn test_next_with_bars() {
         let test_data = vec![
             // high, low , close, expected
-            (20.0, 20.0, 20.0, 50.0), // min = 20, max = 20
-            (30.0, 10.0, 25.0, 75.0), // min = 10, max = 30
-            (40.0, 20.0, 16.0, 20.0), // min = 10, max = 40
-            (35.0, 15.0, 19.0, 30.0), // min = 10, max = 40
-            (30.0, 20.0, 25.0, 40.0), // min = 15, max = 40
-            (35.0, 25.0, 30.0, 75.0), // min = 15, max = 35
+            (lit!(20.0), lit!(20.0), lit!(20.0), lit!(50.0)), // min = 20, max = 20
+            (lit!(30.0), lit!(10.0), lit!(25.0), lit!(75.0)), // min = 10, max = 30
+            (lit!(40.0), lit!(20.0), lit!(16.0), lit!(20.0)), // min = 10, max = 40
+            (lit!(35.0), lit!(15.0), lit!(19.0), lit!(30.0)), // min = 10, max = 40
+            (lit!(30.0), lit!(20.0), lit!(25.0), lit!(40.0)), // min = 15, max = 40
+            (lit!(35.0), lit!(25.0), lit!(30.0), lit!(75.0)), // min = 15, max = 35
         ];
 
         let mut stoch = FastStochastic::new(3).unwrap();
@@ -163,15 +163,15 @@ mod tests {
     #[test]
     fn test_reset() {
         let mut indicator = FastStochastic::new(10).unwrap();
-        assert_eq!(indicator.next(10.0), 50.0);
-        assert_eq!(indicator.next(210.0), 100.0);
-        assert_eq!(indicator.next(10.0), 0.0);
-        assert_eq!(indicator.next(60.0), 25.0);
+        assert_eq!(indicator.next(lit!(10.0)), lit!(50.0));
+        assert_eq!(indicator.next(lit!(210.0)), lit!(100.0));
+        assert_eq!(indicator.next(lit!(10.0)), lit!(0.0));
+        assert_eq!(indicator.next(lit!(60.0)), lit!(25.0));
 
         indicator.reset();
-        assert_eq!(indicator.next(10.0), 50.0);
-        assert_eq!(indicator.next(20.0), 100.0);
-        assert_eq!(indicator.next(12.5), 25.0);
+        assert_eq!(indicator.next(lit!(10.0)), lit!(50.0));
+        assert_eq!(indicator.next(lit!(20.0)), lit!(100.0));
+        assert_eq!(indicator.next(lit!(12.5)), lit!(25.0));
     }
 
     #[test]

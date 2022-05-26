@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::helpers::max3;
-use crate::{Close, High, Low, Next, Reset};
+use crate::{lit, Close, High, Low, Next, NumberType, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -52,7 +52,7 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct TrueRange {
-    prev_close: Option<f64>,
+    prev_close: Option<NumberType>,
 }
 
 impl TrueRange {
@@ -73,13 +73,13 @@ impl fmt::Display for TrueRange {
     }
 }
 
-impl Next<f64> for TrueRange {
-    type Output = f64;
+impl Next<NumberType> for TrueRange {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         let distance = match self.prev_close {
             Some(prev) => (input - prev).abs(),
-            None => 0.0,
+            None => lit!(0.0),
         };
         self.prev_close = Some(input);
         distance
@@ -87,7 +87,7 @@ impl Next<f64> for TrueRange {
 }
 
 impl<T: High + Low + Close> Next<&T> for TrueRange {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, bar: &T) -> Self::Output {
         let max_dist = match self.prev_close {

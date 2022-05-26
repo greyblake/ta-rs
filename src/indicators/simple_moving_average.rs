@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
-use crate::{Close, Next, Period, Reset};
+use crate::{int, lit, Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -45,8 +45,8 @@ pub struct SimpleMovingAverage {
     period: usize,
     index: usize,
     count: usize,
-    sum: f64,
-    deque: Box<[f64]>,
+    sum: NumberType,
+    deque: Box<[NumberType]>,
 }
 
 impl SimpleMovingAverage {
@@ -57,8 +57,8 @@ impl SimpleMovingAverage {
                 period,
                 index: 0,
                 count: 0,
-                sum: 0.0,
-                deque: vec![0.0; period].into_boxed_slice(),
+                sum: lit!(0.0),
+                deque: vec![lit!(0.0); period].into_boxed_slice(),
             }),
         }
     }
@@ -70,10 +70,10 @@ impl Period for SimpleMovingAverage {
     }
 }
 
-impl Next<f64> for SimpleMovingAverage {
-    type Output = f64;
+impl Next<NumberType> for SimpleMovingAverage {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         let old_val = self.deque[self.index];
         self.deque[self.index] = input;
 
@@ -88,7 +88,7 @@ impl Next<f64> for SimpleMovingAverage {
         }
 
         self.sum = self.sum - old_val + input;
-        self.sum / (self.count as f64)
+        self.sum / int!(self.count)
     }
 }
 
@@ -104,9 +104,9 @@ impl Reset for SimpleMovingAverage {
     fn reset(&mut self) {
         self.index = 0;
         self.count = 0;
-        self.sum = 0.0;
+        self.sum = lit!(0.0);
         for i in 0..self.period {
-            self.deque[i] = 0.0;
+            self.deque[i] = lit!(0.0);
         }
     }
 }
