@@ -4,6 +4,8 @@ use crate::errors::{Result, TaError};
 use crate::{int, lit, Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "decimal")]
+use sqrt::Sqrt;
 
 /// Standard deviation (SD).
 ///
@@ -142,6 +144,23 @@ impl fmt::Display for StandardDeviation {
     }
 }
 
+#[cfg(feature = "decimal")]
+mod sqrt {
+    use crate::lit;
+    use num_traits::Pow;
+    use rust_decimal::Decimal;
+
+    pub(super) trait Sqrt {
+        fn sqrt(self) -> Self;
+    }
+
+    impl Sqrt for Decimal {
+        fn sqrt(self) -> Self {
+            self.pow(lit!(0.5))
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -158,59 +177,59 @@ mod tests {
     #[test]
     fn test_next() {
         let mut sd = StandardDeviation::new(4).unwrap();
-        assert_eq!(sd.next(10.0), 0.0);
-        assert_eq!(sd.next(20.0), 5.0);
-        assert_eq!(round(sd.next(30.0)), 8.165);
-        assert_eq!(round(sd.next(20.0)), 7.071);
-        assert_eq!(round(sd.next(10.0)), 7.071);
-        assert_eq!(round(sd.next(100.0)), 35.355);
+        assert_eq!(sd.next(lit!(10.0)), lit!(0.0));
+        assert_eq!(sd.next(lit!(20.0)), lit!(5.0));
+        assert_eq!(round(sd.next(lit!(30.0))), lit!(8.165));
+        assert_eq!(round(sd.next(lit!(20.0))), lit!(7.071));
+        assert_eq!(round(sd.next(lit!(10.0))), lit!(7.071));
+        assert_eq!(round(sd.next(lit!(100.0))), lit!(35.355));
     }
 
     #[test]
     fn test_next_floating_point_error() {
         let mut sd = StandardDeviation::new(6).unwrap();
-        assert_eq!(sd.next(1.872), 0.0);
-        assert_eq!(round(sd.next(1.0)), 0.436);
-        assert_eq!(round(sd.next(1.0)), 0.411);
-        assert_eq!(round(sd.next(1.0)), 0.378);
-        assert_eq!(round(sd.next(1.0)), 0.349);
-        assert_eq!(round(sd.next(1.0)), 0.325);
-        assert_eq!(round(sd.next(1.0)), 0.0);
+        assert_eq!(sd.next(lit!(1.872)), lit!(0.0));
+        assert_eq!(round(sd.next(lit!(1.0))), lit!(0.436));
+        assert_eq!(round(sd.next(lit!(1.0))), lit!(0.411));
+        assert_eq!(round(sd.next(lit!(1.0))), lit!(0.378));
+        assert_eq!(round(sd.next(lit!(1.0))), lit!(0.349));
+        assert_eq!(round(sd.next(lit!(1.0))), lit!(0.325));
+        assert_eq!(round(sd.next(lit!(1.0))), lit!(0.0));
     }
 
     #[test]
     fn test_next_with_bars() {
-        fn bar(close: f64) -> Bar {
+        fn bar(close: NumberType) -> Bar {
             Bar::new().close(close)
         }
 
         let mut sd = StandardDeviation::new(4).unwrap();
-        assert_eq!(sd.next(&bar(10.0)), 0.0);
-        assert_eq!(sd.next(&bar(20.0)), 5.0);
-        assert_eq!(round(sd.next(&bar(30.0))), 8.165);
-        assert_eq!(round(sd.next(&bar(20.0))), 7.071);
-        assert_eq!(round(sd.next(&bar(10.0))), 7.071);
-        assert_eq!(round(sd.next(&bar(100.0))), 35.355);
+        assert_eq!(sd.next(&bar(lit!(10.0))), lit!(0.0));
+        assert_eq!(sd.next(&bar(lit!(20.0))), lit!(5.0));
+        assert_eq!(round(sd.next(&bar(lit!(30.0)))), lit!(8.165));
+        assert_eq!(round(sd.next(&bar(lit!(20.0)))), lit!(7.071));
+        assert_eq!(round(sd.next(&bar(lit!(10.0)))), lit!(7.071));
+        assert_eq!(round(sd.next(&bar(lit!(100.0)))), lit!(35.355));
     }
 
     #[test]
     fn test_next_same_values() {
         let mut sd = StandardDeviation::new(3).unwrap();
-        assert_eq!(sd.next(4.2), 0.0);
-        assert_eq!(sd.next(4.2), 0.0);
-        assert_eq!(sd.next(4.2), 0.0);
-        assert_eq!(sd.next(4.2), 0.0);
+        assert_eq!(sd.next(lit!(4.2)), lit!(0.0));
+        assert_eq!(sd.next(lit!(4.2)), lit!(0.0));
+        assert_eq!(sd.next(lit!(4.2)), lit!(0.0));
+        assert_eq!(sd.next(lit!(4.2)), lit!(0.0));
     }
 
     #[test]
     fn test_reset() {
         let mut sd = StandardDeviation::new(4).unwrap();
-        assert_eq!(sd.next(10.0), 0.0);
-        assert_eq!(sd.next(20.0), 5.0);
-        assert_eq!(round(sd.next(30.0)), 8.165);
+        assert_eq!(sd.next(lit!(10.0)), lit!(0.0));
+        assert_eq!(sd.next(lit!(20.0)), lit!(5.0));
+        assert_eq!(round(sd.next(lit!(30.0))), lit!(8.165));
 
         sd.reset();
-        assert_eq!(sd.next(20.0), 0.0);
+        assert_eq!(sd.next(lit!(20.0)), lit!(0.0));
     }
 
     #[test]

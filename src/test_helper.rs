@@ -1,4 +1,4 @@
-use super::{Close, High, Low, NumberType, Open, Volume};
+use super::{lit, Close, High, Low, NumberType, Open, Volume};
 
 #[derive(Debug, PartialEq)]
 pub struct Bar {
@@ -12,11 +12,11 @@ pub struct Bar {
 impl Bar {
     pub fn new() -> Self {
         Self {
-            open: 0.0,
-            close: 0.0,
-            low: 0.0,
-            high: 0.0,
-            volume: 0.0,
+            open: lit!(0.0),
+            close: lit!(0.0),
+            low: lit!(0.0),
+            high: lit!(0.0),
+            volume: lit!(0.0),
         }
     }
 
@@ -76,12 +76,12 @@ impl Volume for Bar {
     }
 }
 
-#[cfg(not(feature = "rust_decimal"))]
+#[cfg(not(feature = "decimal"))]
 pub fn round(num: NumberType) -> NumberType {
     (num * 1000.0).round() / 1000.00
 }
 
-#[cfg(feature = "rust_decimal")]
+#[cfg(feature = "decimal")]
 pub fn round(num: NumberType) -> NumberType {
     num.round_dp(3)
 }
@@ -96,14 +96,14 @@ macro_rules! test_indicator {
             let mut indicator = $i::default();
 
             // ensure Next<NumberType> is implemented
-            let first_output = indicator.next(12.3);
+            let first_output = indicator.next(lit!(12.3));
 
             // ensure next accepts &DataItem as well
             indicator.next(&bar);
 
             // ensure Reset is implemented and works correctly
             indicator.reset();
-            assert_eq!(indicator.next(12.3), first_output);
+            assert_eq!(indicator.next(lit!(12.3)), first_output);
 
             // ensure Display is implemented
             format!("{}", indicator);

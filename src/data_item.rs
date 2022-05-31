@@ -1,6 +1,6 @@
 use crate::errors::*;
-use crate::traits::{Close, High, Low, Open, Volume};
 use crate::NumberType;
+use crate::{lit, Close, High, Low, Open, Volume};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -75,6 +75,7 @@ impl Volume for DataItem {
     }
 }
 
+#[derive(Default)]
 pub struct DataItemBuilder {
     open: Option<NumberType>,
     high: Option<NumberType>,
@@ -85,13 +86,7 @@ pub struct DataItemBuilder {
 
 impl DataItemBuilder {
     pub fn new() -> Self {
-        Self {
-            open: None,
-            high: None,
-            low: None,
-            close: None,
-            volume: None,
-        }
+        Self::default()
     }
 
     pub fn open(mut self, val: NumberType) -> Self {
@@ -129,8 +124,8 @@ impl DataItemBuilder {
                 && low <= high
                 && high >= open
                 && high >= close
-                && volume >= 0.0
-                && low >= 0.0
+                && volume >= lit!(0.0)
+                && low >= lit!(0.0)
             {
                 let item = DataItem {
                     open,
@@ -195,9 +190,9 @@ mod tests {
 
         let valid_records = vec![
             // open, high, low , close, volume
-            (20.0, 25.0, 15.0, 21.0, 7500.0),
-            (10.0, 10.0, 10.0, 10.0, 10.0),
-            (0.0, 0.0, 0.0, 0.0, 0.0),
+            (lit!(20.0), lit!(25.0), lit!(15.0), lit!(21.0), lit!(7500.0)),
+            (lit!(10.0), lit!(10.0), lit!(10.0), lit!(10.0), lit!(10.0)),
+            (lit!(0.0), lit!(0.0), lit!(0.0), lit!(0.0), lit!(0.0)),
         ];
         for record in valid_records {
             assert_valid(record)
@@ -205,16 +200,16 @@ mod tests {
 
         let invalid_records = vec![
             // open, high, low , close, volume
-            (-1.0, 25.0, 15.0, 21.0, 7500.0),
-            (20.0, -1.0, 15.0, 21.0, 7500.0),
-            (20.0, 25.0, -1.0, 21.0, 7500.0),
-            (20.0, 25.0, 15.0, -1.0, 7500.0),
-            (20.0, 25.0, 15.0, 21.0, -1.0),
-            (14.9, 25.0, 15.0, 21.0, 7500.0),
-            (25.1, 25.0, 15.0, 21.0, 7500.0),
-            (20.0, 25.0, 15.0, 14.9, 7500.0),
-            (20.0, 25.0, 15.0, 25.1, 7500.0),
-            (20.0, 15.0, 25.0, 21.0, 7500.0),
+            (lit!(-1.0), lit!(25.0), lit!(15.0), lit!(21.0), lit!(7500.0)),
+            (lit!(20.0), lit!(-1.0), lit!(15.0), lit!(21.0), lit!(7500.0)),
+            (lit!(20.0), lit!(25.0), lit!(-1.0), lit!(21.0), lit!(7500.0)),
+            (lit!(20.0), lit!(25.0), lit!(15.0), lit!(-1.0), lit!(7500.0)),
+            (lit!(20.0), lit!(25.0), lit!(15.0), lit!(21.0), lit!(-1.0)),
+            (lit!(14.9), lit!(25.0), lit!(15.0), lit!(21.0), lit!(7500.0)),
+            (lit!(25.1), lit!(25.0), lit!(15.0), lit!(21.0), lit!(7500.0)),
+            (lit!(20.0), lit!(25.0), lit!(15.0), lit!(14.9), lit!(7500.0)),
+            (lit!(20.0), lit!(25.0), lit!(15.0), lit!(25.1), lit!(7500.0)),
+            (lit!(20.0), lit!(15.0), lit!(25.0), lit!(21.0), lit!(7500.0)),
         ];
         for record in invalid_records {
             assert_invalid(record)

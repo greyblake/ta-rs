@@ -142,38 +142,38 @@ mod tests {
     fn test_next_f64() {
         let mut roc = RateOfChange::new(3).unwrap();
 
-        assert_eq!(round(roc.next(10.0)), 0.0);
-        assert_eq!(round(roc.next(10.4)), 4.0);
-        assert_eq!(round(roc.next(10.57)), 5.7);
-        assert_eq!(round(roc.next(10.8)), 8.0);
-        assert_eq!(round(roc.next(10.9)), 4.808);
-        assert_eq!(round(roc.next(10.0)), -5.393);
+        assert_eq!(round(roc.next(lit!(10.0))), lit!(0.0));
+        assert_eq!(round(roc.next(lit!(10.4))), lit!(4.0));
+        assert_eq!(round(roc.next(lit!(10.57))), lit!(5.7));
+        assert_eq!(round(roc.next(lit!(10.8))), lit!(8.0));
+        assert_eq!(round(roc.next(lit!(10.9))), lit!(4.808));
+        assert_eq!(round(roc.next(lit!(10.0))), lit!(-5.393));
     }
 
     #[test]
     fn test_next_bar() {
-        fn bar(close: f64) -> Bar {
+        fn bar(close: NumberType) -> Bar {
             Bar::new().close(close)
         }
 
         let mut roc = RateOfChange::new(3).unwrap();
 
-        assert_eq!(round(roc.next(&bar(10.0))), 0.0);
-        assert_eq!(round(roc.next(&bar(10.4))), 4.0);
-        assert_eq!(round(roc.next(&bar(10.57))), 5.7);
+        assert_eq!(round(roc.next(&bar(lit!(10.0)))), lit!(0.0));
+        assert_eq!(round(roc.next(&bar(lit!(10.4)))), lit!(4.0));
+        assert_eq!(round(roc.next(&bar(lit!(10.57)))), lit!(5.7));
     }
 
     #[test]
     fn test_reset() {
         let mut roc = RateOfChange::new(3).unwrap();
 
-        roc.next(12.3);
-        roc.next(15.0);
+        roc.next(lit!(12.3));
+        roc.next(lit!(15.0));
 
         roc.reset();
 
-        assert_eq!(round(roc.next(10.0)), 0.0);
-        assert_eq!(round(roc.next(10.4)), 4.0);
-        assert_eq!(round(roc.next(10.57)), 5.7);
+        assert_eq!(round(roc.next(lit!(10.0))), lit!(0.0));
+        assert_eq!(round(roc.next(lit!(10.4))), lit!(4.0));
+        assert_eq!(round(roc.next(lit!(10.57))), lit!(5.7));
     }
 }

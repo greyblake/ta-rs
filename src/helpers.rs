@@ -1,4 +1,4 @@
-#[cfg(not(feature = "rust_decimal"))]
+#[cfg(not(feature = "decimal"))]
 mod generics {
     pub(crate) type NumberType = f64;
 
@@ -19,7 +19,7 @@ mod generics {
     pub use std::f64::INFINITY;
 }
 
-#[cfg(feature = "rust_decimal")]
+#[cfg(feature = "decimal")]
 mod generics {
     pub(crate) type NumberType = rust_decimal::Decimal;
 
@@ -44,18 +44,19 @@ mod generics {
 pub(crate) use generics::*;
 
 /// Returns the largest of 3 given numbers.
-pub fn max3(a: f64, b: f64, c: f64) -> f64 {
+pub fn max3(a: NumberType, b: NumberType, c: NumberType) -> NumberType {
     a.max(b).max(c)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::lit;
 
     #[test]
     fn test_max3() {
-        assert_eq!(max3(3.0, 2.0, 1.0), 3.0);
-        assert_eq!(max3(2.0, 3.0, 1.0), 3.0);
-        assert_eq!(max3(2.0, 1.0, 3.0), 3.0);
+        assert_eq!(max3(lit!(3.0), lit!(2.0), lit!(1.0)), lit!(3.0));
+        assert_eq!(max3(lit!(2.0), lit!(3.0), lit!(1.0)), lit!(3.0));
+        assert_eq!(max3(lit!(2.0), lit!(1.0), lit!(3.0)), lit!(3.0));
     }
 }

@@ -120,37 +120,37 @@ mod tests {
     #[test]
     fn test_next_f64() {
         let mut tr = TrueRange::new();
-        assert_eq!(round(tr.next(2.5)), 0.0);
-        assert_eq!(round(tr.next(3.6)), 1.1);
-        assert_eq!(round(tr.next(3.3)), 0.3);
+        assert_eq!(round(tr.next(lit!(2.5))), lit!(0.0));
+        assert_eq!(round(tr.next(lit!(3.6))), lit!(1.1));
+        assert_eq!(round(tr.next(lit!(3.3))), lit!(0.3));
     }
 
     #[test]
     fn test_next_bar() {
         let mut tr = TrueRange::new();
 
-        let bar1 = Bar::new().high(10).low(7.5).close(9);
-        let bar2 = Bar::new().high(11).low(9).close(9.5);
+        let bar1 = Bar::new().high(10).low(lit!(7.5)).close(9);
+        let bar2 = Bar::new().high(11).low(9).close(lit!(9.5));
         let bar3 = Bar::new().high(9).low(5).close(8);
 
-        assert_eq!(tr.next(&bar1), 2.5);
-        assert_eq!(tr.next(&bar2), 2.0);
-        assert_eq!(tr.next(&bar3), 4.5);
+        assert_eq!(tr.next(&bar1), lit!(2.5));
+        assert_eq!(tr.next(&bar2), lit!(2.0));
+        assert_eq!(tr.next(&bar3), lit!(4.5));
     }
 
     #[test]
     fn test_reset() {
         let mut tr = TrueRange::new();
 
-        let bar1 = Bar::new().high(10).low(7.5).close(9);
-        let bar2 = Bar::new().high(11).low(9).close(9.5);
+        let bar1 = Bar::new().high(10).low(lit!(7.5)).close(9);
+        let bar2 = Bar::new().high(11).low(9).close(lit!(9.5));
 
         tr.next(&bar1);
         tr.next(&bar2);
 
         tr.reset();
         let bar3 = Bar::new().high(60).low(15).close(51);
-        assert_eq!(tr.next(&bar3), 45.0);
+        assert_eq!(tr.next(&bar3), lit!(45.0));
     }
 
     #[test]

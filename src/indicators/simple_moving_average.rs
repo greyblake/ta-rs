@@ -93,7 +93,7 @@ impl Next<NumberType> for SimpleMovingAverage {
 }
 
 impl<T: Close> Next<&T> for SimpleMovingAverage {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
@@ -139,37 +139,37 @@ mod tests {
     #[test]
     fn test_next() {
         let mut sma = SimpleMovingAverage::new(4).unwrap();
-        assert_eq!(sma.next(4.0), 4.0);
-        assert_eq!(sma.next(5.0), 4.5);
-        assert_eq!(sma.next(6.0), 5.0);
-        assert_eq!(sma.next(6.0), 5.25);
-        assert_eq!(sma.next(6.0), 5.75);
-        assert_eq!(sma.next(6.0), 6.0);
-        assert_eq!(sma.next(2.0), 5.0);
+        assert_eq!(sma.next(lit!(4.0)), lit!(4.0));
+        assert_eq!(sma.next(lit!(5.0)), lit!(4.5));
+        assert_eq!(sma.next(lit!(6.0)), lit!(5.0));
+        assert_eq!(sma.next(lit!(6.0)), lit!(5.25));
+        assert_eq!(sma.next(lit!(6.0)), lit!(5.75));
+        assert_eq!(sma.next(lit!(6.0)), lit!(6.0));
+        assert_eq!(sma.next(lit!(2.0)), lit!(5.0));
     }
 
     #[test]
     fn test_next_with_bars() {
-        fn bar(close: f64) -> Bar {
+        fn bar(close: NumberType) -> Bar {
             Bar::new().close(close)
         }
 
         let mut sma = SimpleMovingAverage::new(3).unwrap();
-        assert_eq!(sma.next(&bar(4.0)), 4.0);
-        assert_eq!(sma.next(&bar(4.0)), 4.0);
-        assert_eq!(sma.next(&bar(7.0)), 5.0);
-        assert_eq!(sma.next(&bar(1.0)), 4.0);
+        assert_eq!(sma.next(&bar(lit!(4.0))), lit!(4.0));
+        assert_eq!(sma.next(&bar(lit!(4.0))), lit!(4.0));
+        assert_eq!(sma.next(&bar(lit!(7.0))), lit!(5.0));
+        assert_eq!(sma.next(&bar(lit!(1.0))), lit!(4.0));
     }
 
     #[test]
     fn test_reset() {
         let mut sma = SimpleMovingAverage::new(4).unwrap();
-        assert_eq!(sma.next(4.0), 4.0);
-        assert_eq!(sma.next(5.0), 4.5);
-        assert_eq!(sma.next(6.0), 5.0);
+        assert_eq!(sma.next(lit!(4.0)), lit!(4.0));
+        assert_eq!(sma.next(lit!(5.0)), lit!(4.5));
+        assert_eq!(sma.next(lit!(6.0)), lit!(5.0));
 
         sma.reset();
-        assert_eq!(sma.next(99.0), 99.0);
+        assert_eq!(sma.next(lit!(99.0)), lit!(99.0));
     }
 
     #[test]

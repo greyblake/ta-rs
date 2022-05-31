@@ -87,6 +87,7 @@ impl fmt::Display for SlowStochastic {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::lit;
     use crate::test_helper::*;
 
     test_indicator!(SlowStochastic);
@@ -101,23 +102,23 @@ mod tests {
     #[test]
     fn test_next_with_f64() {
         let mut stoch = SlowStochastic::new(3, 2).unwrap();
-        assert_eq!(stoch.next(10.0), 50.0);
-        assert_eq!(stoch.next(50.0).round(), 83.0);
-        assert_eq!(stoch.next(50.0).round(), 94.0);
-        assert_eq!(stoch.next(30.0).round(), 31.0);
-        assert_eq!(stoch.next(55.0).round(), 77.0);
+        assert_eq!(stoch.next(lit!(10.0)), lit!(50.0));
+        assert_eq!(stoch.next(lit!(50.0)).round(), lit!(83.0));
+        assert_eq!(stoch.next(lit!(50.0)).round(), lit!(94.0));
+        assert_eq!(stoch.next(lit!(30.0)).round(), lit!(31.0));
+        assert_eq!(stoch.next(lit!(55.0)).round(), lit!(77.0));
     }
 
     #[test]
     fn test_next_with_bars() {
         let test_data = vec![
             // high, low , close, expected
-            (30.0, 10.0, 25.0, 75.0),
-            (20.0, 20.0, 20.0, 58.0),
-            (40.0, 20.0, 16.0, 33.0),
-            (35.0, 15.0, 19.0, 22.0),
-            (30.0, 20.0, 25.0, 34.0),
-            (35.0, 25.0, 30.0, 61.0),
+            (lit!(30.0), lit!(10.0), lit!(25.0), lit!(75.0)),
+            (lit!(20.0), lit!(20.0), lit!(20.0), lit!(58.0)),
+            (lit!(40.0), lit!(20.0), lit!(16.0), lit!(33.0)),
+            (lit!(35.0), lit!(15.0), lit!(19.0), lit!(22.0)),
+            (lit!(30.0), lit!(20.0), lit!(25.0), lit!(34.0)),
+            (lit!(35.0), lit!(25.0), lit!(30.0), lit!(61.0)),
         ];
 
         let mut stoch = SlowStochastic::new(3, 2).unwrap();
@@ -131,12 +132,12 @@ mod tests {
     #[test]
     fn test_reset() {
         let mut stoch = SlowStochastic::new(3, 2).unwrap();
-        assert_eq!(stoch.next(10.0), 50.0);
-        assert_eq!(stoch.next(50.0).round(), 83.0);
-        assert_eq!(stoch.next(50.0).round(), 94.0);
+        assert_eq!(stoch.next(lit!(10.0)), lit!(50.0));
+        assert_eq!(stoch.next(lit!(50.0)).round(), lit!(83.0));
+        assert_eq!(stoch.next(lit!(50.0)).round(), lit!(94.0));
 
         stoch.reset();
-        assert_eq!(stoch.next(10.0), 50.0);
+        assert_eq!(stoch.next(lit!(10.0)), lit!(50.0));
     }
 
     #[test]
