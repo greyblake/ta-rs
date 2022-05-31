@@ -83,7 +83,8 @@ pub fn round(num: NumberType) -> NumberType {
 
 #[cfg(feature = "decimal")]
 pub fn round(num: NumberType) -> NumberType {
-    num.round_dp(3)
+    use rust_decimal::prelude::RoundingStrategy;
+    num.round_dp_with_strategy(3, RoundingStrategy::MidpointAwayFromZero)
 }
 
 macro_rules! test_indicator {

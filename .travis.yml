@@ -10,4 +10,5 @@ script:
   # - cargo clippy -- -D warnings
   - cargo test
   - cargo test --features serde
+  - cargo test --features decimal --tests
   - cargo package

@@ -195,7 +195,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let indicator = Ce::new(10, lit!(5.0)).unwrap();
+        let indicator = Ce::new(10, crate::int!(5)).unwrap();
         assert_eq!(format!("{}", indicator), "CE(10, 5)");
     }
 }

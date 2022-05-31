@@ -2,10 +2,10 @@ use std::fmt;
 
 use crate::errors::{Result, TaError};
 use crate::{int, lit, Close, Next, NumberType, Period, Reset};
+#[cfg(feature = "decimal")]
+use rust_decimal::MathematicalOps;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-#[cfg(feature = "decimal")]
-use sqrt::Sqrt;
 
 /// Standard deviation (SD).
 ///
@@ -108,7 +108,12 @@ impl Next<NumberType> for StandardDeviation {
             self.m2 = lit!(0.0);
         }
 
-        (self.m2 / int!(self.count)).sqrt()
+        #[cfg(not(feature = "decimal"))]
+        return (self.m2 / int!(self.count)).sqrt();
+        #[cfg(feature = "decimal")]
+        return (self.m2 / int!(self.count))
+            .sqrt()
+            .expect("Invalid (probably negative) number sent.");
     }
 }
 
@@ -141,23 +146,6 @@ impl Default for StandardDeviation {
 impl fmt::Display for StandardDeviation {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "SD({})", self.period)
-    }
-}
-
-#[cfg(feature = "decimal")]
-mod sqrt {
-    use crate::lit;
-    use num_traits::Pow;
-    use rust_decimal::Decimal;
-
-    pub(super) trait Sqrt {
-        fn sqrt(self) -> Self;
-    }
-
-    impl Sqrt for Decimal {
-        fn sqrt(self) -> Self {
-            self.pow(lit!(0.5))
-        }
     }
 }
 

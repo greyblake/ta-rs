@@ -140,14 +140,26 @@ mod tests {
     use super::*;
     use crate::test_helper::*;
     type Ppo = PercentagePriceOscillator;
+    #[cfg(feature = "decimal")]
+    use rust_decimal::Decimal;
 
     test_indicator!(Ppo);
 
-    fn round(nums: (NumberType, NumberType, NumberType)) -> (NumberType, NumberType, NumberType) {
-        let n0 = (nums.0 * lit!(100.0)).round() / lit!(100.0);
-        let n1 = (nums.1 * lit!(100.0)).round() / lit!(100.0);
-        let n2 = (nums.2 * lit!(100.0)).round() / lit!(100.0);
+    #[cfg(not(feature = "decimal"))]
+    fn round(nums: (f64, f64, f64)) -> (f64, f64, f64) {
+        let n0 = (nums.0 * 100.0).round() / 100.0;
+        let n1 = (nums.1 * 100.0).round() / 100.0;
+        let n2 = (nums.2 * 100.0).round() / 100.0;
         (n0, n1, n2)
+    }
+    #[cfg(feature = "decimal")]
+    fn round(nums: (Decimal, Decimal, Decimal)) -> (Decimal, Decimal, Decimal) {
+        use rust_decimal::prelude::RoundingStrategy::MidpointAwayFromZero;
+        (
+            nums.0.round_dp_with_strategy(2, MidpointAwayFromZero),
+            nums.1.round_dp_with_strategy(2, MidpointAwayFromZero),
+            nums.2.round_dp_with_strategy(2, MidpointAwayFromZero),
+        )
     }
 
     #[test]
@@ -175,16 +187,16 @@ mod tests {
             (lit!(18.26), lit!(9.56), lit!(8.71))
         );
         assert_eq!(
-            round(ppo.next(lit!(7.0)).into()),
-            (lit!(28.62), lit!(17.18), lit!(11.44))
+            round(ppo.next(lit!(8.0)).into()),
+            (lit!(31.70), lit!(18.41), lit!(13.29))
         );
         assert_eq!(
             round(ppo.next(lit!(6.7)).into()),
-            (lit!(24.01), lit!(19.91), lit!(4.09))
+            (lit!(23.94), lit!(20.63), lit!(3.32))
         );
         assert_eq!(
             round(ppo.next(lit!(6.5)).into()),
-            (lit!(17.84), lit!(19.08), lit!(-1.24))
+            (lit!(16.98), lit!(19.17), lit!(-2.19))
         );
     }
 

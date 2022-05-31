@@ -195,7 +195,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let bb = BollingerBands::new(10, lit!(3.0)).unwrap();
+        let bb = BollingerBands::new(10, crate::int!(3)).unwrap();
         assert_eq!(format!("{}", bb), "BB(10, 3)");
     }
 }

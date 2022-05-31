@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
-use crate::{lit, Close, Next, NumberType, Period, Reset};
+use crate::{int, lit, Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -68,7 +68,7 @@ impl ExponentialMovingAverage {
             0 => Err(TaError::InvalidParameter),
             _ => Ok(Self {
                 period,
-                k: lit!(2.0) / lit!((period + 1) as f64),
+                k: lit!(2.0) / int!(period + 1),
                 current: NumberType::default(),
                 is_new: true,
             }),

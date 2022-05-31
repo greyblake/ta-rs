@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::{AverageTrueRange, ExponentialMovingAverage};
-use crate::{lit, Close, High, Low, Next, NumberType, Period, Reset};
+use crate::{int, lit, Close, High, Low, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -125,7 +125,7 @@ impl Reset for KeltnerChannel {
 
 impl Default for KeltnerChannel {
     fn default() -> Self {
-        Self::new(10, lit!(2_f64)).unwrap()
+        Self::new(10, int!(2)).unwrap()
     }
 }
 
@@ -231,7 +231,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let kc = KeltnerChannel::new(10, lit!(3.0)).unwrap();
+        let kc = KeltnerChannel::new(10, int!(3)).unwrap();
         assert_eq!(format!("{}", kc), "KC(10, 3)");
     }
 }
