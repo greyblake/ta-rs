@@ -1,4 +1,4 @@
-use bencher::{benchmark_group, benchmark_main, Bencher};
+use bencher::{benchmark_group, benchmark_main, black_box, Bencher};
 use rand::Rng;
 use ta::indicators::{
     AverageTrueRange, BollingerBands, ChandelierExit, CommodityChannelIndex, EfficiencyRatio,
@@ -37,10 +37,10 @@ macro_rules! bench_indicators {
             fn $indicator(bench: &mut Bencher) {
                 let items: Vec<DataItem> = (0..ITEMS_COUNT).map( |_| rand_data_item() ).collect();
                 let mut indicator = $indicator::default();
-
+                
                 bench.iter(|| {
                     for item in items.iter() {
-                        indicator.next(item);
+                        black_box(indicator.next(item));
                     }
                 })
             }
