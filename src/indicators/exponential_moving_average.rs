@@ -1,9 +1,10 @@
-use std::fmt;
-
-use crate::errors::{Result, TaError};
-use crate::{Close, Next, Period, Reset};
+use crate::{
+    errors::{Result, TaError},
+    Close, Next, Period, Reset,
+};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 /// An exponential moving average (EMA), also known as an exponentially weighted
 /// moving average (EWMA).
