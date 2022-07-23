@@ -128,8 +128,7 @@ impl DataItemBuilder {
                 && low <= high
                 && high >= open
                 && high >= close
-                && volume >= 0.0
-                && low >= 0.0
+                && volume >= 0.0 
             {
                 let item = DataItem {
                     open,
