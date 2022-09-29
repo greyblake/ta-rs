@@ -7,17 +7,17 @@ use serde::{Deserialize, Serialize};
 
 /// Volume weight adjusted price (VWAP).
 ///
+/// In finance, volume-weighted average price (VWAP) is the ratio of the value of a security or
+/// financial asset traded to the total volume of transactions during a trading session.
+/// It is a measure of the average trading price for the period.
+///
 /// # Formula
 ///
 /// ![VWAP](https://wikimedia.org/api/rest_v1/media/math/render/svg/6c0a822a0a9e58a127105e818a07061a02851685)
 ///
 /// Where:
 ///
-/// TODO
-///
-/// # Parameters
-///
-/// TODO
+/// vwap - volume weight adjusted price
 ///
 /// # Example
 ///
