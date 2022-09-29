@@ -92,4 +92,59 @@ impl Reset for VolumeWeightAdjustedPrice {
     }
 }
 
-// TODO: tests
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::test_helper::*;
+
+    #[test]
+    fn test_next_bar() {
+        let mut vwap = VolumeWeightAdjustedPrice::new();
+
+        let bar1 = Bar::new().close(1.5).volume(1000.0);
+        let bar2 = Bar::new().close(5).volume(5000.0);
+        let bar3 = Bar::new().close(4).volume(9000.0);
+        let bar4 = Bar::new().close(4).volume(4000.0);
+
+        assert_eq!(vwap.next(&bar1), 1000.0);
+
+        //close > prev_close
+        assert_eq!(vwap.next(&bar2), 6000.0);
+
+        // close < prev_close
+        assert_eq!(vwap.next(&bar3), -3000.0);
+
+        // close == prev_close
+        assert_eq!(vwap.next(&bar4), -3000.0);
+    }
+
+    #[test]
+    fn test_reset() {
+        let mut vwap = VolumeWeightAdjustedPrice::new();
+
+        let bar1 = Bar::new().close(1.5).volume(1000.0);
+        let bar2 = Bar::new().close(4).volume(2000.0);
+        let bar3 = Bar::new().close(8).volume(3000.0);
+
+        assert_eq!(vwap.next(&bar1), 1000.0);
+        assert_eq!(vwap.next(&bar2), 3000.0);
+        assert_eq!(vwap.next(&bar3), 6000.0);
+
+        vwap.reset();
+
+        assert_eq!(vwap.next(&bar1), 1000.0);
+        assert_eq!(vwap.next(&bar2), 3000.0);
+        assert_eq!(vwap.next(&bar3), 6000.0);
+    }
+
+    #[test]
+    fn test_default() {
+        VolumeWeightAdjustedPrice::default();
+    }
+
+    #[test]
+    fn test_display() {
+        let vwap = VolumeWeightAdjustedPrice::new();
+        assert_eq!(format!("{}", vwap), "VWAP");
+    }
+}
