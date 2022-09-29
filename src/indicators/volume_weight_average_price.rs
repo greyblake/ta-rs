@@ -4,7 +4,7 @@ use crate::{Close, Next, Volume, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-/// Volume weight adjusted price (VWAP).
+/// Volume weight average price (VWAP).
 ///
 /// In finance, volume-weighted average price (VWAP) is the ratio of the value of a security or
 /// financial asset traded to the total volume of transactions during a trading session.
@@ -16,15 +16,15 @@ use serde::{Deserialize, Serialize};
 ///
 /// Where:
 ///
-/// vwap - volume weight adjusted price
+/// vwap - volume weight average price
 ///
 /// # Example
 ///
 /// ```
-/// use ta::indicators::VolumeWeightAdjustedPrice;
+/// use ta::indicators::VolumeWeightAveragePrice;
 /// use ta::{Next, DataItem};
 ///
-/// let mut vwap = VolumeWeightAdjustedPrice::new();
+/// let mut vwap = VolumeWeightAveragePrice::new();
 ///
 /// let di1 = DataItem::builder()
 ///             .high(3.0)
@@ -48,18 +48,18 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Links
 ///
-/// * [Volume weight adjusted price, Wikipedia](https://en.wikipedia.org/wiki/Volume-weighted_average_price)
+/// * [Volume weight average price, Wikipedia](https://en.wikipedia.org/wiki/Volume-weighted_average_price)
 ///
 #[doc(alias = "VWAP")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
-pub struct VolumeWeightAdjustedPrice {
+pub struct VolumeWeightAveragePrice {
     cumulative_volume: f64,
     cumulative_traded: f64,
     vwap: f64
 }
 
-impl VolumeWeightAdjustedPrice {
+impl VolumeWeightAveragePrice {
     pub fn new() -> Self {
         Self {
             cumulative_volume: 0.0,
@@ -69,7 +69,7 @@ impl VolumeWeightAdjustedPrice {
     }
 }
 
-impl<T: Close + Volume> Next<&T> for VolumeWeightAdjustedPrice {
+impl<T: Close + Volume> Next<&T> for VolumeWeightAveragePrice {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> f64 {
@@ -82,19 +82,19 @@ impl<T: Close + Volume> Next<&T> for VolumeWeightAdjustedPrice {
     }
 }
 
-impl Default for VolumeWeightAdjustedPrice {
+impl Default for VolumeWeightAveragePrice {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl fmt::Display for VolumeWeightAdjustedPrice {
+impl fmt::Display for VolumeWeightAveragePrice {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "VWAP")
     }
 }
 
-impl Reset for VolumeWeightAdjustedPrice {
+impl Reset for VolumeWeightAveragePrice {
     fn reset(&mut self) {
         self.cumulative_volume = 0.0;
         self.cumulative_traded = 0.0;
@@ -109,7 +109,7 @@ mod tests {
 
     #[test]
     fn test_next_bar() {
-        let mut vwap = VolumeWeightAdjustedPrice::new();
+        let mut vwap = VolumeWeightAveragePrice::new();
         let bar1 = Bar::new().close(245.0504667).volume(103033.0);
         let bar2 = Bar::new().close(244.7635667).volume(21168.0);
         let bar3 = Bar::new().close(245.3166667).volume(36544.0);
@@ -120,7 +120,7 @@ mod tests {
 
     #[test]
     fn test_reset() {
-        let mut vwap = VolumeWeightAdjustedPrice::new();
+        let mut vwap = VolumeWeightAveragePrice::new();
 
         let bar1 = Bar::new().close(245.0504667).volume(103033.0);
         let bar2 = Bar::new().close(244.7635667).volume(21168.0);
@@ -136,12 +136,12 @@ mod tests {
 
     #[test]
     fn test_default() {
-        VolumeWeightAdjustedPrice::default();
+        VolumeWeightAveragePrice::default();
     }
 
     #[test]
     fn test_display() {
-        let vwap = VolumeWeightAdjustedPrice::new();
+        let vwap = VolumeWeightAveragePrice::new();
         assert_eq!(format!("{}", vwap), "VWAP");
     }
 }
