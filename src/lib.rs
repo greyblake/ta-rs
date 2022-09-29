@@ -50,7 +50,7 @@
 //!   * [Efficiency Ratio (ER)](indicators/struct.EfficiencyRatio.html)
 //!   * [Rate of Change (ROC)](indicators/struct.RateOfChange.html)
 //!   * [On Balance Volume (OBV)](indicators/struct.OnBalanceVolume.html)
-//!   * [Volume Weight Average Price (VWAP)](indicators/struct.VolumeWeightAveragePrice.html)
+//!   * [Volume Weight Average Price (VWAP)](indicators/struct.VolumeWeightedAveragePrice.html)
 //!
 #[cfg(test)]
 #[macro_use]

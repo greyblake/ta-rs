@@ -21,10 +21,10 @@ use serde::{Deserialize, Serialize};
 /// # Example
 ///
 /// ```
-/// use ta::indicators::VolumeWeightAveragePrice;
+/// use ta::indicators::VolumeWeightedAveragePrice;
 /// use ta::{Next, DataItem};
 ///
-/// let mut vwap = VolumeWeightAveragePrice::new();
+/// let mut vwap = VolumeWeightedAveragePrice::new();
 ///
 /// let di1 = DataItem::builder()
 ///             .high(3.0)
@@ -53,13 +53,13 @@ use serde::{Deserialize, Serialize};
 #[doc(alias = "VWAP")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
-pub struct VolumeWeightAveragePrice {
+pub struct VolumeWeightedAveragePrice {
     cumulative_volume: f64,
     cumulative_traded: f64,
     vwap: f64
 }
 
-impl VolumeWeightAveragePrice {
+impl VolumeWeightedAveragePrice {
     pub fn new() -> Self {
         Self {
             cumulative_volume: 0.0,
@@ -69,7 +69,7 @@ impl VolumeWeightAveragePrice {
     }
 }
 
-impl<T: Close + Volume> Next<&T> for VolumeWeightAveragePrice {
+impl<T: Close + Volume> Next<&T> for VolumeWeightedAveragePrice {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> f64 {
@@ -82,19 +82,19 @@ impl<T: Close + Volume> Next<&T> for VolumeWeightAveragePrice {
     }
 }
 
-impl Default for VolumeWeightAveragePrice {
+impl Default for VolumeWeightedAveragePrice {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl fmt::Display for VolumeWeightAveragePrice {
+impl fmt::Display for VolumeWeightedAveragePrice {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "VWAP")
     }
 }
 
-impl Reset for VolumeWeightAveragePrice {
+impl Reset for VolumeWeightedAveragePrice {
     fn reset(&mut self) {
         self.cumulative_volume = 0.0;
         self.cumulative_traded = 0.0;
@@ -109,7 +109,7 @@ mod tests {
 
     #[test]
     fn test_next_bar() {
-        let mut vwap = VolumeWeightAveragePrice::new();
+        let mut vwap = VolumeWeightedAveragePrice::new();
         let bar1 = Bar::new().close(245.0504667).volume(103033.0);
         let bar2 = Bar::new().close(244.7635667).volume(21168.0);
         let bar3 = Bar::new().close(245.3166667).volume(36544.0);
@@ -120,7 +120,7 @@ mod tests {
 
     #[test]
     fn test_reset() {
-        let mut vwap = VolumeWeightAveragePrice::new();
+        let mut vwap = VolumeWeightedAveragePrice::new();
 
         let bar1 = Bar::new().close(245.0504667).volume(103033.0);
         let bar2 = Bar::new().close(244.7635667).volume(21168.0);
@@ -136,12 +136,12 @@ mod tests {
 
     #[test]
     fn test_default() {
-        VolumeWeightAveragePrice::default();
+        VolumeWeightedAveragePrice::default();
     }
 
     #[test]
     fn test_display() {
-        let vwap = VolumeWeightAveragePrice::new();
+        let vwap = VolumeWeightedAveragePrice::new();
         assert_eq!(format!("{}", vwap), "VWAP");
     }
 }
