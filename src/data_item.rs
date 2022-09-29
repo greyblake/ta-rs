@@ -199,7 +199,6 @@ mod tests {
             (20.0, 15.0, 25.0, 21.0, 7500.0),
         ];
         for record in invalid_records {
-            println!("{:?}", record);
             assert_invalid(record)
         }
     }
