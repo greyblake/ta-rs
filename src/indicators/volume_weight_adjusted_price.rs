@@ -1,7 +1,6 @@
 use std::fmt;
 
-use crate::errors::{Result, TaError};
-use crate::{Close, Next, Period, Reset};
+use crate::{Close, Next, Volume, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -23,9 +22,9 @@ use serde::{Deserialize, Serialize};
 ///
 /// ```
 /// use ta::indicators::VolumeWeightAdjustedPrice;
-/// use ta::Next;
+/// use ta::{Next, DataItem};
 ///
-/// let mut vwap = VolumeWeightAdjustedPrice::new().unwrap();
+/// let mut vwap = VolumeWeightAdjustedPrice::new();
 ///
 /// let di1 = DataItem::builder()
 ///             .high(3.0)
@@ -43,8 +42,8 @@ use serde::{Deserialize, Serialize};
 ///             .volume(300.0)
 ///             .build().unwrap();
 ///
-/// assert_eq!(vwap.next(&di1), 1000.0);
-/// assert_eq!(vwap.next(&di2), 700.0);
+/// assert_eq!(vwap.next(&di1), 2.0);
+/// assert_eq!(vwap.next(&di2), 1.8846153846153846);
 /// ```
 ///
 /// # Links
@@ -55,12 +54,16 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct VolumeWeightAdjustedPrice {
+    cumulative_volume: f64,
+    cumulative_traded: f64,
     vwap: f64
 }
 
 impl VolumeWeightAdjustedPrice {
-    pub fn new() -> Result<Self> {
+    pub fn new() -> Self {
         Self {
+            cumulative_volume: 0.0,
+            cumulative_traded: 0.0,
             vwap: 0.0
         }
     }
@@ -70,7 +73,12 @@ impl<T: Close + Volume> Next<&T> for VolumeWeightAdjustedPrice {
     type Output = f64;
 
     fn next(&mut self, input: &T) -> f64 {
-        // TODO
+        let price = input.close();
+        let volume = input.volume();
+        self.cumulative_volume += volume;
+        self.cumulative_traded += price * volume;
+        self.vwap = self.cumulative_traded / self.cumulative_volume;
+        self.vwap
     }
 }
 
@@ -88,6 +96,8 @@ impl fmt::Display for VolumeWeightAdjustedPrice {
 
 impl Reset for VolumeWeightAdjustedPrice {
     fn reset(&mut self) {
+        self.cumulative_volume = 0.0;
+        self.cumulative_traded = 0.0;
         self.vwap = 0.0;
     }
 }
@@ -100,41 +110,28 @@ mod tests {
     #[test]
     fn test_next_bar() {
         let mut vwap = VolumeWeightAdjustedPrice::new();
-
-        let bar1 = Bar::new().close(1.5).volume(1000.0);
-        let bar2 = Bar::new().close(5).volume(5000.0);
-        let bar3 = Bar::new().close(4).volume(9000.0);
-        let bar4 = Bar::new().close(4).volume(4000.0);
-
-        assert_eq!(vwap.next(&bar1), 1000.0);
-
-        //close > prev_close
-        assert_eq!(vwap.next(&bar2), 6000.0);
-
-        // close < prev_close
-        assert_eq!(vwap.next(&bar3), -3000.0);
-
-        // close == prev_close
-        assert_eq!(vwap.next(&bar4), -3000.0);
+        let bar1 = Bar::new().close(245.0504667).volume(103033.0);
+        let bar2 = Bar::new().close(244.7635667).volume(21168.0);
+        let bar3 = Bar::new().close(245.3166667).volume(36544.0);
+        assert_eq!(vwap.next(&bar1), 245.0504667);
+        assert_eq!(vwap.next(&bar2), 245.001569354568);
+        assert_eq!(vwap.next(&bar3), 245.07320403926406);
     }
 
     #[test]
     fn test_reset() {
         let mut vwap = VolumeWeightAdjustedPrice::new();
 
-        let bar1 = Bar::new().close(1.5).volume(1000.0);
-        let bar2 = Bar::new().close(4).volume(2000.0);
-        let bar3 = Bar::new().close(8).volume(3000.0);
-
-        assert_eq!(vwap.next(&bar1), 1000.0);
-        assert_eq!(vwap.next(&bar2), 3000.0);
-        assert_eq!(vwap.next(&bar3), 6000.0);
-
+        let bar1 = Bar::new().close(245.0504667).volume(103033.0);
+        let bar2 = Bar::new().close(244.7635667).volume(21168.0);
+        let bar3 = Bar::new().close(245.3166667).volume(36544.0);
+        assert_eq!(vwap.next(&bar1), 245.0504667);
+        assert_eq!(vwap.next(&bar2), 245.001569354568);
+        assert_eq!(vwap.next(&bar3), 245.07320403926406);
         vwap.reset();
-
-        assert_eq!(vwap.next(&bar1), 1000.0);
-        assert_eq!(vwap.next(&bar2), 3000.0);
-        assert_eq!(vwap.next(&bar3), 6000.0);
+        assert_eq!(vwap.next(&bar1), 245.0504667);
+        assert_eq!(vwap.next(&bar2), 245.001569354568);
+        assert_eq!(vwap.next(&bar3), 245.07320403926406);
     }
 
     #[test]
