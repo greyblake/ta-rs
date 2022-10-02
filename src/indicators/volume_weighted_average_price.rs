@@ -24,7 +24,7 @@ use serde::{Deserialize, Serialize};
 /// use ta::indicators::VolumeWeightedAveragePrice;
 /// use ta::{Next, DataItem};
 ///
-/// let mut vwap = VolumeWeightedAveragePrice::new();
+/// let mut vwap = VolumeWeightedAveragePrice::new(1.0);
 ///
 /// let di1 = DataItem::builder()
 ///             .high(3.0)
@@ -42,8 +42,8 @@ use serde::{Deserialize, Serialize};
 ///             .volume(300.0)
 ///             .build().unwrap();
 ///
-/// assert_eq!(vwap.next(&di1), 2.0);
-/// assert_eq!(vwap.next(&di2), 1.8846153846153846);
+/// assert_eq!(vwap.next(&di1), (2.0, 2.0, 2.0));
+/// assert_eq!(vwap.next(&di2), (1.8846153846153846, 1.6739528624980127, 2.0952779067327563));
 /// ```
 ///
 /// # Links
@@ -54,37 +54,67 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct VolumeWeightedAveragePrice {
+    std_dev_multiplier: f64,
     cumulative_volume: f64,
     cumulative_traded: f64,
-    vwap: f64
+    cumulative_traded_squared: f64
 }
 
 impl VolumeWeightedAveragePrice {
-    pub fn new() -> Self {
+    pub fn new(std_dev_multiplier: f64) -> Self {
         Self {
+            std_dev_multiplier: std_dev_multiplier,
             cumulative_volume: 0.0,
             cumulative_traded: 0.0,
-            vwap: 0.0
+            cumulative_traded_squared: 0.0
         }
     }
 }
 
 impl<T: Close + Volume> Next<&T> for VolumeWeightedAveragePrice {
-    type Output = f64;
+    type Output = (f64, f64, f64);
 
-    fn next(&mut self, input: &T) -> f64 {
+    /*
+    computeVWAP(src, isNewPeriod, stDevMultiplier) =>
+        var float cumulative_traded = na
+        var float cumulative_volume = na
+        var float cumulative_traded_squared = na
+
+        cumulative_traded += src * volume
+        cumulative_volume += volume
+        cumulative_traded_squared += volume * pow(src, 2)
+
+        _vwap = cumulative_traded / cumulative_volume
+        variance = cumulative_traded_squared / cumulative_volume - pow(_vwap, 2)
+        variance := variance < 0 ? 0 : variance
+        stDev = sqrt(variance)
+
+        lowerBand = _vwap - stDev * stDevMultiplier
+        upperBand = _vwap + stDev * stDevMultiplier
+
+        [_vwap, lowerBand, upperBand]
+    */
+
+    fn next(&mut self, input: &T) -> (f64, f64, f64) {
         let price = input.close();
         let volume = input.volume();
         self.cumulative_volume += volume;
         self.cumulative_traded += price * volume;
-        self.vwap = self.cumulative_traded / self.cumulative_volume;
-        self.vwap
+        self.cumulative_traded_squared += volume * price.powf(2.0);
+        let vwap = self.cumulative_traded / self.cumulative_volume;
+        let variance = self.cumulative_traded_squared / self.cumulative_volume - vwap.powf(2.0);
+        let variance = if variance < 0.0 { 0.0 } else { variance };
+        let std_dev = variance.sqrt();
+        println!("variance = {} std_dev = {}", variance, std_dev);
+        let lower_band = vwap - std_dev * self.std_dev_multiplier;
+        let upper_band = vwap + std_dev * self.std_dev_multiplier;
+        (vwap, lower_band, upper_band)
     }
 }
 
 impl Default for VolumeWeightedAveragePrice {
     fn default() -> Self {
-        Self::new()
+        Self::new(1.0)
     }
 }
 
@@ -98,7 +128,7 @@ impl Reset for VolumeWeightedAveragePrice {
     fn reset(&mut self) {
         self.cumulative_volume = 0.0;
         self.cumulative_traded = 0.0;
-        self.vwap = 0.0;
+        self.cumulative_traded_squared = 0.0;
     }
 }
 
@@ -109,29 +139,28 @@ mod tests {
 
     #[test]
     fn test_next_bar() {
-        let mut vwap = VolumeWeightedAveragePrice::new();
+        let mut vwap = VolumeWeightedAveragePrice::new(1.25);
         let bar1 = Bar::new().close(245.0504667).volume(103033.0);
         let bar2 = Bar::new().close(244.7635667).volume(21168.0);
         let bar3 = Bar::new().close(245.3166667).volume(36544.0);
-        assert_eq!(vwap.next(&bar1), 245.0504667);
-        assert_eq!(vwap.next(&bar2), 245.001569354568);
-        assert_eq!(vwap.next(&bar3), 245.07320403926406);
+        assert_eq!(vwap.next(&bar1), (245.0504667, 245.0504667, 245.0504667));
+        assert_eq!(vwap.next(&bar2), (245.001569354568, 244.86672165111835, 245.13641705801766));
+        assert_eq!(vwap.next(&bar3), (245.07320403926406, 244.86997872595126, 245.27642935257686));
     }
 
     #[test]
     fn test_reset() {
-        let mut vwap = VolumeWeightedAveragePrice::new();
-
+        let mut vwap = VolumeWeightedAveragePrice::new(1.25);
         let bar1 = Bar::new().close(245.0504667).volume(103033.0);
         let bar2 = Bar::new().close(244.7635667).volume(21168.0);
         let bar3 = Bar::new().close(245.3166667).volume(36544.0);
-        assert_eq!(vwap.next(&bar1), 245.0504667);
-        assert_eq!(vwap.next(&bar2), 245.001569354568);
-        assert_eq!(vwap.next(&bar3), 245.07320403926406);
+        assert_eq!(vwap.next(&bar1), (245.0504667, 245.0504667, 245.0504667));
+        assert_eq!(vwap.next(&bar2), (245.001569354568, 244.86672165111835, 245.13641705801766));
+        assert_eq!(vwap.next(&bar3), (245.07320403926406, 244.86997872595126, 245.27642935257686));
         vwap.reset();
-        assert_eq!(vwap.next(&bar1), 245.0504667);
-        assert_eq!(vwap.next(&bar2), 245.001569354568);
-        assert_eq!(vwap.next(&bar3), 245.07320403926406);
+        assert_eq!(vwap.next(&bar1), (245.0504667, 245.0504667, 245.0504667));
+        assert_eq!(vwap.next(&bar2), (245.001569354568, 244.86672165111835, 245.13641705801766));
+        assert_eq!(vwap.next(&bar3), (245.07320403926406, 244.86997872595126, 245.27642935257686));
     }
 
     #[test]
@@ -141,7 +170,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let vwap = VolumeWeightedAveragePrice::new();
+        let vwap = VolumeWeightedAveragePrice::new(1.0);
         assert_eq!(format!("{}", vwap), "VWAP");
     }
 }
