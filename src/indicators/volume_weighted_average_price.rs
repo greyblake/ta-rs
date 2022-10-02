@@ -105,7 +105,6 @@ impl<T: Close + Volume> Next<&T> for VolumeWeightedAveragePrice {
         let variance = self.cumulative_traded_squared / self.cumulative_volume - vwap.powf(2.0);
         let variance = if variance < 0.0 { 0.0 } else { variance };
         let std_dev = variance.sqrt();
-        println!("variance = {} std_dev = {}", variance, std_dev);
         let lower_band = vwap - std_dev * self.std_dev_multiplier;
         let upper_band = vwap + std_dev * self.std_dev_multiplier;
         (vwap, lower_band, upper_band)
