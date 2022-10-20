@@ -6,7 +6,7 @@ use std::fmt;
 /// Negative Directional Movement (DM-).
 ///
 /// A direction indicator that is commonly used as a component of the
-/// [(Average)](crate::indicators::AverageDirectionalMovementIndex)
+/// [(Average)](crate::indicators::AverageDirectionalIndex)
 /// [Directional Movement Index](crate::indicators::DirectionalMovementIndex)
 /// (ADX/DX).
 ///
@@ -80,7 +80,7 @@ impl fmt::Display for NegativeDirectionalMovement {
 /// Positive Directional Movement (DM+).
 ///
 /// A direction indicator that is commonly used as a component of the
-/// [(Average)](crate::indicators::AverageDirectionalMovementIndex)
+/// [(Average)](crate::indicators::AverageDirectionalIndex)
 /// [Directional Movement Index](crate::indicators::DirectionalMovementIndex)
 /// (ADX/DX).
 ///
@@ -92,7 +92,7 @@ impl fmt::Display for NegativeDirectionalMovement {
 ///
 /// * _DM+<sub>t</sub>_ – [Positive Directional
 ///   Movement](crate::indicators::PositiveDirectionalMovement) at time _t_.
-#[doc(alias = "+DM")]
+#[doc(alias = "DM+")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct PositiveDirectionalMovement {
@@ -147,60 +147,98 @@ impl Default for PositiveDirectionalMovement {
 
 impl fmt::Display for PositiveDirectionalMovement {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "+DI")
+        write!(f, "DM+")
     }
 }
 
-/*
 #[cfg(test)]
-mod tests {
+mod tests_negative {
     use super::*;
     use crate::test_helper::*;
 
-    test_indicator!(AverageTrueRange);
+    test_indicator!(NegativeDirectionalMovement);
 
     #[test]
     fn test_new() {
-        assert!(AverageTrueRange::new(0).is_err());
-        assert!(AverageTrueRange::new(1).is_ok());
+        assert!(NegativeDirectionalMovement::new().is_ok());
     }
+
     #[test]
     fn test_next() {
-        let mut atr = AverageTrueRange::new(3).unwrap();
+        let mut dmm = NegativeDirectionalMovement::new().unwrap();
 
-        let bar1 = Bar::new().high(10).low(7.5).close(9);
-        let bar2 = Bar::new().high(11).low(9).close(9.5);
-        let bar3 = Bar::new().high(9).low(5).close(8);
+        dmm.next(10.0);
+        dmm.next(11.0);
 
-        assert_eq!(atr.next(&bar1), 2.5);
-        assert_eq!(atr.next(&bar2), 2.25);
-        assert_eq!(atr.next(&bar3), 3.375);
+        assert_eq!(dmm.next(9.0), 2.0);
     }
 
     #[test]
     fn test_reset() {
-        let mut atr = AverageTrueRange::new(9).unwrap();
+        let mut dmm = NegativeDirectionalMovement::new().unwrap();
 
-        let bar1 = Bar::new().high(10).low(7.5).close(9);
-        let bar2 = Bar::new().high(11).low(9).close(9.5);
+        dmm.next(10.0);
+        dmm.next(11.0);
 
-        atr.next(&bar1);
-        atr.next(&bar2);
+        dmm.reset();
 
-        atr.reset();
-        let bar3 = Bar::new().high(60).low(15).close(51);
-        assert_eq!(atr.next(&bar3), 45.0);
+        assert_eq!(dmm.next(10.0), 10.0);
     }
 
     #[test]
     fn test_default() {
-        AverageTrueRange::default();
+        NegativeDirectionalMovement::default();
     }
 
     #[test]
     fn test_display() {
-        let indicator = AverageTrueRange::new(8).unwrap();
-        assert_eq!(format!("{}", indicator), "ATR(8)");
+        let indicator = NegativeDirectionalMovement::new().unwrap();
+        assert_eq!(format!("{}", indicator), "DM-");
     }
 }
-*/
+
+#[cfg(test)]
+mod tests_positive {
+    use super::*;
+    use crate::test_helper::*;
+
+    test_indicator!(PositiveDirectionalMovement);
+
+    #[test]
+    fn test_new() {
+        assert!(PositiveDirectionalMovement::new().is_ok());
+    }
+
+    #[test]
+    fn test_next() {
+        let mut dmp = PositiveDirectionalMovement::new().unwrap();
+
+        dmp.next(10.0);
+        dmp.next(11.0);
+
+        assert_eq!(dmp.next(9.0), -2.0);
+    }
+
+    #[test]
+    fn test_reset() {
+        let mut dmp = PositiveDirectionalMovement::new().unwrap();
+
+        dmp.next(10.0);
+        dmp.next(11.0);
+
+        dmp.reset();
+
+        assert_eq!(dmp.next(10.0), 10.0);
+    }
+
+    #[test]
+    fn test_default() {
+        PositiveDirectionalMovement::default();
+    }
+
+    #[test]
+    fn test_display() {
+        let indicator = PositiveDirectionalMovement::new().unwrap();
+        assert_eq!(format!("{}", indicator), "DM+");
+    }
+}

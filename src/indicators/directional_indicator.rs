@@ -179,55 +179,53 @@ impl fmt::Display for PositiveDirectionalIndicator {
     }
 }
 
-/*
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::test_helper::*;
 
-    test_indicator!(AverageTrueRange);
+    test_indicator!(NegativeDirectionalIndicator);
 
     #[test]
     fn test_new() {
-        assert!(AverageTrueRange::new(0).is_err());
-        assert!(AverageTrueRange::new(1).is_ok());
+        assert!(NegativeDirectionalIndicator::new(0).is_err());
+        assert!(NegativeDirectionalIndicator::new(1).is_ok());
     }
     #[test]
     fn test_next() {
-        let mut atr = AverageTrueRange::new(3).unwrap();
+        let mut dm_minus = NegativeDirectionalIndicator::new(3).unwrap();
 
-        let bar1 = Bar::new().high(10).low(7.5).close(9);
-        let bar2 = Bar::new().high(11).low(9).close(9.5);
-        let bar3 = Bar::new().high(9).low(5).close(8);
+        dm_minus.next(10.);
+        dm_minus.next(11.);
+        dm_minus.next(9.);
+        dm_minus.next(12.);
+        dm_minus.next(11.);
 
-        assert_eq!(atr.next(&bar1), 2.5);
-        assert_eq!(atr.next(&bar2), 2.25);
-        assert_eq!(atr.next(&bar3), 3.375);
+        println!("{}", dm_minus.next(11.))
     }
 
     #[test]
     fn test_reset() {
-        let mut atr = AverageTrueRange::new(9).unwrap();
+        let mut dm_minus = NegativeDirectionalIndicator::new(5).unwrap();
 
-        let bar1 = Bar::new().high(10).low(7.5).close(9);
-        let bar2 = Bar::new().high(11).low(9).close(9.5);
+        assert_eq!(dm_minus.next(4.0), -f64::INFINITY);
 
-        atr.next(&bar1);
-        atr.next(&bar2);
+        dm_minus.next(10.0);
+        dm_minus.next(15.0);
+        dm_minus.next(20.0);
 
-        atr.reset();
-        let bar3 = Bar::new().high(60).low(15).close(51);
-        assert_eq!(atr.next(&bar3), 45.0);
+        dm_minus.reset();
+        assert_eq!(dm_minus.next(4.0), -f64::INFINITY);
     }
 
     #[test]
     fn test_default() {
-        AverageTrueRange::default();
+        NegativeDirectionalIndicator::default();
     }
 
     #[test]
     fn test_display() {
-        let indicator = AverageTrueRange::new(8).unwrap();
-        assert_eq!(format!("{}", indicator), "ATR(8)");
+        let indicator = NegativeDirectionalIndicator::new(8).unwrap();
+        assert_eq!(format!("{}", indicator), "DI-(8)");
     }
-}*/
+}

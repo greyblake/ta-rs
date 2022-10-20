@@ -45,7 +45,8 @@ impl Next<f64> for AverageDirectionalIndex {
 
     fn next(&mut self, input: f64) -> Self::Output {
         let current = self.dx.next(input);
-        let adx = (self.previous * (self.dx.period() - 1) as f64 + current) / self.dx.period() as f64;
+        let adx =
+            (self.previous * (self.dx.period() - 1) as f64 + current) / self.dx.period() as f64;
         self.previous = current;
 
         adx
