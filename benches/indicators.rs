@@ -37,7 +37,7 @@ macro_rules! bench_indicators {
             fn $indicator(bench: &mut Bencher) {
                 let items: Vec<DataItem> = (0..ITEMS_COUNT).map( |_| rand_data_item() ).collect();
                 let mut indicator = $indicator::default();
-                
+
                 bench.iter(|| {
                     for item in items.iter() {
                         black_box(indicator.next(item));
