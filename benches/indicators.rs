@@ -5,7 +5,7 @@ use ta::indicators::{
     ExponentialMovingAverage, FastStochastic, KeltnerChannel, Maximum, MeanAbsoluteDeviation,
     Minimum, MoneyFlowIndex, MovingAverageConvergenceDivergence, OnBalanceVolume,
     PercentagePriceOscillator, RateOfChange, RelativeStrengthIndex, SimpleMovingAverage,
-    SlowStochastic, StandardDeviation, TrueRange, VolumeWeightedAveragePrice,
+    SlowStochastic, StandardDeviation, TrueRange, VolumeWeightedAveragePrice, WeightedMovingAverage,
 };
 use ta::{DataItem, Next};
 
@@ -37,7 +37,7 @@ macro_rules! bench_indicators {
             fn $indicator(bench: &mut Bencher) {
                 let items: Vec<DataItem> = (0..ITEMS_COUNT).map( |_| rand_data_item() ).collect();
                 let mut indicator = $indicator::default();
-                
+
                 bench.iter(|| {
                     for item in items.iter() {
                         black_box(indicator.next(item));
@@ -73,5 +73,6 @@ bench_indicators!(
     SimpleMovingAverage,
     SlowStochastic,
     StandardDeviation,
-    TrueRange
+    TrueRange,
+    WeightedMovingAverage
 );

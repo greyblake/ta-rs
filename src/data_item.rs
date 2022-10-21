@@ -29,7 +29,7 @@ use serde::{Deserialize, Serialize};
 /// ```
 ///
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct DataItem {
     open: f64,
     high: f64,
@@ -128,7 +128,7 @@ impl DataItemBuilder {
                 && low <= high
                 && high >= open
                 && high >= close
-                && volume >= 0.0 
+                && volume >= 0.0
             {
                 let item = DataItem {
                     open,
@@ -164,7 +164,8 @@ mod tests {
             assert!(result.is_ok());
         }
 
-        fn assert_invalid((open, high, low, close, volume): (f64, f64, f64, f64, f64)) {
+        fn assert_invalid(record: (f64, f64, f64, f64, f64)) {
+            let (open, high, low, close, volume) = record;
             let result = DataItem::builder()
                 .open(open)
                 .high(high)
@@ -172,7 +173,7 @@ mod tests {
                 .close(close)
                 .volume(volume)
                 .build();
-            assert!(result.is_err());
+            assert_eq!(result, Err(TaError::DataItemInvalid));
         }
 
         let valid_records = vec![
@@ -189,7 +190,6 @@ mod tests {
             // open, high, low , close, volume
             (-1.0, 25.0, 15.0, 21.0, 7500.0),
             (20.0, -1.0, 15.0, 21.0, 7500.0),
-            //(20.0, 25.0, -1.0, 21.0, 7500.0),
             (20.0, 25.0, 15.0, -1.0, 7500.0),
             (20.0, 25.0, 15.0, 21.0, -1.0),
             (14.9, 25.0, 15.0, 21.0, 7500.0),

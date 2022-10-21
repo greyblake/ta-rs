@@ -3,7 +3,7 @@ use std::fmt::{Display, Formatter};
 
 pub type Result<T> = std::result::Result<T, TaError>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum TaError {
     InvalidParameter,
     DataItemIncomplete,
