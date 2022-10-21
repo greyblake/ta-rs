@@ -48,7 +48,7 @@ pub struct WeightedMovingAverage {
     weight: f64,
     sum: f64,
     sum_flat: f64,
-    deque: Box<[f64]>
+    deque: Box<[f64]>,
 }
 
 impl WeightedMovingAverage {
@@ -150,9 +150,9 @@ mod tests {
         let mut wma = WeightedMovingAverage::new(3).unwrap();
 
         assert_eq!(wma.next(12.0), 12.0);
-        assert_eq!(wma.next(3.0), 6.0);
-        assert_eq!(wma.next(3.0), 4.5);
-        assert_eq!(wma.next(5.0), 4.0);
+        assert_eq!(wma.next(3.0), 6.0); // (1*12 + 2*3) / 3 = 6.0
+        assert_eq!(wma.next(3.0), 4.5); // (1*12 + 2*3 + 3*3) / 6 = 4.5
+        assert_eq!(wma.next(5.0), 4.0); // (1*3 + 2*3 + 3*5) / 6 = 4.0
 
         let mut wma = WeightedMovingAverage::new(3).unwrap();
         let bar1 = Bar::new().close(2);

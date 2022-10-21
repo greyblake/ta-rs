@@ -5,7 +5,7 @@ use ta::indicators::{
     ExponentialMovingAverage, FastStochastic, KeltnerChannel, Maximum, MeanAbsoluteDeviation,
     Minimum, MoneyFlowIndex, MovingAverageConvergenceDivergence, OnBalanceVolume,
     PercentagePriceOscillator, RateOfChange, RelativeStrengthIndex, SimpleMovingAverage,
-    SlowStochastic, StandardDeviation, TrueRange, WeightedMovingAverage
+    SlowStochastic, StandardDeviation, TrueRange, WeightedMovingAverage,
 };
 use ta::{DataItem, Next};
 
