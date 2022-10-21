@@ -5,7 +5,7 @@ use ta::indicators::{
     ExponentialMovingAverage, FastStochastic, KeltnerChannel, Maximum, MeanAbsoluteDeviation,
     Minimum, MoneyFlowIndex, MovingAverageConvergenceDivergence, OnBalanceVolume,
     PercentagePriceOscillator, RateOfChange, RelativeStrengthIndex, SimpleMovingAverage,
-    SlowStochastic, StandardDeviation, TrueRange,
+    SlowStochastic, StandardDeviation, TrueRange, WeightedMovingAverage,
 };
 use ta::{DataItem, Next};
 
@@ -72,5 +72,6 @@ bench_indicators!(
     SimpleMovingAverage,
     SlowStochastic,
     StandardDeviation,
-    TrueRange
+    TrueRange,
+    WeightedMovingAverage
 );
