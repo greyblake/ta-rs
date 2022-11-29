@@ -71,7 +71,6 @@ impl Next<DataItem> for VolumeWeightedAveragePrice {
     type Output = f64;
 
     fn next(&mut self, d: DataItem) -> Self::Output {
-        // df['HL2'] = (df.High + df.Low) / 2
         let typical_price = self.typical_price(&d);
 
         self.cumulative_volume = d.volume() + self.cumulative_volume;
@@ -207,6 +206,7 @@ mod tests {
         ];
 
         let result_vwap_offset_2 = vec![
+            // upper, lower (bands)
             (76.529, 76.529),
             (76.15085245902783, 75.98278688523443),
             (76.27197010203601, 76.00843693866803),
@@ -226,6 +226,7 @@ mod tests {
         ];
 
         let result_vwap_offset_3 = vec![
+            // upper, lower (bands)
             (76.529, 76.529),
             (76.19286885247618, 75.94077049178608),
             (76.33785339287802, 75.94255364782602),
