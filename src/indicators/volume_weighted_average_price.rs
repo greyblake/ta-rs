@@ -106,7 +106,7 @@ pub enum VolumeWeightedAveragePriceBands {
     Down,
 }
 
-#[doc(alias = "EMA")]
+#[doc(alias = "VWAP")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone)]
 pub struct VolumeWeightedAveragePrice {
