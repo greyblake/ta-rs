@@ -1,22 +1,13 @@
 use std::fmt;
 
-use crate::errors::{Result, TaError};
-use crate::{DataItem, High, Low, Next, Period, Reset, Volume, Close};
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
+use crate::errors::Result;
+use crate::{High, Low, Next, Reset, Volume, Close};
 
 #[derive(Debug)]
 pub enum VolumeWeightedAveragePriceBands {
     Up,
     Down,
 }
-
-#[derive(Clone, Debug)]
-pub enum VolumeWeightedAveragePriceSource {
-    HLC3
-}
-
-// comments
 
 #[doc(alias = "EMA")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -26,25 +17,18 @@ pub struct VolumeWeightedAveragePrice {
     cumulative_volume: f64,
     cumulative_v2: f64,
     vwap: f64,
-    std_dev: f64,
-    period: usize,
-    source: VolumeWeightedAveragePriceSource
+    std_dev: f64
 }
 
 impl VolumeWeightedAveragePrice {
-    pub fn new(period: usize) -> Result<Self> {
-        match period {
-            0 => Err(TaError::InvalidParameter),
-            _ => Ok(Self {
-                period,
-                cumulative_total: 0.0,
-                cumulative_volume: 0.0,
-                cumulative_v2: 0.0,
-                vwap: 0.0,
-                std_dev: 0.0,
-                source: VolumeWeightedAveragePriceSource::HLC3
-            }),
-        }
+    pub fn new() -> Result<Self> {
+        Ok(Self {
+            cumulative_total: 0.0,
+            cumulative_volume: 0.0,
+            cumulative_v2: 0.0,
+            vwap: 0.0,
+            std_dev: 0.0
+        })
     }
 
     pub fn std_dev(&self, offset: f64, band_direction: VolumeWeightedAveragePriceBands) -> f64 {
@@ -53,25 +37,13 @@ impl VolumeWeightedAveragePrice {
             VolumeWeightedAveragePriceBands::Down => self.vwap - offset * self.std_dev,
         }
     }
-
-    pub fn typical_price(&self, d: &DataItem) -> f64 {
-        match self.source {
-            VolumeWeightedAveragePriceSource::HLC3 => (d.high() + d.low() + d.close()) / 3.0,
-        }
-    }
 }
 
-impl Period for VolumeWeightedAveragePrice {
-    fn period(&self) -> usize {
-        self.period
-    }
-}
-
-impl Next<DataItem> for VolumeWeightedAveragePrice {
+impl<T: High + Low + Close + Volume> Next<&T> for VolumeWeightedAveragePrice {
     type Output = f64;
 
-    fn next(&mut self, d: DataItem) -> Self::Output {
-        let typical_price = self.typical_price(&d);
+    fn next(&mut self, d: &T) -> Self::Output {
+        let typical_price = (d.high() + d.low() + d.close()) / 3.0;
 
         self.cumulative_volume = d.volume() + self.cumulative_volume;
 
@@ -99,13 +71,13 @@ impl Reset for VolumeWeightedAveragePrice {
 
 impl Default for VolumeWeightedAveragePrice {
     fn default() -> Self {
-        Self::new(14).unwrap()
+        Self::new().unwrap()
     }
 }
 
 impl fmt::Display for VolumeWeightedAveragePrice {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "VWAP({})", self.period)
+        write!(f, "VWAP()")
     }
 }
 
@@ -115,11 +87,11 @@ mod tests {
     use assert_approx_eq::assert_approx_eq;
     use std::iter::zip;
     use VolumeWeightedAveragePriceBands::*;
+    use crate::DataItem;
 
     #[test]
     fn test_new() {
-        assert!(VolumeWeightedAveragePrice::new(0).is_err());
-        assert!(VolumeWeightedAveragePrice::new(1).is_ok());
+        assert!(VolumeWeightedAveragePrice::new().is_ok());
     }
 
     fn generate_bar(record: (f64, f64, f64, f64)) -> DataItem {
@@ -139,7 +111,7 @@ mod tests {
     fn test_next() {
         let bars = generate_bars_next();
 
-        let mut vwap = VolumeWeightedAveragePrice::new(18).unwrap();
+        let mut vwap = VolumeWeightedAveragePrice::new().unwrap();
 
         let result = vec![
             150.31, 150.41, 150.41, 150.43, 150.56, 150.66, 150.66, 150.67, 150.70, 150.83, 150.85,
@@ -149,7 +121,7 @@ mod tests {
         let iter = zip(result, bars);
 
         iter.for_each(|(r, b)| {
-            assert_approx_eq!(vwap.next(b), r, 0.01);
+            assert_approx_eq!(vwap.next(&b), r, 0.01);
         });
     }
 
@@ -184,7 +156,7 @@ mod tests {
     fn test_next_std_dev() {
         let bars = generate_bars_std_dev();
 
-        let mut vwap = VolumeWeightedAveragePrice::new(18).unwrap();
+        let mut vwap = VolumeWeightedAveragePrice::new().unwrap();
 
         let result = vec![
             76.529,
@@ -210,12 +182,12 @@ mod tests {
             (76.529, 76.529),
             (76.15085245902783, 75.98278688523443),
             (76.27197010203601, 76.00843693866803),
-            (76.25148729829992, 75.96245331046028), // DOWN
+            (76.25148729829992, 75.96245331046028),
             (76.23361138086482, 75.93184012415189),
             (76.23399096258677, 75.94499311845519),
             (76.23600089361555, 75.95378761813377),
             (76.22155470994076, 75.95645190527424),
-            (76.21690062084983, 75.91894949905424), // DOWN
+            (76.21690062084983, 75.91894949905424),
             (76.21628813403485, 75.8764909946379),
             (76.20971995401032, 75.86961619028577),
             (76.20113288848688, 75.87030659371376),
@@ -250,7 +222,7 @@ mod tests {
         iter.for_each(|((r, (rv2, rv3)), b)| {
             let (rv2u, rv2d) = rv2;
             let (rv3u, rv3d) = rv3;
-            assert_approx_eq!(vwap.next(b), r, 0.01);
+            assert_approx_eq!(vwap.next(&b), r, 0.01);
             assert_approx_eq!(vwap.std_dev(2.0, Up), rv2u, 0.01);
             assert_approx_eq!(vwap.std_dev(2.0, Down), rv2d, 0.01);
             assert_approx_eq!(vwap.std_dev(3.0, Up), rv3u, 0.01);
@@ -288,22 +260,22 @@ mod tests {
 
     #[test]
     fn test_reset() {
-        let mut vwap = VolumeWeightedAveragePrice::new(5).unwrap();
+        let mut vwap = VolumeWeightedAveragePrice::new().unwrap();
 
         assert_approx_eq!(
-            vwap.next(generate_bar((150.39, 150.22, 150.31, 380.0))),
+            vwap.next(&generate_bar((150.39, 150.22, 150.31, 380.0))),
             150.31,
             0.01
         );
-        vwap.next(generate_bar((150.47, 150.38, 150.41, 5270.0)));
+        vwap.next(&generate_bar((150.47, 150.38, 150.41, 5270.0)));
         assert_ne!(
-            vwap.next(generate_bar((150.49, 150.33, 150.46, 990.0))),
+            vwap.next(&generate_bar((150.49, 150.33, 150.46, 990.0))),
             150.31
         );
 
         vwap.reset();
         assert_approx_eq!(
-            vwap.next(generate_bar((150.39, 150.22, 150.31, 380.0))),
+            vwap.next(&generate_bar((150.39, 150.22, 150.31, 380.0))),
             150.31,
             0.01
         );
@@ -316,7 +288,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let vwap = VolumeWeightedAveragePrice::new(7).unwrap();
-        assert_eq!(format!("{}", vwap), "VWAP(7)");
+        let vwap = VolumeWeightedAveragePrice::new().unwrap();
+        assert_eq!(format!("{}", vwap), "VWAP()");
     }
 }

@@ -21,7 +21,6 @@ include = [
 travis-ci = { repository = "greyblake/ta-rs", branch = "master" }
 
 [dependencies]
-assert_approx_eq = "1.0.0"
 serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
