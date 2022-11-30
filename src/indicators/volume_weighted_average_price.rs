@@ -1,7 +1,53 @@
 use std::fmt;
 
-use crate::errors::Result;
 use crate::{High, Low, Next, Reset, Volume, Close};
+
+/// # Example
+///
+/// ```
+/// extern crate ta;
+/// #[macro_use] extern crate assert_approx_eq;
+///
+/// use ta::{Next, DataItem};
+/// use ta::indicators::VolumeWeightedAveragePrice;
+///
+///
+/// fn main() {
+///     let data = vec![
+///         // open, high, low, close, volume, vwap
+///         (150.39, 150.39, 150.22, 150.31, 380.0,  150.31),
+///         (150.47, 150.47, 150.38, 150.41, 5270.0, 150.41),
+///         (150.49, 150.49, 150.33, 150.46, 990.0,  150.41),
+///         (150.63, 150.63, 150.44, 150.61, 1031.0, 150.43),
+///         (151.10, 151.10, 150.67, 151.01, 2675.0, 150.56),
+///         (151.30, 151.30, 150.77, 150.80, 3334.0, 150.66),
+///         (150.95, 150.95, 150.78, 150.93, 430.0,  150.66),
+///         (151.12, 151.12, 150.80, 151.10, 220.0,  150.67),
+///         (151.27, 151.27, 151.01, 151.25, 900.0,  150.70),
+///         (151.35, 151.35, 151.26, 151.33, 4088.0, 150.83),
+///         (151.52, 151.52, 151.32, 151.51, 650.0,  150.85),
+///         (151.69, 151.69, 151.49, 151.67, 1582.0, 150.91),
+///         (152.03, 152.03, 151.66, 151.80, 1892.0, 150.98),
+///         (151.90, 151.90, 151.75, 151.88, 2200.0, 151.05),
+///         (152.15, 152.15, 151.86, 152.10, 3043.0, 151.16),
+///         (152.43, 152.43, 152.03, 152.33, 675.0,  151.18),
+///         (152.57, 152.57, 152.25, 152.50, 1243.0, 151.24)
+///
+///     ];
+///     let mut indicator = VolumeWeightedAveragePrice::new();
+///
+///     for (open, high, low, close, volume, vwap) in data {
+///         let di = DataItem::builder()
+///             .high(high)
+///             .low(low)
+///             .close(close)
+///             .open(open)
+///             .volume(volume)
+///             .build().unwrap();
+///         assert_approx_eq!(indicator.next(&di), vwap, 0.01);
+///     }
+/// }
+/// ```
 
 #[derive(Debug)]
 pub enum VolumeWeightedAveragePriceBands {
@@ -21,14 +67,14 @@ pub struct VolumeWeightedAveragePrice {
 }
 
 impl VolumeWeightedAveragePrice {
-    pub fn new() -> Result<Self> {
-        Ok(Self {
+    pub fn new() -> Self {
+        Self {
             cumulative_total: 0.0,
             cumulative_volume: 0.0,
             cumulative_v2: 0.0,
             vwap: 0.0,
             std_dev: 0.0
-        })
+        }
     }
 
     pub fn std_dev(&self, offset: f64, band_direction: VolumeWeightedAveragePriceBands) -> f64 {
@@ -71,7 +117,7 @@ impl Reset for VolumeWeightedAveragePrice {
 
 impl Default for VolumeWeightedAveragePrice {
     fn default() -> Self {
-        Self::new().unwrap()
+        Self::new()
     }
 }
 
@@ -88,11 +134,6 @@ mod tests {
     use std::iter::zip;
     use VolumeWeightedAveragePriceBands::*;
     use crate::DataItem;
-
-    #[test]
-    fn test_new() {
-        assert!(VolumeWeightedAveragePrice::new().is_ok());
-    }
 
     fn generate_bar(record: (f64, f64, f64, f64)) -> DataItem {
         let (high, low, close, volume): (f64, f64, f64, f64) = record;
@@ -111,7 +152,7 @@ mod tests {
     fn test_next() {
         let bars = generate_bars_next();
 
-        let mut vwap = VolumeWeightedAveragePrice::new().unwrap();
+        let mut vwap = VolumeWeightedAveragePrice::new();
 
         let result = vec![
             150.31, 150.41, 150.41, 150.43, 150.56, 150.66, 150.66, 150.67, 150.70, 150.83, 150.85,
@@ -156,7 +197,7 @@ mod tests {
     fn test_next_std_dev() {
         let bars = generate_bars_std_dev();
 
-        let mut vwap = VolumeWeightedAveragePrice::new().unwrap();
+        let mut vwap = VolumeWeightedAveragePrice::new();
 
         let result = vec![
             76.529,
@@ -260,7 +301,7 @@ mod tests {
 
     #[test]
     fn test_reset() {
-        let mut vwap = VolumeWeightedAveragePrice::new().unwrap();
+        let mut vwap = VolumeWeightedAveragePrice::new();
 
         assert_approx_eq!(
             vwap.next(&generate_bar((150.39, 150.22, 150.31, 380.0))),
@@ -288,7 +329,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let vwap = VolumeWeightedAveragePrice::new().unwrap();
+        let vwap = VolumeWeightedAveragePrice::new();
         assert_eq!(format!("{}", vwap), "VWAP()");
     }
 }
