@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
-use crate::{Close, Next, Period, Reset};
+use crate::{int, lit, Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -45,8 +45,8 @@ pub struct SimpleMovingAverage {
     period: usize,
     index: usize,
     count: usize,
-    sum: f64,
-    deque: Box<[f64]>,
+    sum: NumberType,
+    deque: Box<[NumberType]>,
 }
 
 impl SimpleMovingAverage {
@@ -57,8 +57,8 @@ impl SimpleMovingAverage {
                 period,
                 index: 0,
                 count: 0,
-                sum: 0.0,
-                deque: vec![0.0; period].into_boxed_slice(),
+                sum: lit!(0.0),
+                deque: vec![lit!(0.0); period].into_boxed_slice(),
             }),
         }
     }
@@ -70,10 +70,10 @@ impl Period for SimpleMovingAverage {
     }
 }
 
-impl Next<f64> for SimpleMovingAverage {
-    type Output = f64;
+impl Next<NumberType> for SimpleMovingAverage {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         let old_val = self.deque[self.index];
         self.deque[self.index] = input;
 
@@ -88,12 +88,12 @@ impl Next<f64> for SimpleMovingAverage {
         }
 
         self.sum = self.sum - old_val + input;
-        self.sum / (self.count as f64)
+        self.sum / int!(self.count)
     }
 }
 
 impl<T: Close> Next<&T> for SimpleMovingAverage {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
@@ -104,9 +104,9 @@ impl Reset for SimpleMovingAverage {
     fn reset(&mut self) {
         self.index = 0;
         self.count = 0;
-        self.sum = 0.0;
+        self.sum = lit!(0.0);
         for i in 0..self.period {
-            self.deque[i] = 0.0;
+            self.deque[i] = lit!(0.0);
         }
     }
 }
@@ -139,37 +139,37 @@ mod tests {
     #[test]
     fn test_next() {
         let mut sma = SimpleMovingAverage::new(4).unwrap();
-        assert_eq!(sma.next(4.0), 4.0);
-        assert_eq!(sma.next(5.0), 4.5);
-        assert_eq!(sma.next(6.0), 5.0);
-        assert_eq!(sma.next(6.0), 5.25);
-        assert_eq!(sma.next(6.0), 5.75);
-        assert_eq!(sma.next(6.0), 6.0);
-        assert_eq!(sma.next(2.0), 5.0);
+        assert_eq!(sma.next(lit!(4.0)), lit!(4.0));
+        assert_eq!(sma.next(lit!(5.0)), lit!(4.5));
+        assert_eq!(sma.next(lit!(6.0)), lit!(5.0));
+        assert_eq!(sma.next(lit!(6.0)), lit!(5.25));
+        assert_eq!(sma.next(lit!(6.0)), lit!(5.75));
+        assert_eq!(sma.next(lit!(6.0)), lit!(6.0));
+        assert_eq!(sma.next(lit!(2.0)), lit!(5.0));
     }
 
     #[test]
     fn test_next_with_bars() {
-        fn bar(close: f64) -> Bar {
+        fn bar(close: NumberType) -> Bar {
             Bar::new().close(close)
         }
 
         let mut sma = SimpleMovingAverage::new(3).unwrap();
-        assert_eq!(sma.next(&bar(4.0)), 4.0);
-        assert_eq!(sma.next(&bar(4.0)), 4.0);
-        assert_eq!(sma.next(&bar(7.0)), 5.0);
-        assert_eq!(sma.next(&bar(1.0)), 4.0);
+        assert_eq!(sma.next(&bar(lit!(4.0))), lit!(4.0));
+        assert_eq!(sma.next(&bar(lit!(4.0))), lit!(4.0));
+        assert_eq!(sma.next(&bar(lit!(7.0))), lit!(5.0));
+        assert_eq!(sma.next(&bar(lit!(1.0))), lit!(4.0));
     }
 
     #[test]
     fn test_reset() {
         let mut sma = SimpleMovingAverage::new(4).unwrap();
-        assert_eq!(sma.next(4.0), 4.0);
-        assert_eq!(sma.next(5.0), 4.5);
-        assert_eq!(sma.next(6.0), 5.0);
+        assert_eq!(sma.next(lit!(4.0)), lit!(4.0));
+        assert_eq!(sma.next(lit!(5.0)), lit!(4.5));
+        assert_eq!(sma.next(lit!(6.0)), lit!(5.0));
 
         sma.reset();
-        assert_eq!(sma.next(99.0), 99.0);
+        assert_eq!(sma.next(lit!(99.0)), lit!(99.0));
     }
 
     #[test]

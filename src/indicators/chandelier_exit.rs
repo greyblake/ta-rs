@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::errors::Result;
 use crate::indicators::{AverageTrueRange, Maximum, Minimum};
-use crate::{Close, High, Low, Next, Period, Reset};
+use crate::{lit, Close, High, Low, Next, NumberType, Period, Reset};
 
 /// Chandelier Exit (CE).
 ///
@@ -57,11 +57,11 @@ pub struct ChandelierExit {
     atr: AverageTrueRange,
     min: Minimum,
     max: Maximum,
-    multiplier: f64,
+    multiplier: NumberType,
 }
 
 impl ChandelierExit {
-    pub fn new(period: usize, multiplier: f64) -> Result<Self> {
+    pub fn new(period: usize, multiplier: NumberType) -> Result<Self> {
         Ok(Self {
             atr: AverageTrueRange::new(period)?,
             min: Minimum::new(period)?,
@@ -70,18 +70,18 @@ impl ChandelierExit {
         })
     }
 
-    pub fn multiplier(&self) -> f64 {
+    pub fn multiplier(&self) -> NumberType {
         self.multiplier
     }
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ChandelierExitOutput {
-    pub long: f64,
-    pub short: f64,
+    pub long: NumberType,
+    pub short: NumberType,
 }
 
-impl From<ChandelierExitOutput> for (f64, f64) {
+impl From<ChandelierExitOutput> for (NumberType, NumberType) {
     fn from(ce: ChandelierExitOutput) -> Self {
         (ce.long, ce.short)
     }
@@ -118,7 +118,7 @@ impl Reset for ChandelierExit {
 
 impl Default for ChandelierExit {
     fn default() -> Self {
-        Self::new(22, 3.0).unwrap()
+        Self::new(22, lit!(3.0)).unwrap()
     }
 }
 
@@ -136,56 +136,56 @@ mod tests {
 
     type Ce = ChandelierExit;
 
-    fn round(nums: (f64, f64)) -> (f64, f64) {
-        let n0 = (nums.0 * 100.0).round() / 100.0;
-        let n1 = (nums.1 * 100.0).round() / 100.0;
+    fn round(nums: (NumberType, NumberType)) -> (NumberType, NumberType) {
+        let n0 = (nums.0 * lit!(100.0)).round() / lit!(100.0);
+        let n1 = (nums.1 * lit!(100.0)).round() / lit!(100.0);
         (n0, n1)
     }
 
     #[test]
     fn test_new() {
-        assert!(Ce::new(0, 0.0).is_err());
-        assert!(Ce::new(1, 1.0).is_ok());
-        assert!(Ce::new(22, 3.0).is_ok());
+        assert!(Ce::new(0, lit!(0.0)).is_err());
+        assert!(Ce::new(1, lit!(1.0)).is_ok());
+        assert!(Ce::new(22, lit!(3.0)).is_ok());
     }
 
     #[test]
     fn test_next_bar() {
-        let mut ce = Ce::new(5, 2.0).unwrap();
+        let mut ce = Ce::new(5, lit!(2.0)).unwrap();
 
-        let bar1 = Bar::new().high(2).low(1).close(1.5);
-        assert_eq!(round(ce.next(&bar1).into()), (0.0, 3.0));
+        let bar1 = Bar::new().high(2).low(1).close(lit!(1.5));
+        assert_eq!(round(ce.next(&bar1).into()), (lit!(0.0), lit!(3.0)));
 
         let bar2 = Bar::new().high(5).low(3).close(4);
-        assert_eq!(round(ce.next(&bar2).into()), (1.33, 4.67));
+        assert_eq!(round(ce.next(&bar2).into()), (lit!(1.33), lit!(4.67)));
 
         let bar3 = Bar::new().high(9).low(7).close(8);
-        assert_eq!(round(ce.next(&bar3).into()), (3.22, 6.78));
+        assert_eq!(round(ce.next(&bar3).into()), (lit!(3.22), lit!(6.78)));
 
         let bar4 = Bar::new().high(5).low(3).close(4);
-        assert_eq!(round(ce.next(&bar4).into()), (1.81, 8.19));
+        assert_eq!(round(ce.next(&bar4).into()), (lit!(1.81), lit!(8.19)));
 
         let bar5 = Bar::new().high(5).low(3).close(4);
-        assert_eq!(round(ce.next(&bar5).into()), (2.88, 7.12));
+        assert_eq!(round(ce.next(&bar5).into()), (lit!(2.88), lit!(7.12)));
 
-        let bar6 = Bar::new().high(2).low(1).close(1.5);
-        assert_eq!(round(ce.next(&bar6).into()), (2.92, 7.08));
+        let bar6 = Bar::new().high(2).low(1).close(lit!(1.5));
+        assert_eq!(round(ce.next(&bar6).into()), (lit!(2.92), lit!(7.08)));
     }
 
     #[test]
     fn test_reset() {
-        let mut ce = Ce::new(5, 2.0).unwrap();
+        let mut ce = Ce::new(5, lit!(2.0)).unwrap();
 
-        let bar1 = Bar::new().high(2).low(1).close(1.5);
+        let bar1 = Bar::new().high(2).low(1).close(lit!(1.5));
         let bar2 = Bar::new().high(5).low(3).close(4);
 
-        assert_eq!(round(ce.next(&bar1).into()), (0.0, 3.0));
-        assert_eq!(round(ce.next(&bar2).into()), (1.33, 4.67));
+        assert_eq!(round(ce.next(&bar1).into()), (lit!(0.0), lit!(3.0)));
+        assert_eq!(round(ce.next(&bar2).into()), (lit!(1.33), lit!(4.67)));
 
         ce.reset();
 
-        assert_eq!(round(ce.next(&bar1).into()), (0.0, 3.0));
-        assert_eq!(round(ce.next(&bar2).into()), (1.33, 4.67));
+        assert_eq!(round(ce.next(&bar1).into()), (lit!(0.0), lit!(3.0)));
+        assert_eq!(round(ce.next(&bar2).into()), (lit!(1.33), lit!(4.67)));
     }
 
     #[test]
@@ -195,7 +195,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let indicator = Ce::new(10, 5.0).unwrap();
+        let indicator = Ce::new(10, crate::int!(5)).unwrap();
         assert_eq!(format!("{}", indicator), "CE(10, 5)");
     }
 }

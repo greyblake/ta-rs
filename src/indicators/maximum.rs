@@ -1,7 +1,8 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
-use crate::{High, Next, Period, Reset};
+use crate::helpers::NEG_INFINITY;
+use crate::{High, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -30,7 +31,7 @@ pub struct Maximum {
     period: usize,
     max_index: usize,
     cur_index: usize,
-    deque: Box<[f64]>,
+    deque: Box<[NumberType]>,
 }
 
 impl Maximum {
@@ -41,13 +42,13 @@ impl Maximum {
                 period,
                 max_index: 0,
                 cur_index: 0,
-                deque: vec![f64::NEG_INFINITY; period].into_boxed_slice(),
+                deque: vec![NEG_INFINITY; period].into_boxed_slice(),
             }),
         }
     }
 
     fn find_max_index(&self) -> usize {
-        let mut max = f64::NEG_INFINITY;
+        let mut max = NEG_INFINITY;
         let mut index: usize = 0;
 
         for (i, &val) in self.deque.iter().enumerate() {
@@ -67,10 +68,10 @@ impl Period for Maximum {
     }
 }
 
-impl Next<f64> for Maximum {
-    type Output = f64;
+impl Next<NumberType> for Maximum {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         self.deque[self.cur_index] = input;
 
         if input > self.deque[self.max_index] {
@@ -90,7 +91,7 @@ impl Next<f64> for Maximum {
 }
 
 impl<T: High> Next<&T> for Maximum {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.high())
@@ -100,7 +101,7 @@ impl<T: High> Next<&T> for Maximum {
 impl Reset for Maximum {
     fn reset(&mut self) {
         for i in 0..self.period {
-            self.deque[i] = f64::NEG_INFINITY;
+            self.deque[i] = NEG_INFINITY;
         }
     }
 }
@@ -120,6 +121,7 @@ impl fmt::Display for Maximum {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::lit;
     use crate::test_helper::*;
 
     test_indicator!(Maximum);
@@ -134,40 +136,40 @@ mod tests {
     fn test_next() {
         let mut max = Maximum::new(3).unwrap();
 
-        assert_eq!(max.next(4.0), 4.0);
-        assert_eq!(max.next(1.2), 4.0);
-        assert_eq!(max.next(5.0), 5.0);
-        assert_eq!(max.next(3.0), 5.0);
-        assert_eq!(max.next(4.0), 5.0);
-        assert_eq!(max.next(0.0), 4.0);
-        assert_eq!(max.next(-1.0), 4.0);
-        assert_eq!(max.next(-2.0), 0.0);
-        assert_eq!(max.next(-1.5), -1.0);
+        assert_eq!(max.next(lit!(4.0)), lit!(4.0));
+        assert_eq!(max.next(lit!(1.2)), lit!(4.0));
+        assert_eq!(max.next(lit!(5.0)), lit!(5.0));
+        assert_eq!(max.next(lit!(3.0)), lit!(5.0));
+        assert_eq!(max.next(lit!(4.0)), lit!(5.0));
+        assert_eq!(max.next(lit!(0.0)), lit!(4.0));
+        assert_eq!(max.next(lit!(-1.0)), lit!(4.0));
+        assert_eq!(max.next(lit!(-2.0)), lit!(0.0));
+        assert_eq!(max.next(lit!(-1.5)), lit!(-1.0));
     }
 
     #[test]
     fn test_next_with_bars() {
-        fn bar(high: f64) -> Bar {
+        fn bar(high: NumberType) -> Bar {
             Bar::new().high(high)
         }
 
         let mut max = Maximum::new(2).unwrap();
 
-        assert_eq!(max.next(&bar(1.1)), 1.1);
-        assert_eq!(max.next(&bar(4.0)), 4.0);
-        assert_eq!(max.next(&bar(3.5)), 4.0);
-        assert_eq!(max.next(&bar(2.0)), 3.5);
+        assert_eq!(max.next(&bar(lit!(1.1))), lit!(1.1));
+        assert_eq!(max.next(&bar(lit!(4.0))), lit!(4.0));
+        assert_eq!(max.next(&bar(lit!(3.5))), lit!(4.0));
+        assert_eq!(max.next(&bar(lit!(2.0))), lit!(3.5));
     }
 
     #[test]
     fn test_reset() {
         let mut max = Maximum::new(100).unwrap();
-        assert_eq!(max.next(4.0), 4.0);
-        assert_eq!(max.next(10.0), 10.0);
-        assert_eq!(max.next(4.0), 10.0);
+        assert_eq!(max.next(lit!(4.0)), lit!(4.0));
+        assert_eq!(max.next(lit!(10.0)), lit!(10.0));
+        assert_eq!(max.next(lit!(4.0)), lit!(10.0));
 
         max.reset();
-        assert_eq!(max.next(4.0), 4.0);
+        assert_eq!(max.next(lit!(4.0)), lit!(4.0));
     }
 
     #[test]

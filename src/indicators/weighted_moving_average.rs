@@ -1,6 +1,7 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
+use crate::{int, lit, NumberType};
 use crate::{Close, Next, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -45,10 +46,10 @@ pub struct WeightedMovingAverage {
     period: usize,
     index: usize,
     count: usize,
-    weight: f64,
-    sum: f64,
-    sum_flat: f64,
-    deque: Box<[f64]>,
+    weight: NumberType,
+    sum: NumberType,
+    sum_flat: NumberType,
+    deque: Box<[NumberType]>,
 }
 
 impl WeightedMovingAverage {
@@ -59,10 +60,10 @@ impl WeightedMovingAverage {
                 period,
                 index: 0,
                 count: 0,
-                weight: 0.0,
-                sum: 0.0,
-                sum_flat: 0.0,
-                deque: vec![0.0; period].into_boxed_slice(),
+                weight: lit!(0.0),
+                sum: lit!(0.0),
+                sum_flat: lit!(0.0),
+                deque: vec![lit!(0.0); period].into_boxed_slice(),
             }),
         }
     }
@@ -74,11 +75,11 @@ impl Period for WeightedMovingAverage {
     }
 }
 
-impl Next<f64> for WeightedMovingAverage {
-    type Output = f64;
+impl Next<NumberType> for WeightedMovingAverage {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
-        let old_val: f64 = self.deque[self.index];
+    fn next(&mut self, input: NumberType) -> Self::Output {
+        let old_val: NumberType = self.deque[self.index];
         self.deque[self.index] = input;
 
         self.index = if self.index + 1 < self.period {
@@ -89,18 +90,18 @@ impl Next<f64> for WeightedMovingAverage {
 
         if self.count < self.period {
             self.count += 1;
-            self.weight = self.count as f64;
+            self.weight = int!(self.count);
             self.sum += input * self.weight
         } else {
             self.sum = self.sum - self.sum_flat + (input * self.weight);
         }
         self.sum_flat = self.sum_flat - old_val + input;
-        self.sum / (self.weight * (self.weight + 1.0) / 2.0)
+        self.sum / (self.weight * (self.weight + lit!(1.0)) / lit!(2.0))
     }
 }
 
 impl<T: Close> Next<&T> for WeightedMovingAverage {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
@@ -111,11 +112,11 @@ impl Reset for WeightedMovingAverage {
     fn reset(&mut self) {
         self.index = 0;
         self.count = 0;
-        self.weight = 0.0;
-        self.sum = 0.0;
-        self.sum_flat = 0.0;
+        self.weight = lit!(0.0);
+        self.sum = lit!(0.0);
+        self.sum_flat = lit!(0.0);
         for i in 0..self.period {
-            self.deque[i] = 0.0;
+            self.deque[i] = lit!(0.0);
         }
     }
 }
@@ -149,30 +150,30 @@ mod tests {
     fn test_next() {
         let mut wma = WeightedMovingAverage::new(3).unwrap();
 
-        assert_eq!(wma.next(12.0), 12.0);
-        assert_eq!(wma.next(3.0), 6.0); // (1*12 + 2*3) / 3 = 6.0
-        assert_eq!(wma.next(3.0), 4.5); // (1*12 + 2*3 + 3*3) / 6 = 4.5
-        assert_eq!(wma.next(5.0), 4.0); // (1*3 + 2*3 + 3*5) / 6 = 4.0
+        assert_eq!(wma.next(lit!(12.0)), lit!(12.0));
+        assert_eq!(wma.next(lit!(3.0)), lit!(6.0)); // (1*12 + 2*3) / 3 = 6.0
+        assert_eq!(wma.next(lit!(3.0)), lit!(4.5)); // (1*12 + 2*3 + 3*3) / 6 = 4.5
+        assert_eq!(wma.next(lit!(5.0)), lit!(4.0)); // (1*3 + 2*3 + 3*5) / 6 = 4.0
 
         let mut wma = WeightedMovingAverage::new(3).unwrap();
         let bar1 = Bar::new().close(2);
         let bar2 = Bar::new().close(5);
-        assert_eq!(wma.next(&bar1), 2.0);
-        assert_eq!(wma.next(&bar2), 4.0);
+        assert_eq!(wma.next(&bar1), lit!(2.0));
+        assert_eq!(wma.next(&bar2), lit!(4.0));
     }
 
     #[test]
     fn test_reset() {
         let mut wma = WeightedMovingAverage::new(5).unwrap();
 
-        assert_eq!(wma.next(4.0), 4.0);
-        wma.next(10.0);
-        wma.next(15.0);
-        wma.next(20.0);
-        assert_ne!(wma.next(4.0), 4.0);
+        assert_eq!(wma.next(lit!(4.0)), lit!(4.0));
+        wma.next(lit!(10.0));
+        wma.next(lit!(15.0));
+        wma.next(lit!(20.0));
+        assert_ne!(wma.next(lit!(4.0)), lit!(4.0));
 
         wma.reset();
-        assert_eq!(wma.next(4.0), 4.0);
+        assert_eq!(wma.next(lit!(4.0)), lit!(4.0));
     }
 
     #[test]

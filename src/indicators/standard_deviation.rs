@@ -1,7 +1,9 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
-use crate::{Close, Next, Period, Reset};
+use crate::{int, lit, Close, Next, NumberType, Period, Reset};
+#[cfg(feature = "decimal")]
+use rust_decimal::MathematicalOps;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -45,9 +47,9 @@ pub struct StandardDeviation {
     period: usize,
     index: usize,
     count: usize,
-    m: f64,
-    m2: f64,
-    deque: Box<[f64]>,
+    m: NumberType,
+    m2: NumberType,
+    deque: Box<[NumberType]>,
 }
 
 impl StandardDeviation {
@@ -58,14 +60,14 @@ impl StandardDeviation {
                 period,
                 index: 0,
                 count: 0,
-                m: 0.0,
-                m2: 0.0,
-                deque: vec![0.0; period].into_boxed_slice(),
+                m: lit!(0.0),
+                m2: lit!(0.0),
+                deque: vec![lit!(0.0); period].into_boxed_slice(),
             }),
         }
     }
 
-    pub(super) fn mean(&self) -> f64 {
+    pub(super) fn mean(&self) -> NumberType {
         self.m
     }
 }
@@ -76,10 +78,10 @@ impl Period for StandardDeviation {
     }
 }
 
-impl Next<f64> for StandardDeviation {
-    type Output = f64;
+impl Next<NumberType> for StandardDeviation {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         let old_val = self.deque[self.index];
         self.deque[self.index] = input;
 
@@ -92,26 +94,31 @@ impl Next<f64> for StandardDeviation {
         if self.count < self.period {
             self.count += 1;
             let delta = input - self.m;
-            self.m += delta / self.count as f64;
+            self.m += delta / int!(self.count);
             let delta2 = input - self.m;
             self.m2 += delta * delta2;
         } else {
             let delta = input - old_val;
             let old_m = self.m;
-            self.m += delta / self.period as f64;
+            self.m += delta / int!(self.period);
             let delta2 = input - self.m + old_val - old_m;
             self.m2 += delta * delta2;
         }
-        if self.m2 < 0.0 {
-            self.m2 = 0.0;
+        if self.m2 < lit!(0.0) {
+            self.m2 = lit!(0.0);
         }
 
-        (self.m2 / self.count as f64).sqrt()
+        #[cfg(not(feature = "decimal"))]
+        return (self.m2 / int!(self.count)).sqrt();
+        #[cfg(feature = "decimal")]
+        return (self.m2 / int!(self.count))
+            .sqrt()
+            .expect("Invalid (probably negative) number sent.");
     }
 }
 
 impl<T: Close> Next<&T> for StandardDeviation {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
@@ -122,10 +129,10 @@ impl Reset for StandardDeviation {
     fn reset(&mut self) {
         self.index = 0;
         self.count = 0;
-        self.m = 0.0;
-        self.m2 = 0.0;
+        self.m = lit!(0.0);
+        self.m2 = lit!(0.0);
         for i in 0..self.period {
-            self.deque[i] = 0.0;
+            self.deque[i] = lit!(0.0);
         }
     }
 }
@@ -158,59 +165,59 @@ mod tests {
     #[test]
     fn test_next() {
         let mut sd = StandardDeviation::new(4).unwrap();
-        assert_eq!(sd.next(10.0), 0.0);
-        assert_eq!(sd.next(20.0), 5.0);
-        assert_eq!(round(sd.next(30.0)), 8.165);
-        assert_eq!(round(sd.next(20.0)), 7.071);
-        assert_eq!(round(sd.next(10.0)), 7.071);
-        assert_eq!(round(sd.next(100.0)), 35.355);
+        assert_eq!(sd.next(lit!(10.0)), lit!(0.0));
+        assert_eq!(sd.next(lit!(20.0)), lit!(5.0));
+        assert_eq!(round(sd.next(lit!(30.0))), lit!(8.165));
+        assert_eq!(round(sd.next(lit!(20.0))), lit!(7.071));
+        assert_eq!(round(sd.next(lit!(10.0))), lit!(7.071));
+        assert_eq!(round(sd.next(lit!(100.0))), lit!(35.355));
     }
 
     #[test]
     fn test_next_floating_point_error() {
         let mut sd = StandardDeviation::new(6).unwrap();
-        assert_eq!(sd.next(1.872), 0.0);
-        assert_eq!(round(sd.next(1.0)), 0.436);
-        assert_eq!(round(sd.next(1.0)), 0.411);
-        assert_eq!(round(sd.next(1.0)), 0.378);
-        assert_eq!(round(sd.next(1.0)), 0.349);
-        assert_eq!(round(sd.next(1.0)), 0.325);
-        assert_eq!(round(sd.next(1.0)), 0.0);
+        assert_eq!(sd.next(lit!(1.872)), lit!(0.0));
+        assert_eq!(round(sd.next(lit!(1.0))), lit!(0.436));
+        assert_eq!(round(sd.next(lit!(1.0))), lit!(0.411));
+        assert_eq!(round(sd.next(lit!(1.0))), lit!(0.378));
+        assert_eq!(round(sd.next(lit!(1.0))), lit!(0.349));
+        assert_eq!(round(sd.next(lit!(1.0))), lit!(0.325));
+        assert_eq!(round(sd.next(lit!(1.0))), lit!(0.0));
     }
 
     #[test]
     fn test_next_with_bars() {
-        fn bar(close: f64) -> Bar {
+        fn bar(close: NumberType) -> Bar {
             Bar::new().close(close)
         }
 
         let mut sd = StandardDeviation::new(4).unwrap();
-        assert_eq!(sd.next(&bar(10.0)), 0.0);
-        assert_eq!(sd.next(&bar(20.0)), 5.0);
-        assert_eq!(round(sd.next(&bar(30.0))), 8.165);
-        assert_eq!(round(sd.next(&bar(20.0))), 7.071);
-        assert_eq!(round(sd.next(&bar(10.0))), 7.071);
-        assert_eq!(round(sd.next(&bar(100.0))), 35.355);
+        assert_eq!(sd.next(&bar(lit!(10.0))), lit!(0.0));
+        assert_eq!(sd.next(&bar(lit!(20.0))), lit!(5.0));
+        assert_eq!(round(sd.next(&bar(lit!(30.0)))), lit!(8.165));
+        assert_eq!(round(sd.next(&bar(lit!(20.0)))), lit!(7.071));
+        assert_eq!(round(sd.next(&bar(lit!(10.0)))), lit!(7.071));
+        assert_eq!(round(sd.next(&bar(lit!(100.0)))), lit!(35.355));
     }
 
     #[test]
     fn test_next_same_values() {
         let mut sd = StandardDeviation::new(3).unwrap();
-        assert_eq!(sd.next(4.2), 0.0);
-        assert_eq!(sd.next(4.2), 0.0);
-        assert_eq!(sd.next(4.2), 0.0);
-        assert_eq!(sd.next(4.2), 0.0);
+        assert_eq!(sd.next(lit!(4.2)), lit!(0.0));
+        assert_eq!(sd.next(lit!(4.2)), lit!(0.0));
+        assert_eq!(sd.next(lit!(4.2)), lit!(0.0));
+        assert_eq!(sd.next(lit!(4.2)), lit!(0.0));
     }
 
     #[test]
     fn test_reset() {
         let mut sd = StandardDeviation::new(4).unwrap();
-        assert_eq!(sd.next(10.0), 0.0);
-        assert_eq!(sd.next(20.0), 5.0);
-        assert_eq!(round(sd.next(30.0)), 8.165);
+        assert_eq!(sd.next(lit!(10.0)), lit!(0.0));
+        assert_eq!(sd.next(lit!(20.0)), lit!(5.0));
+        assert_eq!(round(sd.next(lit!(30.0))), lit!(8.165));
 
         sd.reset();
-        assert_eq!(sd.next(20.0), 0.0);
+        assert_eq!(sd.next(lit!(20.0)), lit!(0.0));
     }
 
     #[test]

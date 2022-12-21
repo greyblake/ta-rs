@@ -1,7 +1,8 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
-use crate::{Low, Next, Period, Reset};
+use crate::helpers::INFINITY;
+use crate::{Low, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -29,7 +30,7 @@ pub struct Minimum {
     period: usize,
     min_index: usize,
     cur_index: usize,
-    deque: Box<[f64]>,
+    deque: Box<[NumberType]>,
 }
 
 impl Minimum {
@@ -40,13 +41,13 @@ impl Minimum {
                 period,
                 min_index: 0,
                 cur_index: 0,
-                deque: vec![f64::INFINITY; period].into_boxed_slice(),
+                deque: vec![INFINITY; period].into_boxed_slice(),
             }),
         }
     }
 
     fn find_min_index(&self) -> usize {
-        let mut min = f64::INFINITY;
+        let mut min = INFINITY;
         let mut index: usize = 0;
 
         for (i, &val) in self.deque.iter().enumerate() {
@@ -66,10 +67,10 @@ impl Period for Minimum {
     }
 }
 
-impl Next<f64> for Minimum {
-    type Output = f64;
+impl Next<NumberType> for Minimum {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         self.deque[self.cur_index] = input;
 
         if input < self.deque[self.min_index] {
@@ -89,7 +90,7 @@ impl Next<f64> for Minimum {
 }
 
 impl<T: Low> Next<&T> for Minimum {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.low())
@@ -99,7 +100,7 @@ impl<T: Low> Next<&T> for Minimum {
 impl Reset for Minimum {
     fn reset(&mut self) {
         for i in 0..self.period {
-            self.deque[i] = f64::INFINITY;
+            self.deque[i] = INFINITY;
         }
     }
 }
@@ -119,6 +120,7 @@ impl fmt::Display for Minimum {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::lit;
     use crate::test_helper::*;
 
     test_indicator!(Minimum);
@@ -133,41 +135,41 @@ mod tests {
     fn test_next() {
         let mut min = Minimum::new(3).unwrap();
 
-        assert_eq!(min.next(4.0), 4.0);
-        assert_eq!(min.next(1.2), 1.2);
-        assert_eq!(min.next(5.0), 1.2);
-        assert_eq!(min.next(3.0), 1.2);
-        assert_eq!(min.next(4.0), 3.0);
-        assert_eq!(min.next(6.0), 3.0);
-        assert_eq!(min.next(7.0), 4.0);
-        assert_eq!(min.next(8.0), 6.0);
-        assert_eq!(min.next(-9.0), -9.0);
-        assert_eq!(min.next(0.0), -9.0);
+        assert_eq!(min.next(lit!(4.0)), lit!(4.0));
+        assert_eq!(min.next(lit!(1.2)), lit!(1.2));
+        assert_eq!(min.next(lit!(5.0)), lit!(1.2));
+        assert_eq!(min.next(lit!(3.0)), lit!(1.2));
+        assert_eq!(min.next(lit!(4.0)), lit!(3.0));
+        assert_eq!(min.next(lit!(6.0)), lit!(3.0));
+        assert_eq!(min.next(lit!(7.0)), lit!(4.0));
+        assert_eq!(min.next(lit!(8.0)), lit!(6.0));
+        assert_eq!(min.next(lit!(-9.0)), lit!(-9.0));
+        assert_eq!(min.next(lit!(0.0)), lit!(-9.0));
     }
 
     #[test]
     fn test_next_with_bars() {
-        fn bar(low: f64) -> Bar {
+        fn bar(low: NumberType) -> Bar {
             Bar::new().low(low)
         }
 
         let mut min = Minimum::new(3).unwrap();
 
-        assert_eq!(min.next(&bar(4.0)), 4.0);
-        assert_eq!(min.next(&bar(4.0)), 4.0);
-        assert_eq!(min.next(&bar(1.2)), 1.2);
-        assert_eq!(min.next(&bar(5.0)), 1.2);
+        assert_eq!(min.next(&bar(lit!(4.0))), lit!(4.0));
+        assert_eq!(min.next(&bar(lit!(4.0))), lit!(4.0));
+        assert_eq!(min.next(&bar(lit!(1.2))), lit!(1.2));
+        assert_eq!(min.next(&bar(lit!(5.0))), lit!(1.2));
     }
 
     #[test]
     fn test_reset() {
         let mut min = Minimum::new(10).unwrap();
 
-        assert_eq!(min.next(5.0), 5.0);
-        assert_eq!(min.next(7.0), 5.0);
+        assert_eq!(min.next(lit!(5.0)), lit!(5.0));
+        assert_eq!(min.next(lit!(7.0)), lit!(5.0));
 
         min.reset();
-        assert_eq!(min.next(8.0), 8.0);
+        assert_eq!(min.next(lit!(8.0)), lit!(8.0));
     }
 
     #[test]

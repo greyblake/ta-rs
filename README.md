@@ -9,17 +9,18 @@
 
 Technical analysis library for Rust.
 
-* [Getting started](#getting-started)
-* [Basic ideas](#basic-ideas)
-* [List of indicators](#list-of-indicators)
-* [Running benchmarks](#running-benchmarks)
-* [Donations](#donations)
-* [License](#license)
-* [Contributors](#contributors)
+- [Getting started](#getting-started)
+- [Basic ideas](#basic-ideas)
+- [List of indicators](#list-of-indicators)
+- [Running benchmarks](#running-benchmarks)
+- [Donations](#donations)
+- [License](#license)
+- [Contributors](#contributors)
 
 ## Getting started
 
 Add to you `Cargo.toml`:
+
 ```
 [dependencies]
 ta = "0.4.0"
@@ -47,58 +48,60 @@ Check also the [documentation](https://docs.rs/ta).
 
 A data item which represent a stock quote may implement the following traits:
 
-* `Open`
-* `High`
-* `Low`
-* `Close`
-* `Volume`
+- `Open`
+- `High`
+- `Low`
+- `Close`
+- `Volume`
 
 It's not necessary to implement all of them, but it must be enough to fulfill requirements for a particular indicator.
 You probably should prefer using `DataItem` unless you have reasons to implement your own structure.
 
 Indicators typically implement the following traits:
 
-* `Next<T>` (often `Next<f64>` and `Next<&DataItem>`) - to feed and get the next value
-* `Reset` - to reset an indicator
-* `Debug`
-* `Display`
-* `Default`
-* `Clone`
+- `Next<T>` (often `Next<f64>` and `Next<&DataItem>`) - to feed and get the next value
+- `Reset` - to reset an indicator
+- `Debug`
+- `Display`
+- `Default`
+- `Clone`
 
 ## List of indicators
 
 So far there are the following indicators available.
 
-* Trend
-  * Exponential Moving Average (EMA)
-  * Simple Moving Average (SMA)
-* Oscillators
-  * Relative Strength Index (RSI)
-  * Fast Stochastic
-  * Slow Stochastic
-  * Moving Average Convergence Divergence (MACD)
-  * Percentage Price Oscillator (PPO)
-  * Commodity Channel Index (CCI)
-  * Money Flow Index (MFI)
-* Other
-  * Minimum
-  * Maximum
-  * True Range
-  * Standard Deviation (SD)
-  * Mean Absolute Deviation (MAD)
-  * Average True Range (AR)
-  * Efficiency Ratio (ER)
-  * Bollinger Bands (BB)
-  * Chandelier Exit (CE)
-  * Keltner Channel (KC)
-  * Rate of Change (ROC)
-  * On Balance Volume (OBV)
-
+- Trend
+  - Exponential Moving Average (EMA)
+  - Simple Moving Average (SMA)
+- Oscillators
+  - Relative Strength Index (RSI)
+  - Fast Stochastic
+  - Slow Stochastic
+  - Moving Average Convergence Divergence (MACD)
+  - Percentage Price Oscillator (PPO)
+  - Commodity Channel Index (CCI)
+  - Money Flow Index (MFI)
+- Other
+  - Minimum
+  - Maximum
+  - True Range
+  - Standard Deviation (SD)
+  - Mean Absolute Deviation (MAD)
+  - Average True Range (AR)
+  - Efficiency Ratio (ER)
+  - Bollinger Bands (BB)
+  - Chandelier Exit (CE)
+  - Keltner Channel (KC)
+  - Rate of Change (ROC)
+  - On Balance Volume (OBV)
 
 ## Features
 
-* `serde` - allows to serialize and deserialize indicators. NOTE: the backward compatibility of serialized
-data with the future versions of ta is not guaranteed because internal implementation of the indicators is a subject to change.
+- `decimal` - when enabled, uses `Decimal` objects from the [`rust_decimal`] crate instead of `f64`.
+- `serde` - allows to serialize and deserialize indicators. NOTE: the backward compatibility of serialized
+  data with the future versions of ta is not guaranteed because internal implementation of the indicators is a subject to change.
+
+[`rust_decimal`]: https://docs.rs/rust_decimal
 
 ## Running benchmarks
 
@@ -112,11 +115,9 @@ You can support the project by donating [NEAR tokens](https://near.org).
 
 Our NEAR wallet address is `ta-rs.near`
 
-
 ## License
 
 [MIT](https://github.com/greyblake/ta-rs/blob/master/LICENSE) © [Sergey Potapov](http://greyblake.com/)
-
 
 ## Contributors
 
@@ -129,3 +130,4 @@ Our NEAR wallet address is `ta-rs.near`
 - [Devin Gunay](https://github.com/dgunay) - serde support
 - [Youngchan Lee](https://github.com/edwardycl) - bugfix
 - [tommady](https://github.com/tommady) - get rid of error-chain dependency
+- [Luke Sneeringer](https://github.com/lukesneeringer) - Decimal implementation

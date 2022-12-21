@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::{ExponentialMovingAverage, TrueRange};
-use crate::{Close, High, Low, Next, Period, Reset};
+use crate::{Close, High, Low, Next, NumberType, Period, Reset};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -79,16 +79,16 @@ impl Period for AverageTrueRange {
     }
 }
 
-impl Next<f64> for AverageTrueRange {
-    type Output = f64;
+impl Next<NumberType> for AverageTrueRange {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         self.ema.next(self.true_range.next(input))
     }
 }
 
 impl<T: High + Low + Close> Next<&T> for AverageTrueRange {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.ema.next(self.true_range.next(input))
@@ -117,6 +117,7 @@ impl fmt::Display for AverageTrueRange {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::lit;
     use crate::test_helper::*;
 
     test_indicator!(AverageTrueRange);
@@ -130,28 +131,28 @@ mod tests {
     fn test_next() {
         let mut atr = AverageTrueRange::new(3).unwrap();
 
-        let bar1 = Bar::new().high(10).low(7.5).close(9);
-        let bar2 = Bar::new().high(11).low(9).close(9.5);
+        let bar1 = Bar::new().high(10).low(lit!(7.5)).close(9);
+        let bar2 = Bar::new().high(11).low(9).close(lit!(9.5));
         let bar3 = Bar::new().high(9).low(5).close(8);
 
-        assert_eq!(atr.next(&bar1), 2.5);
-        assert_eq!(atr.next(&bar2), 2.25);
-        assert_eq!(atr.next(&bar3), 3.375);
+        assert_eq!(atr.next(&bar1), lit!(2.5));
+        assert_eq!(atr.next(&bar2), lit!(2.25));
+        assert_eq!(atr.next(&bar3), lit!(3.375));
     }
 
     #[test]
     fn test_reset() {
         let mut atr = AverageTrueRange::new(9).unwrap();
 
-        let bar1 = Bar::new().high(10).low(7.5).close(9);
-        let bar2 = Bar::new().high(11).low(9).close(9.5);
+        let bar1 = Bar::new().high(10).low(lit!(7.5)).close(9);
+        let bar2 = Bar::new().high(11).low(9).close(lit!(9.5));
 
         atr.next(&bar1);
         atr.next(&bar2);
 
         atr.reset();
         let bar3 = Bar::new().high(60).low(15).close(51);
-        assert_eq!(atr.next(&bar3), 45.0);
+        assert_eq!(atr.next(&bar3), lit!(45.0));
     }
 
     #[test]

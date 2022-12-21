@@ -4,7 +4,7 @@ use std::fmt;
 use serde::{Deserialize, Serialize};
 
 use crate::errors::{Result, TaError};
-use crate::{Close, Next, Period, Reset};
+use crate::{int, lit, Close, Next, NumberType, Period, Reset};
 
 /// Mean Absolute Deviation (MAD)
 ///
@@ -33,8 +33,8 @@ pub struct MeanAbsoluteDeviation {
     period: usize,
     index: usize,
     count: usize,
-    sum: f64,
-    deque: Box<[f64]>,
+    sum: NumberType,
+    deque: Box<[NumberType]>,
 }
 
 impl MeanAbsoluteDeviation {
@@ -45,8 +45,8 @@ impl MeanAbsoluteDeviation {
                 period,
                 index: 0,
                 count: 0,
-                sum: 0.0,
-                deque: vec![0.0; period].into_boxed_slice(),
+                sum: lit!(0.0),
+                deque: vec![lit!(0.0); period].into_boxed_slice(),
             }),
         }
     }
@@ -58,12 +58,12 @@ impl Period for MeanAbsoluteDeviation {
     }
 }
 
-impl Next<f64> for MeanAbsoluteDeviation {
-    type Output = f64;
+impl Next<NumberType> for MeanAbsoluteDeviation {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         self.sum = if self.count < self.period {
-            self.count = self.count + 1;
+            self.count += 1;
             self.sum + input
         } else {
             self.sum + input - self.deque[self.index]
@@ -76,18 +76,18 @@ impl Next<f64> for MeanAbsoluteDeviation {
             0
         };
 
-        let mean = self.sum / self.count as f64;
+        let mean = self.sum / int!(self.count);
 
-        let mut mad = 0.0;
+        let mut mad = lit!(0.0);
         for value in &self.deque[..self.count] {
             mad += (value - mean).abs();
         }
-        mad / self.count as f64
+        mad / int!(self.count)
     }
 }
 
 impl<T: Close> Next<&T> for MeanAbsoluteDeviation {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
@@ -98,9 +98,9 @@ impl Reset for MeanAbsoluteDeviation {
     fn reset(&mut self) {
         self.index = 0;
         self.count = 0;
-        self.sum = 0.0;
+        self.sum = lit!(0.0);
         for i in 0..self.period {
-            self.deque[i] = 0.0;
+            self.deque[i] = lit!(0.0);
         }
     }
 }
@@ -134,25 +134,25 @@ mod tests {
     fn test_next() {
         let mut mad = MeanAbsoluteDeviation::new(5).unwrap();
 
-        assert_eq!(round(mad.next(1.5)), 0.0);
-        assert_eq!(round(mad.next(4.0)), 1.25);
-        assert_eq!(round(mad.next(8.0)), 2.333);
-        assert_eq!(round(mad.next(4.0)), 1.813);
-        assert_eq!(round(mad.next(4.0)), 1.48);
-        assert_eq!(round(mad.next(1.5)), 1.48);
+        assert_eq!(round(mad.next(lit!(1.5))), lit!(0.0));
+        assert_eq!(round(mad.next(lit!(4.0))), lit!(1.25));
+        assert_eq!(round(mad.next(lit!(8.0))), lit!(2.333));
+        assert_eq!(round(mad.next(lit!(4.0))), lit!(1.813));
+        assert_eq!(round(mad.next(lit!(4.0))), lit!(1.48));
+        assert_eq!(round(mad.next(lit!(1.5))), lit!(1.48));
     }
 
     #[test]
     fn test_reset() {
         let mut mad = MeanAbsoluteDeviation::new(5).unwrap();
 
-        assert_eq!(round(mad.next(1.5)), 0.0);
-        assert_eq!(round(mad.next(4.0)), 1.25);
+        assert_eq!(round(mad.next(lit!(1.5))), lit!(0.0));
+        assert_eq!(round(mad.next(lit!(4.0))), lit!(1.25));
 
         mad.reset();
 
-        assert_eq!(round(mad.next(1.5)), 0.0);
-        assert_eq!(round(mad.next(4.0)), 1.25);
+        assert_eq!(round(mad.next(lit!(1.5))), lit!(0.0));
+        assert_eq!(round(mad.next(lit!(4.0))), lit!(1.25));
     }
 
     #[test]

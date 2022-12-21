@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::StandardDeviation as Sd;
-use crate::{Close, Next, Period, Reset};
+use crate::{lit, Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -50,19 +50,19 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone)]
 pub struct BollingerBands {
     period: usize,
-    multiplier: f64,
+    multiplier: NumberType,
     sd: Sd,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct BollingerBandsOutput {
-    pub average: f64,
-    pub upper: f64,
-    pub lower: f64,
+    pub average: NumberType,
+    pub upper: NumberType,
+    pub lower: NumberType,
 }
 
 impl BollingerBands {
-    pub fn new(period: usize, multiplier: f64) -> Result<Self> {
+    pub fn new(period: usize, multiplier: NumberType) -> Result<Self> {
         Ok(Self {
             period,
             multiplier,
@@ -70,7 +70,7 @@ impl BollingerBands {
         })
     }
 
-    pub fn multiplier(&self) -> f64 {
+    pub fn multiplier(&self) -> NumberType {
         self.multiplier
     }
 }
@@ -81,10 +81,10 @@ impl Period for BollingerBands {
     }
 }
 
-impl Next<f64> for BollingerBands {
+impl Next<NumberType> for BollingerBands {
     type Output = BollingerBandsOutput;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         let sd = self.sd.next(input);
         let mean = self.sd.mean();
 
@@ -112,7 +112,7 @@ impl Reset for BollingerBands {
 
 impl Default for BollingerBands {
     fn default() -> Self {
-        Self::new(9, 2_f64).unwrap()
+        Self::new(9, lit!(2.0)).unwrap()
     }
 }
 
@@ -131,61 +131,61 @@ mod tests {
 
     #[test]
     fn test_new() {
-        assert!(BollingerBands::new(0, 2_f64).is_err());
-        assert!(BollingerBands::new(1, 2_f64).is_ok());
-        assert!(BollingerBands::new(2, 2_f64).is_ok());
+        assert!(BollingerBands::new(0, lit!(2.0)).is_err());
+        assert!(BollingerBands::new(1, lit!(2.0)).is_ok());
+        assert!(BollingerBands::new(2, lit!(2.0)).is_ok());
     }
 
     #[test]
     fn test_next() {
-        let mut bb = BollingerBands::new(3, 2.0_f64).unwrap();
+        let mut bb = BollingerBands::new(3, lit!(2.0)).unwrap();
 
-        let a = bb.next(2.0);
-        let b = bb.next(5.0);
-        let c = bb.next(1.0);
-        let d = bb.next(6.25);
+        let a = bb.next(lit!(2.0));
+        let b = bb.next(lit!(5.0));
+        let c = bb.next(lit!(1.0));
+        let d = bb.next(lit!(6.25));
 
-        assert_eq!(round(a.average), 2.0);
-        assert_eq!(round(b.average), 3.5);
-        assert_eq!(round(c.average), 2.667);
-        assert_eq!(round(d.average), 4.083);
+        assert_eq!(round(a.average), lit!(2.0));
+        assert_eq!(round(b.average), lit!(3.5));
+        assert_eq!(round(c.average), lit!(2.667));
+        assert_eq!(round(d.average), lit!(4.083));
 
-        assert_eq!(round(a.upper), 2.0);
-        assert_eq!(round(b.upper), 6.5);
-        assert_eq!(round(c.upper), 6.066);
-        assert_eq!(round(d.upper), 8.562);
+        assert_eq!(round(a.upper), lit!(2.0));
+        assert_eq!(round(b.upper), lit!(6.5));
+        assert_eq!(round(c.upper), lit!(6.066));
+        assert_eq!(round(d.upper), lit!(8.562));
 
-        assert_eq!(round(a.lower), 2.0);
-        assert_eq!(round(b.lower), 0.5);
-        assert_eq!(round(c.lower), -0.733);
-        assert_eq!(round(d.lower), -0.395);
+        assert_eq!(round(a.lower), lit!(2.0));
+        assert_eq!(round(b.lower), lit!(0.5));
+        assert_eq!(round(c.lower), lit!(-0.733));
+        assert_eq!(round(d.lower), lit!(-0.395));
     }
 
     #[test]
     fn test_reset() {
-        let mut bb = BollingerBands::new(5, 2.0_f64).unwrap();
+        let mut bb = BollingerBands::new(5, lit!(2.0)).unwrap();
 
-        let out = bb.next(3.0);
+        let out = bb.next(lit!(3.0));
 
-        assert_eq!(out.average, 3.0);
-        assert_eq!(out.upper, 3.0);
-        assert_eq!(out.lower, 3.0);
+        assert_eq!(out.average, lit!(3.0));
+        assert_eq!(out.upper, lit!(3.0));
+        assert_eq!(out.lower, lit!(3.0));
 
-        bb.next(2.5);
-        bb.next(3.5);
-        bb.next(4.0);
+        bb.next(lit!(2.5));
+        bb.next(lit!(3.5));
+        bb.next(lit!(4.0));
 
-        let out = bb.next(2.0);
+        let out = bb.next(lit!(2.0));
 
-        assert_eq!(out.average, 3.0);
-        assert_eq!(round(out.upper), 4.414);
-        assert_eq!(round(out.lower), 1.586);
+        assert_eq!(out.average, lit!(3.0));
+        assert_eq!(round(out.upper), lit!(4.414));
+        assert_eq!(round(out.lower), lit!(1.586));
 
         bb.reset();
-        let out = bb.next(3.0);
-        assert_eq!(out.average, 3.0);
-        assert_eq!(out.upper, 3.0);
-        assert_eq!(out.lower, 3.0);
+        let out = bb.next(lit!(3.0));
+        assert_eq!(out.average, lit!(3.0));
+        assert_eq!(out.upper, lit!(3.0));
+        assert_eq!(out.lower, lit!(3.0));
     }
 
     #[test]
@@ -195,7 +195,7 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let bb = BollingerBands::new(10, 3.0_f64).unwrap();
+        let bb = BollingerBands::new(10, crate::int!(3)).unwrap();
         assert_eq!(format!("{}", bb), "BB(10, 3)");
     }
 }

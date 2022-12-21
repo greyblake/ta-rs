@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::ExponentialMovingAverage as Ema;
-use crate::{Close, Next, Period, Reset};
+use crate::{lit, Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -71,25 +71,25 @@ impl PercentagePriceOscillator {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct PercentagePriceOscillatorOutput {
-    pub ppo: f64,
-    pub signal: f64,
-    pub histogram: f64,
+    pub ppo: NumberType,
+    pub signal: NumberType,
+    pub histogram: NumberType,
 }
 
-impl From<PercentagePriceOscillatorOutput> for (f64, f64, f64) {
+impl From<PercentagePriceOscillatorOutput> for (NumberType, NumberType, NumberType) {
     fn from(po: PercentagePriceOscillatorOutput) -> Self {
         (po.ppo, po.signal, po.histogram)
     }
 }
 
-impl Next<f64> for PercentagePriceOscillator {
+impl Next<NumberType> for PercentagePriceOscillator {
     type Output = PercentagePriceOscillatorOutput;
 
-    fn next(&mut self, input: f64) -> Self::Output {
+    fn next(&mut self, input: NumberType) -> Self::Output {
         let fast_val = self.fast_ema.next(input);
         let slow_val = self.slow_ema.next(input);
 
-        let ppo = (fast_val - slow_val) / slow_val * 100.0;
+        let ppo = (fast_val - slow_val) / slow_val * lit!(100.0);
         let signal = self.signal_ema.next(ppo);
         let histogram = ppo - signal;
 
@@ -140,14 +140,26 @@ mod tests {
     use super::*;
     use crate::test_helper::*;
     type Ppo = PercentagePriceOscillator;
+    #[cfg(feature = "decimal")]
+    use rust_decimal::Decimal;
 
     test_indicator!(Ppo);
 
+    #[cfg(not(feature = "decimal"))]
     fn round(nums: (f64, f64, f64)) -> (f64, f64, f64) {
         let n0 = (nums.0 * 100.0).round() / 100.0;
         let n1 = (nums.1 * 100.0).round() / 100.0;
         let n2 = (nums.2 * 100.0).round() / 100.0;
         (n0, n1, n2)
+    }
+    #[cfg(feature = "decimal")]
+    fn round(nums: (Decimal, Decimal, Decimal)) -> (Decimal, Decimal, Decimal) {
+        use rust_decimal::prelude::RoundingStrategy::MidpointAwayFromZero;
+        (
+            nums.0.round_dp_with_strategy(2, MidpointAwayFromZero),
+            nums.1.round_dp_with_strategy(2, MidpointAwayFromZero),
+            nums.2.round_dp_with_strategy(2, MidpointAwayFromZero),
+        )
     }
 
     #[test]
@@ -162,25 +174,55 @@ mod tests {
     fn test_next() {
         let mut ppo = Ppo::new(3, 6, 4).unwrap();
 
-        assert_eq!(round(ppo.next(2.0).into()), (0.0, 0.0, 0.0));
-        assert_eq!(round(ppo.next(3.0).into()), (9.38, 3.75, 5.63));
-        assert_eq!(round(ppo.next(4.2).into()), (18.26, 9.56, 8.71));
-        assert_eq!(round(ppo.next(7.0).into()), (28.62, 17.18, 11.44));
-        assert_eq!(round(ppo.next(6.7).into()), (24.01, 19.91, 4.09));
-        assert_eq!(round(ppo.next(6.5).into()), (17.84, 19.08, -1.24));
+        assert_eq!(
+            round(ppo.next(lit!(2.0)).into()),
+            (lit!(0.0), lit!(0.0), lit!(0.0))
+        );
+        assert_eq!(
+            round(ppo.next(lit!(3.0)).into()),
+            (lit!(9.38), lit!(3.75), lit!(5.63))
+        );
+        assert_eq!(
+            round(ppo.next(lit!(4.2)).into()),
+            (lit!(18.26), lit!(9.56), lit!(8.71))
+        );
+        assert_eq!(
+            round(ppo.next(lit!(8.0)).into()),
+            (lit!(31.70), lit!(18.41), lit!(13.29))
+        );
+        assert_eq!(
+            round(ppo.next(lit!(6.7)).into()),
+            (lit!(23.94), lit!(20.63), lit!(3.32))
+        );
+        assert_eq!(
+            round(ppo.next(lit!(6.5)).into()),
+            (lit!(16.98), lit!(19.17), lit!(-2.19))
+        );
     }
 
     #[test]
     fn test_reset() {
         let mut ppo = Ppo::new(3, 6, 4).unwrap();
 
-        assert_eq!(round(ppo.next(2.0).into()), (0.0, 0.0, 0.0));
-        assert_eq!(round(ppo.next(3.0).into()), (9.38, 3.75, 5.63));
+        assert_eq!(
+            round(ppo.next(lit!(2.0)).into()),
+            (lit!(0.0), lit!(0.0), lit!(0.0))
+        );
+        assert_eq!(
+            round(ppo.next(lit!(3.0)).into()),
+            (lit!(9.38), lit!(3.75), lit!(5.63))
+        );
 
         ppo.reset();
 
-        assert_eq!(round(ppo.next(2.0).into()), (0.0, 0.0, 0.0));
-        assert_eq!(round(ppo.next(3.0).into()), (9.38, 3.75, 5.63));
+        assert_eq!(
+            round(ppo.next(lit!(2.0)).into()),
+            (lit!(0.0), lit!(0.0), lit!(0.0))
+        );
+        assert_eq!(
+            round(ppo.next(lit!(3.0)).into()),
+            (lit!(9.38), lit!(3.75), lit!(5.63))
+        );
     }
 
     #[test]

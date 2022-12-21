@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::errors::Result;
 use crate::indicators::ExponentialMovingAverage as Ema;
-use crate::{Close, Next, Period, Reset};
+use crate::{lit, Close, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -75,7 +75,7 @@ pub struct RelativeStrengthIndex {
     period: usize,
     up_ema_indicator: Ema,
     down_ema_indicator: Ema,
-    prev_val: f64,
+    prev_val: NumberType,
     is_new: bool,
 }
 
@@ -85,7 +85,7 @@ impl RelativeStrengthIndex {
             period,
             up_ema_indicator: Ema::new(period)?,
             down_ema_indicator: Ema::new(period)?,
-            prev_val: 0.0,
+            prev_val: lit!(0.0),
             is_new: true,
         })
     }
@@ -97,35 +97,33 @@ impl Period for RelativeStrengthIndex {
     }
 }
 
-impl Next<f64> for RelativeStrengthIndex {
-    type Output = f64;
+impl Next<NumberType> for RelativeStrengthIndex {
+    type Output = NumberType;
 
-    fn next(&mut self, input: f64) -> Self::Output {
-        let mut up = 0.0;
-        let mut down = 0.0;
+    fn next(&mut self, input: NumberType) -> Self::Output {
+        let mut up = lit!(0.0);
+        let mut down = lit!(0.0);
 
         if self.is_new {
             self.is_new = false;
             // Initialize with some small seed numbers to avoid division by zero
-            up = 0.1;
-            down = 0.1;
+            up = lit!(0.1);
+            down = lit!(0.1);
+        } else if input > self.prev_val {
+            up = input - self.prev_val;
         } else {
-            if input > self.prev_val {
-                up = input - self.prev_val;
-            } else {
-                down = self.prev_val - input;
-            }
+            down = self.prev_val - input;
         }
 
         self.prev_val = input;
         let up_ema = self.up_ema_indicator.next(up);
         let down_ema = self.down_ema_indicator.next(down);
-        100.0 * up_ema / (up_ema + down_ema)
+        lit!(100.0) * up_ema / (up_ema + down_ema)
     }
 }
 
 impl<T: Close> Next<&T> for RelativeStrengthIndex {
-    type Output = f64;
+    type Output = NumberType;
 
     fn next(&mut self, input: &T) -> Self::Output {
         self.next(input.close())
@@ -135,7 +133,7 @@ impl<T: Close> Next<&T> for RelativeStrengthIndex {
 impl Reset for RelativeStrengthIndex {
     fn reset(&mut self) {
         self.is_new = true;
-        self.prev_val = 0.0;
+        self.prev_val = lit!(0.0);
         self.up_ema_indicator.reset();
         self.down_ema_indicator.reset();
     }
@@ -169,21 +167,21 @@ mod tests {
     #[test]
     fn test_next() {
         let mut rsi = RelativeStrengthIndex::new(3).unwrap();
-        assert_eq!(rsi.next(10.0), 50.0);
-        assert_eq!(rsi.next(10.5).round(), 86.0);
-        assert_eq!(rsi.next(10.0).round(), 35.0);
-        assert_eq!(rsi.next(9.5).round(), 16.0);
+        assert_eq!(rsi.next(lit!(10.0)), lit!(50.0));
+        assert_eq!(rsi.next(lit!(10.5)).round(), lit!(86.0));
+        assert_eq!(rsi.next(lit!(10.0)).round(), lit!(35.0));
+        assert_eq!(rsi.next(lit!(9.5)).round(), lit!(16.0));
     }
 
     #[test]
     fn test_reset() {
         let mut rsi = RelativeStrengthIndex::new(3).unwrap();
-        assert_eq!(rsi.next(10.0), 50.0);
-        assert_eq!(rsi.next(10.5).round(), 86.0);
+        assert_eq!(rsi.next(lit!(10.0)), lit!(50.0));
+        assert_eq!(rsi.next(lit!(10.5)).round(), lit!(86.0));
 
         rsi.reset();
-        assert_eq!(rsi.next(10.0).round(), 50.0);
-        assert_eq!(rsi.next(10.5).round(), 86.0);
+        assert_eq!(rsi.next(lit!(10.0)).round(), lit!(50.0));
+        assert_eq!(rsi.next(lit!(10.5)).round(), lit!(86.0));
     }
 
     #[test]
