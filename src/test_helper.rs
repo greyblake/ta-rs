@@ -91,6 +91,7 @@ macro_rules! test_indicator {
     ($i:tt) => {
         #[test]
         fn test_indicator() {
+            use crate::lit;
             let bar = Bar::new();
 
             // ensure Default trait is implemented

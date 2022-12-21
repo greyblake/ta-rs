@@ -1,6 +1,7 @@
 use std::fmt;
 
 use crate::errors::{Result, TaError};
+use crate::helpers::NEG_INFINITY;
 use crate::{High, Next, NumberType, Period, Reset};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -41,13 +42,13 @@ impl Maximum {
                 period,
                 max_index: 0,
                 cur_index: 0,
-                deque: vec![f64::NEG_INFINITY; period].into_boxed_slice(),
+                deque: vec![NEG_INFINITY; period].into_boxed_slice(),
             }),
         }
     }
 
     fn find_max_index(&self) -> usize {
-        let mut max = f64::NEG_INFINITY;
+        let mut max = NEG_INFINITY;
         let mut index: usize = 0;
 
         for (i, &val) in self.deque.iter().enumerate() {
@@ -100,7 +101,7 @@ impl<T: High> Next<&T> for Maximum {
 impl Reset for Maximum {
     fn reset(&mut self) {
         for i in 0..self.period {
-            self.deque[i] = f64::NEG_INFINITY;
+            self.deque[i] = NEG_INFINITY;
         }
     }
 }

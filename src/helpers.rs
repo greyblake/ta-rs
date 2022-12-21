@@ -17,6 +17,7 @@ mod generics {
     }
 
     pub use std::f64::INFINITY;
+    pub use std::f64::NEG_INFINITY;
 }
 
 #[cfg(feature = "decimal")]
@@ -39,6 +40,7 @@ mod generics {
 
     use rust_decimal::Decimal;
     pub const INFINITY: Decimal = Decimal::MAX;
+    pub const NEG_INFINITY: Decimal = Decimal::MIN;
 }
 
 pub(crate) use generics::*;
