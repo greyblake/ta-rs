@@ -5,6 +5,8 @@
 [![Docs.rs](https://docs.rs/ta/badge.svg)](https://docs.rs/ta)
 [![License](https://img.shields.io/crates/l/ta)](https://raw.githubusercontent.com/greyblake/ta-rs/master/LICENSE)
 
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua/)
+
 Technical analysis library for Rust.
 
 - [Getting started](#getting-started)

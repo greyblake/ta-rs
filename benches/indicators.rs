@@ -1,11 +1,11 @@
-use bencher::{benchmark_group, benchmark_main, Bencher};
+use bencher::{benchmark_group, benchmark_main, black_box, Bencher};
 use rand::Rng;
 use ta::indicators::{
     AverageTrueRange, BollingerBands, ChandelierExit, CommodityChannelIndex, EfficiencyRatio,
     ExponentialMovingAverage, FastStochastic, KeltnerChannel, Maximum, MeanAbsoluteDeviation,
     Minimum, MoneyFlowIndex, MovingAverageConvergenceDivergence, OnBalanceVolume,
     PercentagePriceOscillator, RateOfChange, RelativeStrengthIndex, SimpleMovingAverage,
-    SlowStochastic, StandardDeviation, TrueRange,
+    SlowStochastic, StandardDeviation, TrueRange, WeightedMovingAverage,
 };
 use ta::{lit, DataItem, Next};
 
@@ -40,7 +40,7 @@ macro_rules! bench_indicators {
 
                 bench.iter(|| {
                     for item in items.iter() {
-                        indicator.next(item);
+                        black_box(indicator.next(item));
                     }
                 })
             }
@@ -72,5 +72,6 @@ bench_indicators!(
     SimpleMovingAverage,
     SlowStochastic,
     StandardDeviation,
-    TrueRange
+    TrueRange,
+    WeightedMovingAverage
 );
