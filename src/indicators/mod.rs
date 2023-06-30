@@ -67,3 +67,6 @@ pub use self::money_flow_index::MoneyFlowIndex;
 
 mod on_balance_volume;
 pub use self::on_balance_volume::OnBalanceVolume;
+
+mod rotation_factor;
+pub use self::rotation_factor::RotationFactor;
